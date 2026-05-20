@@ -6,9 +6,9 @@ const SESSION_COOKIE = "cev_session";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 gün
 
 function getSecret(): Uint8Array {
-  const secret = process.env.SESSION_SECRET;
+  const secret = process.env.SESSION_SECRET || process.env.JWT_SECRET;
   if (!secret) {
-    throw new Error("SESSION_SECRET environment variable is not set");
+    throw new Error("SESSION_SECRET or JWT_SECRET environment variable is not set");
   }
   return new TextEncoder().encode(secret);
 }

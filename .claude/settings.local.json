@@ -99,7 +99,12 @@
       "Bash(ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null && git push -u origin main)",
       "WebFetch(domain:cevrende-com.vercel.app)",
       "Bash(curl -s https://cevrende-com.vercel.app/)",
-      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"evet\" npx prisma migrate reset --force)"
+      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"evet\" npx prisma migrate reset --force)",
+      "Bash(curl -s -X POST https://cevrende-com.vercel.app/api/auth/login -H \"Content-Type: application/json\" -d '{\"identifier\":\"admin@example.com\",\"password\":\"demo1234\"}' -i)",
+      "Bash(curl -s https://cevrende-com.vercel.app/ilanlar -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s https://cevrende-com.vercel.app/ -o /dev/null -w \"Home: %{http_code}\\\\n\")",
+      "Bash(curl -s https://cevrende-com.vercel.app/giris -o /dev/null -w \"Login: %{http_code}\\\\n\")",
+      "Bash(curl -s https://cevrende-com.vercel.app/ilanlar -o /dev/null -w \"Ilanlar: %{http_code}\\\\n\")"
     ],
     "additionalDirectories": [
       "/private/tmp",
