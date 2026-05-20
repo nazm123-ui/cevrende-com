@@ -7,6 +7,6 @@ build
 *.tsbuildinfo
 next-env.d.ts
 
-# Prisma local DB
-prisma/dev.db
-prisma/dev.db-journal
+# Prisma local DB (keep for demo/testing)
+# prisma/dev.db
+# prisma/dev.db-journal
