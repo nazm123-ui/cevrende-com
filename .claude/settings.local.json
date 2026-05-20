@@ -89,10 +89,21 @@
       "Bash(git init *)",
       "Bash(git config *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git remote *)",
+      "Bash(git branch *)",
+      "Bash(git push *)",
+      "Bash(ls -la ~/.ssh/id_rsa 2>/dev/null && echo \"SSH key var\" || echo \"SSH key yok\")",
+      "Read(//Users/nazim/.ssh/**)",
+      "Bash(ssh-keygen -t ed25519 -C \"infocevrende@gmail.com\" -f ~/.ssh/id_ed25519 -N \"\")",
+      "Bash(ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null && git push -u origin main)",
+      "WebFetch(domain:cevrende-com.vercel.app)",
+      "Bash(curl -s https://cevrende-com.vercel.app/)",
+      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"evet\" npx prisma migrate reset --force)"
     ],
     "additionalDirectories": [
-      "/private/tmp"
+      "/private/tmp",
+      "/Users/nazim/.ssh"
     ]
   }
 }
