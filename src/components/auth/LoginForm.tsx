@@ -14,7 +14,10 @@ export default function LoginForm() {
 
   const [needsVerification, setNeedsVerification] = useState(false);
   const [userId, setUserId] = useState("");
-  const [devOtp, setDevOtp] = useState<string | undefined>();
+  const [needsPhone, setNeedsPhone] = useState(false);
+  const [needsEmail, setNeedsEmail] = useState(false);
+  const [devPhoneOtp, setDevPhoneOtp] = useState<string | undefined>();
+  const [devEmailOtp, setDevEmailOtp] = useState<string | undefined>();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,7 +33,10 @@ export default function LoginForm() {
       if (!res.ok) {
         if (data.needsVerification && data.userId) {
           setUserId(data.userId);
-          setDevOtp(data.devOtp);
+          setNeedsPhone(data.needsPhoneVerification ?? false);
+          setNeedsEmail(data.needsEmailVerification ?? false);
+          setDevPhoneOtp(data.devPhoneOtp);
+          setDevEmailOtp(data.devEmailOtp);
           setNeedsVerification(true);
           return;
         }
@@ -50,13 +56,19 @@ export default function LoginForm() {
     return (
       <div>
         <h2 className="text-xl font-bold text-ink-900 mb-1">
-          Telefonunu doğrula
+          Hesabını Doğrula
         </h2>
         <p className="text-sm text-ink-500 mb-6">
-          Hesabın henüz doğrulanmamış. Devam etmek için telefonuna gönderilen
-          kodu gir.
+          Hesabın henüz tamamen doğrulanmamış. Devam etmek için eksik doğrulamaları tamamla.
         </p>
-        <OtpForm userId={userId} initialDevOtp={devOtp} redirectTo="/" />
+        <OtpForm
+          userId={userId}
+          needsPhone={needsPhone}
+          needsEmail={needsEmail}
+          initialDevPhoneOtp={devPhoneOtp}
+          initialDevEmailOtp={devEmailOtp}
+          redirectTo="/"
+        />
       </div>
     );
   }

@@ -71,6 +71,7 @@ async function main() {
       phone: "05300000000",
       passwordHash,
       isPhoneVerified: true,
+      isEmailVerified: true,
     },
   });
 
@@ -87,6 +88,7 @@ async function main() {
         passwordHash,
         neighborhood: e.neighborhood,
         isPhoneVerified: true,
+      isEmailVerified: true,
       },
       select: { id: true },
     });

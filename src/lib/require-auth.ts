@@ -9,7 +9,9 @@ export async function requireUser() {
 
 export async function requireVerifiedUser() {
   const user = await requireUser();
-  if (!user.isPhoneVerified) redirect("/dogrulama");
+  if (!user.isEmailVerified) {
+    redirect(`/dogrulama?userId=${user.id}`);
+  }
   return user;
 }
 

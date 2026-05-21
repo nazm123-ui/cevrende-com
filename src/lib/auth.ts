@@ -73,6 +73,7 @@ export async function getCurrentUser() {
       email: true,
       phone: true,
       isPhoneVerified: true,
+      isEmailVerified: true,
       isActive: true,
       city: true,
       district: true,

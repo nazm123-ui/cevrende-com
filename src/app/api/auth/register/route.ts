@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/password";
 import { createOtp, isDevMode } from "@/lib/otp";
+import { sendOtpEmail } from "@/lib/email";
 import { registerSchema } from "@/lib/validators";
 
 export async function POST(req: Request) {
@@ -24,17 +25,26 @@ export async function POST(req: Request) {
 
   const existing = await prisma.user.findFirst({
     where: { OR: [{ email }, { phone }] },
-    select: { id: true, isPhoneVerified: true, email: true, phone: true },
+    select: {
+      id: true,
+      email: true,
+      phone: true,
+      isEmailVerified: true,
+    },
   });
 
   if (existing) {
-    if (!existing.isPhoneVerified) {
-      const otp = await createOtp(existing.id, "registration");
+    if (!existing.isEmailVerified) {
+      const emailOtp = await createOtp(existing.id, "email_registration");
+      await sendOtpEmail(existing.email, emailOtp.code);
+
       return NextResponse.json({
         userId: existing.id,
         message:
           "Bu bilgilerle daha önce kayıt başlatılmış. Doğrulama kodu tekrar gönderildi.",
-        ...(isDevMode() ? { devOtp: otp.code } : {}),
+        needsPhoneVerification: false,
+        needsEmailVerification: true,
+        ...(isDevMode() ? { devEmailOtp: emailOtp.code } : {}),
       });
     }
     return NextResponse.json(
@@ -53,14 +63,18 @@ export async function POST(req: Request) {
       phone,
       passwordHash,
       neighborhood: neighborhood || null,
+      isPhoneVerified: true,
     },
-    select: { id: true },
+    select: { id: true, email: true },
   });
 
-  const otp = await createOtp(user.id, "registration");
+  const emailOtp = await createOtp(user.id, "email_registration");
+  await sendOtpEmail(user.email, emailOtp.code);
 
   return NextResponse.json({
     userId: user.id,
-    ...(isDevMode() ? { devOtp: otp.code } : {}),
+    needsPhoneVerification: false,
+    needsEmailVerification: true,
+    ...(isDevMode() ? { devEmailOtp: emailOtp.code } : {}),
   });
 }

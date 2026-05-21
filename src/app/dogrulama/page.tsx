@@ -6,7 +6,7 @@ import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 
 export const metadata = {
-  title: "Telefon Doğrulama — Cevrende.com",
+  title: "Hesap Doğrulama — Cevrende.com",
 };
 
 type SearchParams = Promise<{ userId?: string }>;
@@ -23,7 +23,7 @@ export default async function DogrulamaPage({
 
   if (!userId) {
     return (
-      <AuthShell title="Telefon Doğrulama">
+      <AuthShell title="Hesap Doğrulama">
         <p className="text-sm text-ink-700">
           Bu sayfaya doğrudan erişilemez. Lütfen önce{" "}
           <Link href="/kayit" className="text-brand-700 underline">
@@ -41,12 +41,19 @@ export default async function DogrulamaPage({
 
   const candidate = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, phone: true, isPhoneVerified: true, isActive: true },
+    select: {
+      id: true,
+      phone: true,
+      email: true,
+      isPhoneVerified: true,
+      isEmailVerified: true,
+      isActive: true,
+    },
   });
 
   if (!candidate || !candidate.isActive) {
     return (
-      <AuthShell title="Telefon Doğrulama">
+      <AuthShell title="Hesap Doğrulama">
         <p className="text-sm text-red-700">
           Kullanıcı bulunamadı veya hesap pasif.
         </p>
@@ -54,9 +61,9 @@ export default async function DogrulamaPage({
     );
   }
 
-  if (candidate.isPhoneVerified) {
+  if (candidate.isPhoneVerified && candidate.isEmailVerified) {
     return (
-      <AuthShell title="Telefon Doğrulama">
+      <AuthShell title="Hesap Doğrulama">
         <p className="text-sm text-ink-700">
           Bu hesap zaten doğrulanmış.{" "}
           <Link href="/giris" className="text-brand-700 underline">
@@ -68,14 +75,35 @@ export default async function DogrulamaPage({
     );
   }
 
-  const masked = candidate.phone.replace(/^(\d{3})\d{4}(\d{2})(\d{2})$/, "$1****$2$3");
+  const phoneMasked = maskPhone(candidate.phone);
+  const emailMasked = maskEmail(candidate.email);
 
   return (
     <AuthShell
-      title="Telefonunu Doğrula"
-      subtitle={`${masked} numarasına gönderilen 6 haneli kodu gir.`}
+      title="Hesabını Doğrula"
+      subtitle="Telefonuna SMS ve e-postana doğrulama kodu gönderildi. İkisini de gir."
     >
-      <OtpForm userId={candidate.id} redirectTo="/" />
+      <OtpForm
+        userId={candidate.id}
+        needsPhone={!candidate.isPhoneVerified}
+        needsEmail={!candidate.isEmailVerified}
+        phoneMasked={phoneMasked}
+        emailMasked={emailMasked}
+        redirectTo="/"
+      />
     </AuthShell>
   );
+}
+
+function maskPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length < 4) return phone;
+  return digits.slice(0, 3) + "****" + digits.slice(-2);
+}
+
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!domain) return email;
+  if (local.length <= 2) return `${local[0]}***@${domain}`;
+  return `${local[0]}${local[1]}***@${domain}`;
 }

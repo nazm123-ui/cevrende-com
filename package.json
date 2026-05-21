@@ -18,6 +18,7 @@
     "bcryptjs": "^3.0.3",
     "jose": "^6.2.3",
     "next": "^15.5.0",
+    "nodemailer": "^8.0.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zod": "^4.4.3"
@@ -26,6 +27,7 @@
     "@tailwindcss/postcss": "^4.0.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.0.0",
+    "@types/nodemailer": "^8.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "prisma": "^6.19.3",

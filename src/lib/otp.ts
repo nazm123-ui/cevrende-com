@@ -3,7 +3,10 @@ import { prisma } from "@/lib/db";
 const OTP_LENGTH = 6;
 const OTP_TTL_MINUTES = 10;
 
-export type OtpPurpose = "registration" | "login";
+export type OtpPurpose =
+  | "phone_registration"
+  | "email_registration"
+  | "login";
 
 function generateCode(): string {
   let code = "";

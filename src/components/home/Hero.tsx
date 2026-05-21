@@ -26,7 +26,7 @@ export default function Hero() {
             İş İlanlarını Gör
           </Link>
           <Link
-            href="/ilan-olustur"
+            href="/panel/ilan-yeni"
             className="inline-flex items-center justify-center rounded-lg border-2 border-accent-500 bg-white px-6 py-3 text-base font-semibold text-accent-600 hover:bg-accent-500 hover:text-white transition"
           >
             Ücretsiz İlan Oluştur

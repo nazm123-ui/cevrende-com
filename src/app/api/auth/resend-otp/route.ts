@@ -2,8 +2,12 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { createOtp, isDevMode } from "@/lib/otp";
+import { sendOtpEmail } from "@/lib/email";
 
-const schema = z.object({ userId: z.string().min(1) });
+const schema = z.object({
+  userId: z.string().min(1),
+  channel: z.enum(["phone", "email"]).optional().default("email"),
+});
 
 export async function POST(req: Request) {
   let body: unknown;
@@ -18,9 +22,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Form hatalı." }, { status: 400 });
   }
 
+  const { userId, channel } = parsed.data;
+
+  if (channel !== "email") {
+    return NextResponse.json(
+      { error: "Bu doğrulama kanalı şu an aktif değil." },
+      { status: 400 },
+    );
+  }
+
   const user = await prisma.user.findUnique({
-    where: { id: parsed.data.userId },
-    select: { id: true, isPhoneVerified: true, isActive: true },
+    where: { id: userId },
+    select: {
+      id: true,
+      email: true,
+      isEmailVerified: true,
+      isActive: true,
+    },
   });
   if (!user || !user.isActive) {
     return NextResponse.json(
@@ -28,15 +46,15 @@ export async function POST(req: Request) {
       { status: 404 },
     );
   }
-  if (user.isPhoneVerified) {
+
+  if (user.isEmailVerified) {
     return NextResponse.json(
-      { error: "Bu hesap zaten doğrulanmış." },
+      { error: "E-posta zaten doğrulanmış." },
       { status: 400 },
     );
   }
-
-  const otp = await createOtp(user.id, "registration");
-
+  const otp = await createOtp(user.id, "email_registration");
+  await sendOtpEmail(user.email, otp.code);
   return NextResponse.json({
     ok: true,
     ...(isDevMode() ? { devOtp: otp.code } : {}),

@@ -9,7 +9,10 @@ type Role = "employer" | "worker";
 export default function RegisterForm() {
   const [step, setStep] = useState<"form" | "otp">("form");
   const [userId, setUserId] = useState<string>("");
-  const [devOtp, setDevOtp] = useState<string | undefined>();
+  const [devPhoneOtp, setDevPhoneOtp] = useState<string | undefined>();
+  const [devEmailOtp, setDevEmailOtp] = useState<string | undefined>();
+  const [needsPhone, setNeedsPhone] = useState(true);
+  const [needsEmail, setNeedsEmail] = useState(true);
 
   const [role, setRole] = useState<Role>("worker");
   const [fullName, setFullName] = useState("");
@@ -51,7 +54,10 @@ export default function RegisterForm() {
         return;
       }
       setUserId(data.userId);
-      setDevOtp(data.devOtp);
+      setDevPhoneOtp(data.devPhoneOtp);
+      setDevEmailOtp(data.devEmailOtp);
+      setNeedsPhone(data.needsPhoneVerification ?? true);
+      setNeedsEmail(data.needsEmailVerification ?? true);
       setStep("otp");
     } catch {
       setError("Bir hata oluştu. Tekrar deneyin.");
@@ -61,15 +67,26 @@ export default function RegisterForm() {
   }
 
   if (step === "otp") {
+    const phoneMasked = maskPhone(phone);
+    const emailMasked = maskEmail(email);
     return (
       <div>
         <h2 className="text-xl font-bold text-ink-900 mb-1">
-          Telefonunu doğrula
+          Hesabını Doğrula
         </h2>
         <p className="text-sm text-ink-500 mb-6">
-          {phone} numarasına gönderilen 6 haneli kodu gir.
+          Telefonuna SMS, e-postana doğrulama kodu gönderildi. İkisini de gir.
         </p>
-        <OtpForm userId={userId} initialDevOtp={devOtp} redirectTo="/" />
+        <OtpForm
+          userId={userId}
+          needsPhone={needsPhone}
+          needsEmail={needsEmail}
+          phoneMasked={phoneMasked}
+          emailMasked={emailMasked}
+          initialDevPhoneOtp={devPhoneOtp}
+          initialDevEmailOtp={devEmailOtp}
+          redirectTo="/"
+        />
       </div>
     );
   }
@@ -193,6 +210,19 @@ export default function RegisterForm() {
       </p>
     </form>
   );
+}
+
+function maskPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length < 4) return phone;
+  return digits.slice(0, 3) + "****" + digits.slice(-2);
+}
+
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!domain) return email;
+  if (local.length <= 2) return `${local[0]}***@${domain}`;
+  return `${local[0]}${local[1]}***@${domain}`;
 }
 
 function RoleCard({

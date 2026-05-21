@@ -24,7 +24,13 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, role: true, isActive: true },
+    select: {
+      id: true,
+      role: true,
+      isActive: true,
+      isPhoneVerified: true,
+      isEmailVerified: true,
+    },
   });
   if (!user || !user.isActive) {
     return NextResponse.json(
@@ -33,17 +39,25 @@ export async function POST(req: Request) {
     );
   }
 
-  const result = await verifyOtp(userId, code, "registration");
-  if (!result.ok) {
-    return NextResponse.json({ error: result.reason }, { status: 400 });
+  if (!user.isEmailVerified) {
+    const result = await verifyOtp(userId, code, "email_registration");
+    if (!result.ok) {
+      return NextResponse.json({ error: result.reason }, { status: 400 });
+    }
+    await prisma.user.update({
+      where: { id: userId },
+      data: { isEmailVerified: true },
+    });
   }
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: { isPhoneVerified: true },
+  if (user.isPhoneVerified) {
+    await setSessionCookie({ userId: user.id, role: user.role });
+    return NextResponse.json({ ok: true, complete: true });
+  }
+
+  return NextResponse.json({
+    ok: true,
+    complete: false,
+    nextStep: "phone",
   });
-
-  await setSessionCookie({ userId: user.id, role: user.role });
-
-  return NextResponse.json({ ok: true });
 }

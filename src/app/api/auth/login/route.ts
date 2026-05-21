@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { verifyPassword } from "@/lib/password";
 import { setSessionCookie } from "@/lib/auth";
 import { createOtp, isDevMode } from "@/lib/otp";
+import { sendOtpEmail } from "@/lib/email";
 import { loginSchema, phoneSchema } from "@/lib/validators";
 
 export async function POST(req: Request) {
@@ -43,8 +44,9 @@ export async function POST(req: Request) {
     select: {
       id: true,
       role: true,
+      email: true,
       passwordHash: true,
-      isPhoneVerified: true,
+      isEmailVerified: true,
       isActive: true,
     },
   });
@@ -58,14 +60,18 @@ export async function POST(req: Request) {
   const ok = await verifyPassword(password, user.passwordHash);
   if (!ok) return invalid;
 
-  if (!user.isPhoneVerified) {
-    const otp = await createOtp(user.id, "registration");
+  if (!user.isEmailVerified) {
+    const emailOtp = await createOtp(user.id, "email_registration");
+    await sendOtpEmail(user.email, emailOtp.code);
+
     return NextResponse.json(
       {
-        error: "Hesabınız henüz telefonla doğrulanmamış.",
+        error: "Hesabınız henüz e-posta ile doğrulanmamış.",
         needsVerification: true,
         userId: user.id,
-        ...(isDevMode() ? { devOtp: otp.code } : {}),
+        needsPhoneVerification: false,
+        needsEmailVerification: true,
+        ...(isDevMode() ? { devEmailOtp: emailOtp.code } : {}),
       },
       { status: 403 },
     );
