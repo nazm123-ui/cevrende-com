@@ -4,19 +4,18 @@ import { getProfessionCounts } from "@/lib/workers";
 import QuickSearchCard from "@/components/home/QuickSearchCard";
 
 export default async function Hero() {
-  const [withCounts, categories] = await Promise.all([
+  const [withCounts, allCategories] = await Promise.all([
     getProfessionCounts(),
     prisma.jobCategory.findMany({
       where: { isActive: true },
       orderBy: { order: "asc" },
-      take: 8,
       select: { slug: true, name: true },
     }),
   ]);
   const popular =
     withCounts.length > 0
       ? withCounts.sort((a, b) => b.count - a.count).slice(0, 8)
-      : categories.map((c) => ({ ...c, count: 0 }));
+      : allCategories.slice(0, 8).map((c) => ({ ...c, count: 0 }));
   const total = withCounts.reduce((sum, p) => sum + p.count, 0);
 
   return (
@@ -61,7 +60,11 @@ export default async function Hero() {
         </div>
 
         <div className="min-w-0">
-          <QuickSearchCard popular={popular} totalCount={total} />
+          <QuickSearchCard
+            popular={popular}
+            totalCount={total}
+            allCategories={allCategories}
+          />
         </div>
       </div>
     </section>
