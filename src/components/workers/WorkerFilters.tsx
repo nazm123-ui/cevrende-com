@@ -41,83 +41,94 @@ export default function WorkerFilters({
   const hasFilter = current.meslek || current.mahalle || current.q;
 
   return (
-    <aside className="space-y-4">
-      <div className="flex items-baseline justify-between">
-        <h2 className="font-semibold text-ink-900">Filtreler</h2>
-        <span className="text-xs text-ink-500">
-          {total} işçi{isPending ? " • yükleniyor..." : ""}
-        </span>
-      </div>
+    <div>
+      <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium mb-4">
+        Filtrele
+      </p>
 
       <SearchField
         defaultValue={current.q}
         onSubmit={(v) => updateParam("q", v)}
       />
 
-      <SelectField
-        label="Meslek"
-        value={current.meslek}
-        onChange={(v) => updateParam("meslek", v)}
-        options={[
-          { value: "", label: "Tüm Meslekler" },
-          ...professions.map((p) => ({
-            value: p.slug,
-            label: `${p.name} (${p.count})`,
-          })),
-        ]}
-      />
+      <div className="mt-6">
+        <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium mb-3">
+          Meslekler
+        </p>
+        <div className="flex flex-col">
+          <CategoryRow
+            label="Tüm meslekler"
+            count={total}
+            active={!current.meslek}
+            onClick={() => updateParam("meslek", "")}
+          />
+          {professions.map((p) => (
+            <CategoryRow
+              key={p.slug}
+              label={p.name}
+              count={p.count}
+              active={current.meslek === p.slug}
+              onClick={() => updateParam("meslek", p.slug)}
+            />
+          ))}
+        </div>
+      </div>
 
-      <SelectField
-        label="Mahalle"
-        value={current.mahalle}
-        onChange={(v) => updateParam("mahalle", v)}
-        options={[
-          { value: "", label: "Tüm Mahalleler" },
-          ...PENDIK_NEIGHBORHOODS.map((n) => ({ value: n, label: n })),
-        ]}
-      />
+      <div className="mt-7 pt-7 border-t border-ink-100">
+        <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium mb-3">
+          Mahalle
+        </p>
+        <select
+          value={current.mahalle}
+          onChange={(e) => updateParam("mahalle", e.target.value)}
+          className="w-full h-11 px-3.5 rounded-[12px] border border-ink-200 bg-white text-[14px] text-ink-900 outline-none transition focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
+        >
+          <option value="">Tüm mahalleler</option>
+          {PENDIK_NEIGHBORHOODS.map((n) => (
+            <option key={n} value={n}>
+              {n}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      {hasFilter && (
+      {(hasFilter || isPending) && (
         <button
           type="button"
           onClick={reset}
-          className="w-full text-sm text-brand-700 hover:underline"
+          className="mt-6 text-[13px] text-ink-500 hover:text-ink-900 transition"
         >
-          Filtreleri Temizle
+          {isPending ? "Yükleniyor…" : "Filtreleri temizle"}
         </button>
       )}
-    </aside>
+    </div>
   );
 }
 
-function SelectField({
+function CategoryRow({
   label,
-  value,
-  onChange,
-  options,
+  count,
+  active,
+  onClick,
 }: {
   label: string;
-  value: string;
-  onChange: (v: string) => void;
-  options: { value: string; label: string }[];
+  count: number;
+  active: boolean;
+  onClick: () => void;
 }) {
   return (
-    <div>
-      <label className="block text-xs font-medium text-ink-500 mb-1">
-        {label}
-      </label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="block w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex items-center justify-between px-3 py-2.5 rounded-lg transition text-left ${
+        active
+          ? "bg-ink-900/[0.04] text-ink-900 font-medium"
+          : "text-ink-700 hover:bg-ink-900/[0.02]"
+      }`}
+    >
+      <span className="text-[14.5px] tracking-tight">{label}</span>
+      <span className="font-mono text-[12.5px] text-ink-400">{count}</span>
+    </button>
   );
 }
 
@@ -136,23 +147,29 @@ function SearchField({
         onSubmit((fd.get("q") as string) ?? "");
       }}
     >
-      <label className="block text-xs font-medium text-ink-500 mb-1">
-        Arama
-      </label>
-      <div className="flex gap-2">
+      <div className="relative">
+        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+        </span>
         <input
           name="q"
           type="search"
           defaultValue={defaultValue}
-          placeholder="İsim veya tanıtım..."
-          className="flex-1 rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+          placeholder="İsim, tanıtım…"
+          className="w-full h-11 pl-10 pr-3 rounded-[12px] border border-ink-200 bg-white text-[14px] text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
         />
-        <button
-          type="submit"
-          className="rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition"
-        >
-          Ara
-        </button>
       </div>
     </form>
   );

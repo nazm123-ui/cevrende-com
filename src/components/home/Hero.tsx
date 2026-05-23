@@ -1,6 +1,24 @@
 import Link from "next/link";
+import { prisma } from "@/lib/db";
+import { getProfessionCounts } from "@/lib/workers";
+import QuickSearchCard from "@/components/home/QuickSearchCard";
 
-export default function Hero() {
+export default async function Hero() {
+  const [withCounts, categories] = await Promise.all([
+    getProfessionCounts(),
+    prisma.jobCategory.findMany({
+      where: { isActive: true },
+      orderBy: { order: "asc" },
+      take: 8,
+      select: { slug: true, name: true },
+    }),
+  ]);
+  const popular =
+    withCounts.length > 0
+      ? withCounts.sort((a, b) => b.count - a.count).slice(0, 8)
+      : categories.map((c) => ({ ...c, count: 0 }));
+  const total = withCounts.reduce((sum, p) => sum + p.count, 0);
+
   return (
     <section className="pt-16 sm:pt-20 pb-12 sm:pb-16">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6 grid items-center gap-10 lg:gap-16 lg:grid-cols-[1.15fr_0.95fr]">
@@ -43,29 +61,8 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Right side: minimal info card */}
-        <div className="hidden lg:block">
-          <div className="bg-white border border-ink-100 rounded-[14px] shadow-[0_8px_24px_-12px_rgba(15,17,16,0.10)] p-7">
-            <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
-              Nasıl çalışır
-            </p>
-
-            <ol className="mt-5 space-y-4">
-              <Step n="01" title="Profilini aç" desc="E-postanı doğrula, başlamaya hazırsın." />
-              <Step n="02" title="Mesleğini ekle" desc="Çevrendekiler seni bulsun istersen." />
-              <Step n="03" title="Tanış, mesajlaş" desc="Onay sonrası telefonla iletişim." />
-            </ol>
-
-            <div className="mt-6 pt-5 border-t border-ink-100 flex items-center justify-between text-[13px]">
-              <span className="text-ink-500">Ücretsiz hesap</span>
-              <Link
-                href="/kayit"
-                className="text-ink-900 font-medium hover:text-accent-600 transition"
-              >
-                Başla →
-              </Link>
-            </div>
-          </div>
+        <div>
+          <QuickSearchCard popular={popular} totalCount={total} />
         </div>
       </div>
     </section>
@@ -90,29 +87,5 @@ function Trait({ children }: { children: React.ReactNode }) {
       </svg>
       {children}
     </span>
-  );
-}
-
-function Step({
-  n,
-  title,
-  desc,
-}: {
-  n: string;
-  title: string;
-  desc: string;
-}) {
-  return (
-    <li className="flex gap-4">
-      <span className="font-mono text-[12px] text-accent-600 tracking-wider pt-1 shrink-0 w-7">
-        {n}
-      </span>
-      <div>
-        <p className="text-[15px] font-medium text-ink-900 tracking-tight">
-          {title}
-        </p>
-        <p className="text-[13.5px] text-ink-500 mt-0.5 leading-snug">{desc}</p>
-      </div>
-    </li>
   );
 }
