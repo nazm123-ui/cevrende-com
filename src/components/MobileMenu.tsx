@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import Logo from "@/components/Logo";
 import LogoutButton from "@/components/auth/LogoutButton";
 
 type Props = {
@@ -79,37 +80,35 @@ export default function MobileMenu({
         {/* Backdrop */}
         <div
           onClick={() => setOpen(false)}
-          className={`absolute inset-0 bg-ink-900/50 backdrop-blur-sm transition-opacity duration-300 ease-out ${
+          className={`absolute inset-0 bg-ink-900/55 transition-opacity duration-300 ease-out ${
             open ? "opacity-100" : "opacity-0"
           }`}
         />
 
-        {/* Drawer panel */}
+        {/* Drawer panel — slides in from the left */}
         <aside
           role="dialog"
           aria-modal="true"
           aria-label="Menü"
-          className={`absolute right-0 top-0 h-full w-[84vw] max-w-[340px] bg-ink-50 shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
-            open ? "translate-x-0" : "translate-x-full"
+          className={`absolute left-0 top-0 h-full w-[78vw] max-w-[320px] bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
+            open ? "translate-x-0" : "-translate-x-full"
           }`}
           style={{
             paddingTop: "env(safe-area-inset-top)",
             paddingBottom: "env(safe-area-inset-bottom)",
           }}
         >
-          <div className="flex items-center justify-between px-5 h-[72px] border-b border-ink-100 shrink-0">
-            <span className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium truncate pr-3">
-              {isLoggedIn ? firstName : "Menü"}
-            </span>
+          {/* Close (top-right of drawer) */}
+          <div className="flex items-center justify-end px-3 pt-3 shrink-0">
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Menüyü kapat"
-              className="inline-flex items-center justify-center h-11 w-11 -mr-2 rounded-full text-ink-900 hover:bg-ink-100 transition shrink-0"
+              className="inline-flex items-center justify-center h-10 w-10 rounded-full text-ink-700 hover:bg-ink-100 transition"
             >
               <svg
-                width="22"
-                height="22"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -121,18 +120,47 @@ export default function MobileMenu({
             </button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto px-3 py-4">
+          {/* Pill action buttons (top) */}
+          <div className="px-6 pb-5 flex flex-col gap-2.5 shrink-0">
+            {isLoggedIn ? (
+              <>
+                {firstName && (
+                  <p className="px-2 pb-1 text-[13px] text-ink-500 truncate">
+                    Hoş geldin, <span className="text-ink-900 font-medium">{firstName}</span>
+                  </p>
+                )}
+                <LogoutButton className="w-full inline-flex items-center justify-center h-11 px-4 rounded-full border border-ink-200 text-[14.5px] font-medium text-ink-900 hover:border-ink-900 transition" />
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/giris"
+                  className="w-full inline-flex items-center justify-center h-11 px-4 rounded-full border border-ink-200 text-[14.5px] font-medium text-ink-900 hover:border-ink-900 transition"
+                >
+                  Giriş
+                </Link>
+                <Link
+                  href="/kayit"
+                  className="btn-ink w-full h-11 px-4 rounded-full text-[14.5px]"
+                >
+                  Hesap aç
+                </Link>
+              </>
+            )}
+          </div>
+
+          <div className="mx-6 border-t border-ink-100" />
+
+          {/* Plain navigation links */}
+          <nav className="flex-1 overflow-y-auto px-6 py-5">
             <MenuLink href="/iscilar">Çevrendekiler</MenuLink>
 
-            {isLoggedIn ? (
+            {isLoggedIn && (
               <>
                 <MenuLink href="/panel/profil">Profilim</MenuLink>
                 {!isAdmin && (
                   <>
-                    <MenuLink
-                      href="/panel/talepler"
-                      badge={pendingRequestCount}
-                    >
+                    <MenuLink href="/panel/talepler" badge={pendingRequestCount}>
                       Talepler
                     </MenuLink>
                     <MenuLink href="/panel/mesajlar" badge={unreadCount}>
@@ -142,28 +170,12 @@ export default function MobileMenu({
                 )}
                 {isAdmin && <MenuLink href="/admin">Admin</MenuLink>}
               </>
-            ) : null}
+            )}
           </nav>
 
-          <div className="px-5 py-4 border-t border-ink-100 shrink-0">
-            {isLoggedIn ? (
-              <LogoutButton className="w-full inline-flex items-center justify-center h-12 px-4 rounded-full border border-ink-200 text-[15px] font-medium text-ink-900 hover:border-ink-900 transition" />
-            ) : (
-              <div className="flex flex-col gap-2">
-                <Link
-                  href="/giris"
-                  className="w-full inline-flex items-center justify-center h-12 px-4 rounded-full border border-ink-200 text-[15px] font-medium text-ink-900 hover:border-ink-900 transition"
-                >
-                  Giriş
-                </Link>
-                <Link
-                  href="/kayit"
-                  className="btn-ink w-full h-12 px-4 rounded-full text-[15px]"
-                >
-                  Ücretsiz kayıt
-                </Link>
-              </div>
-            )}
+          {/* Logo footer */}
+          <div className="px-6 py-5 shrink-0 flex items-center justify-center border-t border-ink-100">
+            <Logo size="sm" />
           </div>
         </aside>
       </div>
@@ -183,7 +195,7 @@ function MenuLink({
   return (
     <Link
       href={href}
-      className="flex items-center justify-between h-12 px-3 rounded-[10px] text-[16px] text-ink-900 hover:bg-ink-100 transition"
+      className="flex items-center justify-between py-3 text-[18px] font-semibold tracking-tight text-ink-900 hover:text-accent-600 transition"
     >
       <span>{children}</span>
       {badge && badge > 0 ? (
