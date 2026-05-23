@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm i *)",
+      "Bash(npx --yes vercel@latest --version)",
+      "Bash(npx --yes vercel@latest login --github)",
+      "Bash(npx --yes vercel@latest link --yes --project cevrende-com)",
+      "Bash(npx --yes vercel@latest --prod --yes)",
+      "Bash(curl -s -o /dev/null -w \"homepage: %{http_code}\\\\n\" https://cevrende-com.vercel.app/)",
+      "Bash(curl -s -o /dev/null -w \"iscilar: %{http_code}\\\\n\" https://cevrende-com.vercel.app/iscilar)",
+      "Bash(curl -s -o /dev/null -w \"sifre-sifirla: %{http_code}\\\\n\" https://cevrende-com.vercel.app/sifre-sifirla)",
+      "Bash(curl -s -o /dev/null -w \"ilanlar \\(eski\\): %{http_code}\\\\n\" https://cevrende-com.vercel.app/ilanlar)",
+      "WebFetch(domain:claude.ai)",
+      "Bash(unzip -o ~/Downloads/cevrende.zip -d /tmp/cevrende-design)",
+      "Bash(curl -s \"https://cevrende-com.vercel.app/_next/static/css/8edadce5637c0d7a.css\")",
+      "Bash(curl -s -o /dev/null -w \"sifre: %{http_code}\\\\n\" https://cevrende-com.vercel.app/sifre-sifirla)",
+      "Bash(npx vercel *)",
+      "Bash(mkdir -p .claude/commands && ls .claude/)",
+      "Bash(curl -s http://localhost:3000/iscilar)",
+      "Bash(curl -s http://localhost:3000/kayit)"
+    ],
+    "additionalDirectories": [
+      "/Users/nazim/Desktop/Cevrende.com/.claude"
+    ]
+  }
+}

@@ -44,13 +44,29 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.005em;
-  /* Prevent horizontal scroll on small mobile */
+  /* Lock width to viewport — prevents any descendant from creating horizontal scroll */
+  max-width: 100vw;
   overflow-x: hidden;
+}
+
+html {
+  /* iOS Safari sometimes ignores html width — pin it */
+  width: 100%;
+}
+
+body {
+  width: 100%;
 }
 
 /* Tap highlight cleanup for iOS */
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Headings should never overflow their container on small screens */
+h1, h2, h3 {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 /* Critical: prevent iOS auto-zoom on form focus.

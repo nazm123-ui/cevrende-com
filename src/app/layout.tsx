@@ -75,9 +75,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-ink-50 text-ink-900">
+      <body className="min-h-screen flex flex-col bg-ink-50 text-ink-900 overflow-x-hidden">
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 min-w-0 w-full">{children}</main>
         <Footer />
       </body>
     </html>

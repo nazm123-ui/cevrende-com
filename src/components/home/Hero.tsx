@@ -20,19 +20,19 @@ export default async function Hero() {
   const total = withCounts.reduce((sum, p) => sum + p.count, 0);
 
   return (
-    <section className="pt-10 sm:pt-20 pb-12 sm:pb-16">
+    <section className="pt-10 sm:pt-20 pb-12 sm:pb-16 overflow-hidden">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6 grid items-center gap-10 lg:gap-16 lg:grid-cols-[1.15fr_0.95fr]">
-        <div>
+        <div className="min-w-0">
           <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
             Pendik · Tuzla · Kartal
           </p>
 
-          <h1 className="mt-4 text-[32px] sm:text-[48px] lg:text-[64px] font-semibold tracking-[-0.03em] leading-[1.05] sm:leading-[1.02] text-balance max-w-[560px]">
+          <h1 className="mt-4 text-[26px] sm:text-[44px] lg:text-[60px] font-semibold tracking-[-0.025em] leading-[1.12] sm:leading-[1.05] lg:max-w-[560px]">
             Pendik'te mahallenden usta bul,{" "}
             <span className="text-accent-600">aracısız iletişim kur.</span>
           </h1>
 
-          <p className="mt-5 sm:mt-6 text-[16px] sm:text-lg text-ink-700 max-w-[480px] leading-relaxed">
+          <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg text-ink-700 lg:max-w-[480px] leading-relaxed">
             Pendik ve çevresinde meslek sahibi kişilerle aracısız tanış.
             Profilini aç, çevrendekilerin seni bulmasını sağla.
           </p>
@@ -60,7 +60,7 @@ export default async function Hero() {
           </div>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <QuickSearchCard popular={popular} totalCount={total} />
         </div>
       </div>
