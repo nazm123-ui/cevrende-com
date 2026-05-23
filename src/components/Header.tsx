@@ -106,6 +106,7 @@ export default async function Header() {
                   {unreadCount > 0 && <Badge>{unreadCount}</Badge>}
                 </Link>
               )}
+              <LogoutButton className="ml-1 inline-flex items-center justify-center h-8 px-3 rounded-full text-[12.5px] font-medium text-ink-700 hover:bg-ink-100 transition" />
             </>
           ) : (
             <Link

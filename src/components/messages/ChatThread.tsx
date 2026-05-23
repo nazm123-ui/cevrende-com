@@ -27,6 +27,7 @@ export default function ChatThread({
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [clearing, setClearing] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,8 +70,44 @@ export default function ChatThread({
     }
   }
 
+  async function onClearMessages() {
+    if (!confirm("Tüm mesajları silmek istediğine emin misin? Bu geri alınamaz.")) {
+      return;
+    }
+    setClearing(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/messages/clear", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ otherUserId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Mesajlar temizlenemedi.");
+        return;
+      }
+      setMessages([]);
+      router.refresh();
+    } catch {
+      setError("Mesajlar temizlenirken hata oluştu.");
+    } finally {
+      setClearing(false);
+    }
+  }
+
   return (
     <div className="flex flex-col h-[calc(100vh-180px)] min-h-[400px] rounded-2xl border border-ink-100 bg-white shadow-sm overflow-hidden">
+      <div className="border-b border-ink-100 px-4 py-3 flex items-center justify-between">
+        <p className="text-sm font-medium text-ink-900">Sohbet</p>
+        <button
+          onClick={onClearMessages}
+          disabled={clearing || messages.length === 0}
+          className="text-xs font-medium text-red-600 hover:text-red-700 disabled:text-ink-300 transition"
+        >
+          Temizle
+        </button>
+      </div>
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.length === 0 ? (
           <p className="text-center text-sm text-ink-500 mt-8">
@@ -84,25 +121,48 @@ export default function ChatThread({
                 key={m.id}
                 className={`flex ${fromMe ? "justify-end" : "justify-start"}`}
               >
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                    fromMe
-                      ? "bg-ink-900 rounded-br-sm"
-                      : "bg-ink-100 text-ink-900 rounded-bl-sm"
-                  }`}
-                  style={fromMe ? { color: "#ffffff" } : undefined}
-                >
-                  <p className="text-sm whitespace-pre-wrap break-words">
-                    {m.content}
-                  </p>
-                  <p
-                    className={`mt-1 text-[10px] ${
-                      fromMe ? "" : "text-ink-500"
+                <div className="flex flex-col gap-1">
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                      fromMe
+                        ? "bg-ink-900 rounded-br-sm"
+                        : "bg-ink-100 text-ink-900 rounded-bl-sm"
                     }`}
-                    style={fromMe ? { color: "rgba(255,255,255,0.65)" } : undefined}
+                    style={fromMe ? { color: "#ffffff" } : undefined}
                   >
-                    {formatTime(new Date(m.createdAt))}
-                  </p>
+                    <p className="text-sm whitespace-pre-wrap break-words">
+                      {m.content}
+                    </p>
+                    <p
+                      className={`mt-1 text-[10px] ${
+                        fromMe ? "" : "text-ink-500"
+                      }`}
+                      style={fromMe ? { color: "rgba(255,255,255,0.65)" } : undefined}
+                    >
+                      {formatTime(new Date(m.createdAt))}
+                    </p>
+                  </div>
+                  {!fromMe && (
+                    <button
+                      onClick={() => {
+                        if (confirm("Bu mesajı rapor etmek istediğine emin misin?")) {
+                          fetch("/api/messages/report", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              messageId: m.id,
+                              reason: "Uygunsuz içerik",
+                            }),
+                          }).then((res) => {
+                            if (res.ok) alert("Rapor gönderildi.");
+                          });
+                        }
+                      }}
+                      className="text-[9px] text-red-500 hover:text-red-600 self-start transition"
+                    >
+                      Rapor et
+                    </button>
+                  )}
                 </div>
               </div>
             );
