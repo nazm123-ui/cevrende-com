@@ -137,9 +137,9 @@ export default function MobileMenu({
 
           {isLoggedIn && (
             <>
-              <MenuLink href="/panel/profil">Profilim</MenuLink>
               {!isAdmin && (
                 <>
+                  <MenuLink href="/panel/profil">Profilim</MenuLink>
                   <MenuLink href="/panel/talepler" badge={pendingRequestCount}>
                     Talepler
                   </MenuLink>

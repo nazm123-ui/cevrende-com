@@ -37,14 +37,14 @@ export default async function Header() {
 
           {user ? (
             <>
-              <Link
-                href="/panel/profil"
-                className="px-3 py-2 text-ink-500 hover:text-ink-900 transition tracking-tight"
-              >
-                Profilim
-              </Link>
               {!isAdmin && (
                 <>
+                  <Link
+                    href="/panel/profil"
+                    className="px-3 py-2 text-ink-500 hover:text-ink-900 transition tracking-tight"
+                  >
+                    Profilim
+                  </Link>
                   <Link
                     href="/panel/talepler"
                     className="relative px-3 py-2 text-ink-500 hover:text-ink-900 transition tracking-tight"
