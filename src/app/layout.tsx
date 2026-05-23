@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "çevrende — Mahallendeki yardımı bul",
+  title: "Cevrende — Pendik'te Mahallenden Usta ve Hizmet",
   description:
-    "Pendik ve mahallelerinde meslek sahibi kişilerle tanış. Sen de mesleğini profiline ekleyerek başkalarının seni bulmasını sağla.",
+    "Pendik'te güvenilir temizlikçi, çilingir, tadilat ustası ve daha fazlasını mahallenden bul. Aracısız, ücretsiz iletişim.",
 };
 
 export default function RootLayout({
@@ -29,6 +29,44 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr" className={`${geist.variable} ${geistMono.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Cevrende",
+              url: "https://cevrende.com",
+              description:
+                "Pendik'te mahallenden usta ve hizmet bulma platformu",
+              areaServed: ["Pendik", "Tuzla", "Kartal", "Istanbul"],
+              sameAs: [
+                "https://twitter.com/cevrende",
+                "https://instagram.com/cevrende",
+              ],
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              url: "https://cevrende.com",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate:
+                    "https://cevrende.com/iscilar?q={search_term_string}",
+                },
+              },
+            }),
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col bg-ink-50 text-ink-900">
         <Header />
         <main className="flex-1">{children}</main>

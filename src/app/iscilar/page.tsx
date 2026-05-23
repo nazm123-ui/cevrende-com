@@ -7,9 +7,9 @@ import WorkerCard from "@/components/workers/WorkerCard";
 import WorkerFilters from "@/components/workers/WorkerFilters";
 
 export const metadata = {
-  title: "Çevrendekiler — çevrende",
+  title: "Pendik İşçi Arama — Temizlikçi, Tadilat, Çilingir Bul",
   description:
-    "Pendik ve çevresinde mesleğine göre kişi ara. Garson, temizlik, kurye ve daha fazlası.",
+    "Pendik ve Tuzla'da mesleğe göre işçi ara. Profil doğrula, mesajla, aracısız iletişime geç. Yüzlerce usta listesi.",
 };
 
 type SearchParams = Promise<{
@@ -50,13 +50,30 @@ export default async function IscilarPage({
       : new Map();
 
   return (
-    <div className="mx-auto max-w-[1200px] px-5 sm:px-6 py-12 sm:py-16">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: workers.slice(0, 20).map((w, i) => ({
+              "@type": "LocalBusiness",
+              position: i + 1,
+              name: w.fullName || "Profesyonel",
+              areaServed: w.district || "Pendik",
+              description: w.bio || "",
+            })),
+          }),
+        }}
+      />
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 py-12 sm:py-16">
       <header className="mb-10">
         <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
           Çevrendekiler
         </p>
         <h1 className="mt-3 text-[34px] sm:text-[42px] font-semibold tracking-[-0.025em] leading-[1.08] text-ink-900">
-          Pendik ve mahallelerinde
+          Pendik, Tuzla, Kartal'da Güvenilir İşçi Ara
         </h1>
         <p className="mt-2 text-[16px] text-ink-500">
           <span className="font-mono text-ink-700">{workers.length}</span> kişi
@@ -126,6 +143,7 @@ export default async function IscilarPage({
           )}
         </section>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

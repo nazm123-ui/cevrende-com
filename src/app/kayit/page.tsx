@@ -4,7 +4,9 @@ import RegisterForm from "@/components/auth/RegisterForm";
 import { getCurrentUser } from "@/lib/auth";
 
 export const metadata = {
-  title: "Kayıt Ol — Cevrende.com",
+  title: "Pendik'te Usta Profili Aç — Ücretsiz Hizmet Bulma",
+  description:
+    "Pendik'te mesleğini paylaş, mahallendeki işverenler seni bulsun. Ücretsiz profil, komisyonsuz iletişim.",
 };
 
 export default async function KayitPage() {

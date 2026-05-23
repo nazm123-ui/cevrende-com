@@ -25,7 +25,7 @@ export default function HowItWorks() {
             Nasıl çalışır
           </p>
           <h2 className="mt-3 text-[32px] sm:text-[40px] font-semibold tracking-[-0.025em] leading-[1.08] text-balance">
-            Üç adımda, mahallenden iletişim.
+            Üç Adım: Pendik'te Usta Bul, Mesajla, Aracısız İletişim
           </h2>
         </div>
 

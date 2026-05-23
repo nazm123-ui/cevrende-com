@@ -78,7 +78,7 @@ export default function LoginForm() {
       <div>
         <label
           htmlFor="identifier"
-          className="block text-[13px] font-medium text-ink-800 mb-1.5"
+          className="block text-[13px] font-medium text-ink-700 mb-1.5"
         >
           E-posta veya telefon
         </label>
@@ -98,7 +98,7 @@ export default function LoginForm() {
         <div className="flex items-baseline justify-between mb-1.5">
           <label
             htmlFor="password"
-            className="block text-[13px] font-medium text-ink-800"
+            className="block text-[13px] font-medium text-ink-700"
           >
             Şifre
           </label>

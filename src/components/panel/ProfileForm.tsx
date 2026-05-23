@@ -297,7 +297,7 @@ function PhoneRadio({
         <p className={`text-sm font-medium ${checked ? "text-brand-900" : "text-ink-900"}`}>
           {label}
         </p>
-        <p className="text-xs text-ink-600">{desc}</p>
+        <p className="text-xs text-ink-500">{desc}</p>
       </div>
     </label>
   );

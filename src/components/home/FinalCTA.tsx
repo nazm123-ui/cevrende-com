@@ -13,7 +13,7 @@ export default function FinalCTA() {
               className="text-[28px] sm:text-[36px] font-semibold tracking-[-0.025em] leading-[1.08] text-balance max-w-[520px]"
               style={{ color: "#ffffff" }}
             >
-              Mahallenden birine ihtiyacın mı var?
+              Pendik'te acil işçiye mi ihtiyacın var? Üç dakikada bul.
             </h2>
             <p
               className="mt-3 text-[16px] max-w-[460px]"

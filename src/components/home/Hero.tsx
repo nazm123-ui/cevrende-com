@@ -28,9 +28,9 @@ export default async function Hero() {
           </p>
 
           <h1 className="mt-4 text-[42px] sm:text-[56px] lg:text-[64px] font-semibold tracking-[-0.035em] leading-[1.02] text-balance max-w-[560px]">
-            Mahallendeki yardım,
+            Pendik'te mahallenden usta bul,
             <br />
-            <span className="text-accent-600">tek profil ötende.</span>
+            <span className="text-accent-600">aracısız iletişim kur.</span>
           </h1>
 
           <p className="mt-6 text-[17px] sm:text-lg text-ink-700 max-w-[480px] leading-relaxed">

@@ -230,7 +230,7 @@ function Field({
     <div>
       <label
         htmlFor={name}
-        className="block text-sm font-medium text-ink-800 mb-1.5"
+        className="block text-sm font-medium text-ink-700 mb-1.5"
       >
         {label}
       </label>
