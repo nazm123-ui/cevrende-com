@@ -41,10 +41,10 @@ export default async function Hero() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/iscilar"
-              className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-ink-900 text-white text-[15px] font-medium hover:bg-accent-600 transition"
+              className="btn-ink h-12 px-6 rounded-full text-[15px]"
             >
               Çevrendekileri gör
-              <span aria-hidden>→</span>
+              <ArrowRight />
             </Link>
             <Link
               href="/kayit"
@@ -66,6 +66,25 @@ export default async function Hero() {
         </div>
       </div>
     </section>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M5 12h14" />
+      <path d="m13 6 6 6-6 6" />
+    </svg>
   );
 }
 

@@ -237,7 +237,7 @@ export default function AdminCategoriesPage() {
             <button
               type="submit"
               disabled={submitting || !newName || !newSlug}
-              className="w-full rounded-lg bg-brand-600 text-white py-2 text-sm font-medium hover:bg-brand-700 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
+              className="w-full btn-ink h-10 rounded-full text-[14px]"
             >
               {submitting ? "Kaydediliyor..." : "Ekle"}
             </button>

@@ -74,13 +74,13 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
+    <form onSubmit={onSubmit} className="space-y-4">
       <div>
         <label
           htmlFor="identifier"
-          className="block text-sm font-medium text-ink-700"
+          className="block text-[13px] font-medium text-ink-800 mb-1.5"
         >
-          E-posta veya Telefon
+          E-posta veya telefon
         </label>
         <input
           id="identifier"
@@ -89,21 +89,22 @@ export default function LoginForm() {
           autoComplete="username"
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-ink-200 px-3 py-2 text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+          placeholder="ornek@mail.com"
+          className="block w-full h-12 px-3.5 rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
         />
       </div>
 
       <div>
-        <div className="flex items-baseline justify-between">
+        <div className="flex items-baseline justify-between mb-1.5">
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-ink-700"
+            className="block text-[13px] font-medium text-ink-800"
           >
             Şifre
           </label>
           <Link
             href="/sifre-sifirla"
-            className="text-xs text-brand-700 hover:underline"
+            className="text-[12.5px] text-ink-500 hover:text-ink-900 transition"
           >
             Şifremi unuttum
           </Link>
@@ -115,12 +116,12 @@ export default function LoginForm() {
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-ink-200 px-3 py-2 text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+          className="block w-full h-12 px-3.5 rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
         />
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+        <p className="rounded-[10px] bg-red-50 border border-red-100 px-3 py-2.5 text-[13.5px] text-red-700">
           {error}
         </p>
       )}
@@ -128,14 +129,14 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-brand-600 px-4 py-2.5 font-semibold text-white hover:bg-brand-700 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
+        className="w-full btn-ink h-12 rounded-full text-[15px]"
       >
-        {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+        {loading ? "Giriş yapılıyor..." : "Giriş yap"}
       </button>
 
-      <p className="text-center text-sm text-ink-500">
+      <p className="text-center text-[13.5px] text-ink-500 pt-1">
         Hesabın yok mu?{" "}
-        <Link href="/kayit" className="text-brand-700 font-medium hover:underline">
+        <Link href="/kayit" className="text-ink-900 font-medium hover:text-accent-600 transition">
           Kayıt ol
         </Link>
       </p>

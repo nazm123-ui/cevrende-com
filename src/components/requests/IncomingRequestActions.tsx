@@ -42,7 +42,7 @@ export default function IncomingRequestActions({ requestId }: Props) {
           type="button"
           onClick={() => respond("declined")}
           disabled={busy !== null}
-          className="rounded-lg border border-ink-200 px-3 py-1.5 text-xs font-medium text-ink-700 hover:bg-ink-50 disabled:opacity-50"
+          className="inline-flex items-center h-9 px-4 rounded-full border border-ink-200 text-[13px] font-medium text-ink-700 hover:border-ink-900 transition disabled:opacity-50"
         >
           {busy === "declined" ? "..." : "Reddet"}
         </button>
@@ -50,7 +50,7 @@ export default function IncomingRequestActions({ requestId }: Props) {
           type="button"
           onClick={() => respond("accepted")}
           disabled={busy !== null}
-          className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+          className="btn-ink h-9 px-4 rounded-full text-[13px] disabled:opacity-50"
         >
           {busy === "accepted" ? "..." : "✓ Kabul Et"}
         </button>

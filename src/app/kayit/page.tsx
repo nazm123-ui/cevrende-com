@@ -13,8 +13,9 @@ export default async function KayitPage() {
 
   return (
     <AuthShell
-      title="Kayıt Ol"
-      subtitle="Ücretsiz hesap oluştur, mahallendeki kişilerle tanış."
+      eyebrow="Aramıza katıl"
+      title="Ücretsiz hesap aç"
+      subtitle="Mahallendeki meslek sahibi kişilerle aracısız tanışmak için."
     >
       <RegisterForm />
     </AuthShell>

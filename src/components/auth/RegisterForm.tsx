@@ -177,14 +177,14 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={loading || !acceptTerms}
-        className="w-full rounded-xl bg-brand-600 px-4 py-3 font-semibold text-white shadow-sm hover:bg-brand-700 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
+        className="w-full btn-ink h-12 rounded-full text-[15px]"
       >
-        {loading ? "Kayıt oluşturuluyor..." : "Hesabımı Oluştur"}
+        {loading ? "Hesap oluşturuluyor..." : "Hesabımı oluştur"}
       </button>
 
-      <p className="text-center text-sm text-ink-500 pt-1">
+      <p className="text-center text-[13.5px] text-ink-500 pt-1">
         Hesabın var mı?{" "}
-        <Link href="/giris" className="text-brand-700 font-medium hover:underline">
+        <Link href="/giris" className="text-ink-900 font-medium hover:text-accent-600 transition">
           Giriş yap
         </Link>
       </p>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { maskName } from "@/lib/masking";
+import { maskName, maskPhone } from "@/lib/masking";
 import { formatPhone, formatRelative } from "@/lib/format";
 import { canSeePhone, getPhoneVisibility } from "@/lib/phone-visibility";
 import type { WorkerListItem } from "@/lib/workers";
@@ -23,16 +23,24 @@ export default function WorkerCard({
 }: Props) {
   const settings = worker.workerSettings;
   const accepted = requestStatus === "accepted";
-  const displayName =
-    settings.showName || accepted
+
+  // Logged-out: always mask name regardless of showName
+  const displayName = canContact
+    ? settings.showName || accepted
       ? worker.fullName
-      : maskName(worker.fullName);
+      : maskName(worker.fullName)
+    : maskName(worker.fullName);
+
   const location =
     settings.showDistrict && worker.neighborhood
       ? `${worker.neighborhood}, ${worker.district}`
       : worker.district;
 
-  const showPhoneInline = canContact && canSeePhone(settings, accepted);
+  const phoneVisibility = getPhoneVisibility(settings);
+  const showFullPhoneInline = canContact && canSeePhone(settings, accepted);
+  // Logged-out: only show masked phone preview if worker is public
+  const showTeaserPhone = !canContact && phoneVisibility === "public";
+
   const professionNames = worker.professions
     .map((slug) => categoryNameBySlug.get(slug) ?? slug)
     .slice(0, 5);
@@ -47,16 +55,20 @@ export default function WorkerCard({
             <PinIcon /> {location}
           </span>
         </div>
-        {showPhoneInline ? (
+        {showFullPhoneInline ? (
           <a
             href={`tel:${worker.phone}`}
             className="font-mono text-[12.5px] text-ink-900 hover:text-accent-600 transition"
           >
             {formatPhone(worker.phone)}
           </a>
+        ) : showTeaserPhone ? (
+          <span className="font-mono text-[12.5px] text-ink-400">
+            {maskPhone(worker.phone)}
+          </span>
         ) : (
           <span className="text-[12px] text-ink-400">
-            {getPhoneVisibility(settings) === "private"
+            {phoneVisibility === "private"
               ? "Sadece mesaj"
               : "Onay sonrası"}
           </span>
@@ -67,7 +79,7 @@ export default function WorkerCard({
         {displayName}
       </h3>
 
-      {worker.bio && (
+      {worker.bio && canContact && (
         <p className="mt-2 text-[14.5px] text-ink-500 leading-relaxed line-clamp-2">
           {worker.bio}
         </p>
@@ -115,10 +127,10 @@ function renderAction({
   if (!canContact) {
     return (
       <Link
-        href="/giris"
-        className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-ink-900 hover:text-accent-600 transition"
+        href="/kayit"
+        className="btn-ink h-9 px-4 rounded-full text-[13px]"
       >
-        İletişim için giriş yap →
+        Detayları gör · Ücretsiz kayıt
       </Link>
     );
   }
@@ -126,7 +138,7 @@ function renderAction({
     return (
       <Link
         href={`/panel/mesajlar/${worker.id}`}
-        className="inline-flex items-center h-9 px-4 rounded-full bg-ink-900 text-white text-[13px] font-medium hover:bg-accent-600 transition"
+        className="btn-ink h-9 px-4 rounded-full text-[13px]"
       >
         Mesaj gönder
       </Link>

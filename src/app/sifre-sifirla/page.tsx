@@ -13,8 +13,9 @@ export default async function SifreSifirlaPage() {
 
   return (
     <AuthShell
-      title="Şifremi Unuttum"
-      subtitle="E-postana bir kod göndereceğiz. Yeni şifreni o kodla belirleyebilirsin."
+      eyebrow="Şifreni yenile"
+      title="Şifremi unuttum"
+      subtitle="E-posta adresine bir kod göndereceğiz. Yeni şifreni o kodla belirleyebilirsin."
     >
       <ForgotPasswordForm />
     </AuthShell>

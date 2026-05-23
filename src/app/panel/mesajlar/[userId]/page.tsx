@@ -54,7 +54,7 @@ export default async function ThreadPage({
             <div className="mt-4 flex justify-center gap-3">
               <Link
                 href="/iscilar"
-                className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-700"
+                className="btn-ink h-10 px-5 rounded-full text-[14px]"
               >
                 Çevrendekilere dön
               </Link>
@@ -112,7 +112,7 @@ export default async function ThreadPage({
         {canSeePhone(settings, contactAccepted) && (
           <a
             href={`tel:${other.phone}`}
-            className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"
+            className="btn-ink h-9 px-4 rounded-full text-[13px]"
           >
             📞 {formatPhone(other.phone)}
           </a>

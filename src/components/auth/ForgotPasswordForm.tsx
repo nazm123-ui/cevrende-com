@@ -135,7 +135,7 @@ export default function ForgotPasswordForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-brand-600 px-4 py-3 font-semibold text-white shadow-sm hover:bg-brand-700 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
+          className="w-full btn-ink h-12 rounded-full text-[15px]"
         >
           {loading ? "Sıfırlanıyor..." : "Şifreyi Sıfırla"}
         </button>
@@ -178,7 +178,7 @@ export default function ForgotPasswordForm() {
       <button
         type="submit"
         disabled={loading || !email}
-        className="w-full rounded-xl bg-brand-600 px-4 py-3 font-semibold text-white shadow-sm hover:bg-brand-700 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
+        className="w-full btn-ink h-12 rounded-full text-[15px]"
       >
         {loading ? "Gönderiliyor..." : "Sıfırlama Kodu Gönder"}
       </button>
@@ -228,7 +228,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-ink-900 outline-none transition placeholder:text-ink-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+        className="block w-full h-12 px-3.5 rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
       />
       {hint && <p className="mt-1 text-xs text-ink-500">{hint}</p>}
     </div>

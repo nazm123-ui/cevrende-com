@@ -29,7 +29,7 @@ export default async function MesajlarPage() {
             </p>
             <Link
               href="/iscilar"
-              className="mt-5 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700 transition"
+              className="mt-5 btn-ink h-12 px-6 rounded-full text-[15px]"
             >
               Çevrendekileri İncele
             </Link>
@@ -63,7 +63,10 @@ export default async function MesajlarPage() {
                     </p>
                   </div>
                   {c.unreadCount > 0 && (
-                    <span className="rounded-full bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white">
+                    <span
+                      className="inline-flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full bg-accent-600 text-[11px] font-semibold"
+                      style={{ color: "#ffffff" }}
+                    >
                       {c.unreadCount}
                     </span>
                   )}

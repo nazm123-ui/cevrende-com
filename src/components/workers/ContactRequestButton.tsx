@@ -44,7 +44,7 @@ export default function ContactRequestButton({ workerId }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center h-9 px-4 rounded-full bg-ink-900 text-white text-[13px] font-medium hover:bg-accent-600 transition"
+        className="btn-ink h-9 px-4 rounded-full text-[13px]"
       >
         İletişim talebi gönder
       </button>
@@ -103,7 +103,7 @@ export default function ContactRequestButton({ workerId }: Props) {
           <button
             type="submit"
             disabled={sending}
-            className="inline-flex items-center h-10 px-5 rounded-full bg-ink-900 text-white text-[13.5px] font-medium hover:bg-accent-600 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
+            className="btn-ink h-10 px-5 rounded-full text-[13.5px]"
           >
             {sending ? "Gönderiliyor..." : "Talebi gönder"}
           </button>

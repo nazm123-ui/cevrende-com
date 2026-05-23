@@ -87,17 +87,19 @@ export default function ChatThread({
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-2 ${
                     fromMe
-                      ? "bg-brand-600 text-white rounded-br-sm"
+                      ? "bg-ink-900 rounded-br-sm"
                       : "bg-ink-100 text-ink-900 rounded-bl-sm"
                   }`}
+                  style={fromMe ? { color: "#ffffff" } : undefined}
                 >
                   <p className="text-sm whitespace-pre-wrap break-words">
                     {m.content}
                   </p>
                   <p
                     className={`mt-1 text-[10px] ${
-                      fromMe ? "text-brand-100" : "text-ink-500"
+                      fromMe ? "" : "text-ink-500"
                     }`}
+                    style={fromMe ? { color: "rgba(255,255,255,0.65)" } : undefined}
                   >
                     {formatTime(new Date(m.createdAt))}
                   </p>
@@ -131,12 +133,12 @@ export default function ChatThread({
               onSubmit(e as unknown as React.FormEvent);
             }
           }}
-          className="flex-1 resize-none rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 max-h-32"
+          className="flex-1 resize-none rounded-[12px] border border-ink-200 bg-white px-3.5 py-2.5 text-[14.5px] text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5 max-h-32"
         />
         <button
           type="submit"
           disabled={sending || !draft.trim()}
-          className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
+          className="btn-ink h-10 px-5 rounded-full text-[14px]"
         >
           {sending ? "..." : "Gönder"}
         </button>

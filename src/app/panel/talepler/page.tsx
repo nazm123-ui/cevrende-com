@@ -82,14 +82,14 @@ export default async function TaleplerPage() {
                       {r.fromUserPhone && (
                         <a
                           href={`tel:${r.fromUserPhone}`}
-                          className="rounded-lg border border-brand-200 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-100"
+                          className="inline-flex items-center h-9 px-4 rounded-full border border-ink-200 text-[13px] font-mono text-ink-900 hover:border-ink-900 transition"
                         >
                           📞 {formatPhone(r.fromUserPhone)}
                         </a>
                       )}
                       <Link
                         href={`/panel/mesajlar/${r.fromUserId}`}
-                        className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"
+                        className="btn-ink h-9 px-4 rounded-full text-[13px]"
                       >
                         💬 Sohbeti aç
                       </Link>
@@ -146,14 +146,14 @@ export default async function TaleplerPage() {
                     {r.toWorkerPhone && (
                       <a
                         href={`tel:${r.toWorkerPhone}`}
-                        className="rounded-lg border border-brand-200 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-100"
+                        className="inline-flex items-center h-9 px-4 rounded-full border border-ink-200 text-[13px] font-mono text-ink-900 hover:border-ink-900 transition"
                       >
                         📞 {formatPhone(r.toWorkerPhone)}
                       </a>
                     )}
                     <Link
                       href={`/panel/mesajlar/${r.toWorkerId}`}
-                      className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"
+                      className="btn-ink h-9 px-4 rounded-full text-[13px]"
                     >
                       💬 Mesajlaş
                     </Link>

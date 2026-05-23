@@ -4,7 +4,7 @@ import LoginForm from "@/components/auth/LoginForm";
 import { getCurrentUser } from "@/lib/auth";
 
 export const metadata = {
-  title: "Giriş Yap — Cevrende.com",
+  title: "Giriş — çevrende",
 };
 
 export default async function GirisPage() {
@@ -12,7 +12,11 @@ export default async function GirisPage() {
   if (user) redirect("/");
 
   return (
-    <AuthShell title="Giriş Yap" subtitle="Hesabına giriş yap.">
+    <AuthShell
+      eyebrow="Hoş geldin"
+      title="Giriş yap"
+      subtitle="E-posta veya telefon numaranla devam et."
+    >
       <LoginForm />
     </AuthShell>
   );

@@ -206,7 +206,7 @@ export default function ProfileForm({ categories, initial }: Props) {
         <button
           type="submit"
           disabled={loading}
-          className="rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
+          className="btn-ink h-12 px-6 rounded-full text-[15px]"
         >
           {loading ? "Kaydediliyor..." : "Profili Kaydet"}
         </button>

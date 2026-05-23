@@ -169,7 +169,7 @@ export default function OtpForm({
             onChange={(e) =>
               setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
             }
-            className="mt-1 block w-full rounded-lg border border-ink-200 px-3 py-2 text-center text-2xl font-mono tracking-[0.5em] outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+            className="mt-1 block w-full h-14 rounded-[12px] border border-ink-200 bg-white px-3 text-center text-[24px] font-mono tracking-[0.5em] outline-none transition focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
             placeholder="------"
           />
         </div>
@@ -188,7 +188,7 @@ export default function OtpForm({
         <button
           type="submit"
           disabled={loading || code.length !== 6}
-          className="w-full rounded-lg bg-brand-600 px-4 py-2.5 font-semibold text-white hover:bg-brand-700 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
+          className="w-full btn-ink h-12 rounded-full text-[15px]"
         >
           {loading ? "Doğrulanıyor..." : "Doğrula"}
         </button>

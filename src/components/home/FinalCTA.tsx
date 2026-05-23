@@ -4,12 +4,21 @@ export default function FinalCTA() {
   return (
     <section className="pt-8 pb-24">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
-        <div className="bg-ink-900 text-white rounded-[18px] px-8 sm:px-14 py-12 sm:py-16 grid gap-6 sm:grid-cols-[1.4fr_auto] sm:items-center">
+        <div
+          className="bg-ink-900 rounded-[18px] px-8 sm:px-14 py-12 sm:py-16 grid gap-6 sm:grid-cols-[1.4fr_auto] sm:items-center"
+          style={{ color: "#ffffff" }}
+        >
           <div>
-            <h2 className="text-[28px] sm:text-[36px] font-semibold tracking-[-0.025em] leading-[1.08] text-balance max-w-[520px]">
+            <h2
+              className="text-[28px] sm:text-[36px] font-semibold tracking-[-0.025em] leading-[1.08] text-balance max-w-[520px]"
+              style={{ color: "#ffffff" }}
+            >
               Mahallenden birine ihtiyacın mı var?
             </h2>
-            <p className="mt-3 text-[16px] text-white/70 max-w-[460px]">
+            <p
+              className="mt-3 text-[16px] max-w-[460px]"
+              style={{ color: "rgba(255,255,255,0.72)" }}
+            >
               Üç dakikada hesap aç. Mahallendeki meslek sahibi kişilerle
               tanış, aracısız iletişime geç.
             </p>

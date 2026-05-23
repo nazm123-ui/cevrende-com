@@ -82,7 +82,7 @@ export default async function Header() {
               </Link>
               <Link
                 href="/kayit"
-                className="inline-flex items-center justify-center h-9 px-4 rounded-full bg-ink-900 text-white text-[13.5px] font-medium hover:bg-accent-600 transition"
+                className="btn-ink h-9 px-4 rounded-full text-[13.5px]"
               >
                 Kayıt ol
               </Link>
@@ -110,7 +110,7 @@ export default async function Header() {
           ) : (
             <Link
               href="/kayit"
-              className="ml-1 inline-flex items-center justify-center h-8 px-3 rounded-full bg-ink-900 text-white text-[12.5px] font-medium"
+              className="ml-1 btn-ink h-8 px-3 rounded-full text-[12.5px]"
             >
               Kayıt ol
             </Link>
@@ -123,7 +123,10 @@ export default async function Header() {
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="ml-1 inline-flex items-center justify-center h-[18px] min-w-[18px] px-1 rounded-full bg-accent-600 text-[10.5px] font-semibold text-white">
+    <span
+      className="ml-1 inline-flex items-center justify-center h-[18px] min-w-[18px] px-1 rounded-full bg-accent-600 text-[10.5px] font-semibold"
+      style={{ color: "#ffffff" }}
+    >
       {children}
     </span>
   );
