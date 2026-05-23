@@ -48,7 +48,7 @@ export default function WorkerCard({
     .slice(0, 5);
 
   return (
-    <article className="group bg-white border border-ink-100 rounded-[14px] p-6 hover:border-ink-700 transition">
+    <article className="group bg-white border border-ink-100 rounded-[14px] p-5 sm:p-6 hover:border-ink-700 transition">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-2 text-[12.5px] text-ink-500">
           <span className="font-mono">{formatRelative(worker.createdAt)}</span>
@@ -87,7 +87,7 @@ export default function WorkerCard({
         ))}
       </div>
 
-      <div className="mt-5 pt-4 border-t border-ink-100 flex items-center justify-end gap-2">
+      <div className="mt-5 pt-4 border-t border-ink-100 flex flex-wrap items-center justify-end gap-2">
         {renderAction({
           canContact,
           isSelf,
@@ -131,7 +131,7 @@ function renderAction({
         {renderSecondary({ canContact, requestStatus, worker })}
         <a
           href={`tel:${worker.phone}`}
-          className="btn-ink h-9 px-4 rounded-full text-[13px] font-mono tracking-tight"
+          className="btn-ink h-10 px-4 rounded-full text-[13.5px] font-mono tracking-tight"
         >
           <PhoneIcon /> {formatPhone(worker.phone)}
         </a>
@@ -144,7 +144,7 @@ function renderAction({
     return (
       <Link
         href="/kayit"
-        className="btn-ink h-9 px-4 rounded-full text-[13px]"
+        className="btn-ink h-10 px-4 rounded-full text-[13.5px]"
       >
         Detayları gör · Ücretsiz kayıt
       </Link>
@@ -154,7 +154,7 @@ function renderAction({
     return (
       <Link
         href={`/panel/mesajlar/${worker.id}`}
-        className="btn-ink h-9 px-4 rounded-full text-[13px]"
+        className="btn-ink h-10 px-4 rounded-full text-[13.5px]"
       >
         Mesaj gönder
       </Link>
@@ -181,7 +181,7 @@ function renderSecondary({
   worker: WorkerListItem;
 }) {
   const outlineCls =
-    "inline-flex items-center h-9 px-4 rounded-full border border-ink-200 text-[13px] font-medium text-ink-900 hover:border-ink-900 transition";
+    "inline-flex items-center h-10 px-4 rounded-full border border-ink-200 text-[13.5px] font-medium text-ink-900 hover:border-ink-900 transition";
 
   if (!canContact) {
     return (

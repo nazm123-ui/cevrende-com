@@ -5,6 +5,7 @@ import { getPendingIncomingCount } from "@/lib/contact-requests";
 import { isAdminEmail } from "@/lib/constants/admin-emails";
 import Logo from "@/components/Logo";
 import LogoutButton from "@/components/auth/LogoutButton";
+import MobileMenu from "@/components/MobileMenu";
 
 export default async function Header() {
   const user = await getCurrentUser();
@@ -19,7 +20,10 @@ export default async function Header() {
     : [0, 0];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-ink-100 bg-ink-50/80 backdrop-blur-md backdrop-saturate-150">
+    <header
+      className="sticky top-0 z-40 border-b border-ink-100 bg-ink-50/80 backdrop-blur-md backdrop-saturate-150"
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
+    >
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6 h-[72px] flex items-center justify-between">
         <Logo />
 
@@ -90,33 +94,15 @@ export default async function Header() {
           )}
         </nav>
 
-        {/* Mobile */}
-        <nav className="sm:hidden flex items-center gap-2 text-[13px]">
-          <Link href="/iscilar" className="text-ink-700">
-            Çevrendekiler
-          </Link>
-          {user ? (
-            <>
-              <Link href="/panel/profil" className="ml-1 text-ink-700">
-                Profilim
-              </Link>
-              {!isAdmin && (
-                <Link href="/panel/mesajlar" className="relative ml-1 text-ink-700">
-                  Mesajlar
-                  {unreadCount > 0 && <Badge>{unreadCount}</Badge>}
-                </Link>
-              )}
-              <LogoutButton className="ml-1 inline-flex items-center justify-center h-8 px-3 rounded-full text-[12.5px] font-medium text-ink-700 hover:bg-ink-100 transition" />
-            </>
-          ) : (
-            <Link
-              href="/kayit"
-              className="ml-1 btn-ink h-10 px-4 rounded-full text-[14px]"
-            >
-              Kayıt ol
-            </Link>
-          )}
-        </nav>
+        <div className="sm:hidden">
+          <MobileMenu
+            isLoggedIn={!!user}
+            firstName={firstName}
+            isAdmin={isAdmin}
+            unreadCount={unreadCount}
+            pendingRequestCount={pendingRequestCount}
+          />
+        </div>
       </div>
     </header>
   );

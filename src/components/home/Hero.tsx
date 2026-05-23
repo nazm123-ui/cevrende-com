@@ -20,41 +20,40 @@ export default async function Hero() {
   const total = withCounts.reduce((sum, p) => sum + p.count, 0);
 
   return (
-    <section className="pt-16 sm:pt-20 pb-12 sm:pb-16">
+    <section className="pt-10 sm:pt-20 pb-12 sm:pb-16">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6 grid items-center gap-10 lg:gap-16 lg:grid-cols-[1.15fr_0.95fr]">
         <div>
           <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
             Pendik · Tuzla · Kartal
           </p>
 
-          <h1 className="mt-4 text-[42px] sm:text-[56px] lg:text-[64px] font-semibold tracking-[-0.035em] leading-[1.02] text-balance max-w-[560px]">
-            Pendik'te mahallenden usta bul,
-            <br />
+          <h1 className="mt-4 text-[32px] sm:text-[48px] lg:text-[64px] font-semibold tracking-[-0.03em] leading-[1.05] sm:leading-[1.02] text-balance max-w-[560px]">
+            Pendik'te mahallenden usta bul,{" "}
             <span className="text-accent-600">aracısız iletişim kur.</span>
           </h1>
 
-          <p className="mt-6 text-[17px] sm:text-lg text-ink-700 max-w-[480px] leading-relaxed">
+          <p className="mt-5 sm:mt-6 text-[16px] sm:text-lg text-ink-700 max-w-[480px] leading-relaxed">
             Pendik ve çevresinde meslek sahibi kişilerle aracısız tanış.
             Profilini aç, çevrendekilerin seni bulmasını sağla.
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-7 sm:mt-8 flex flex-col sm:flex-row sm:flex-wrap gap-3">
             <Link
               href="/iscilar"
-              className="btn-ink h-12 px-6 rounded-full text-[15px]"
+              className="btn-ink h-12 px-6 rounded-full text-[15px] w-full sm:w-auto"
             >
               Çevrendekileri gör
               <ArrowRight />
             </Link>
             <Link
               href="/kayit"
-              className="inline-flex items-center h-12 px-6 rounded-full border border-ink-200 text-ink-900 text-[15px] font-medium hover:border-ink-900 transition"
+              className="inline-flex items-center justify-center h-12 px-6 rounded-full border border-ink-200 text-ink-900 text-[15px] font-medium hover:border-ink-900 transition w-full sm:w-auto"
             >
               Profilini aç
             </Link>
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-ink-500">
+          <div className="mt-7 sm:mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-ink-500">
             <Trait>Ücretsiz</Trait>
             <Trait>Komisyonsuz</Trait>
             <Trait>Aracısız iletişim</Trait>

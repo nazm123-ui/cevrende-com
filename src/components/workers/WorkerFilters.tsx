@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { PENDIK_NEIGHBORHOODS } from "@/lib/constants/pendik-neighborhoods";
 
 type Profession = { slug: string; name: string; count: number };
@@ -16,6 +16,7 @@ export default function WorkerFilters({
   const router = useRouter();
   const params = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const current = {
     meslek: params.get("meslek") ?? "",
@@ -40,9 +41,34 @@ export default function WorkerFilters({
 
   const hasFilter = current.meslek || current.mahalle || current.q;
 
+  const activeFilterCount =
+    (current.meslek ? 1 : 0) + (current.mahalle ? 1 : 0) + (current.q ? 1 : 0);
+
   return (
     <div>
-      <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium mb-4">
+      <button
+        type="button"
+        onClick={() => setMobileOpen((v) => !v)}
+        className="lg:hidden w-full flex items-center justify-between h-12 px-4 rounded-[12px] border border-ink-200 bg-white text-[14.5px] font-medium text-ink-900 mb-4"
+      >
+        <span className="inline-flex items-center gap-2">
+          <FilterIcon /> Filtrele
+          {activeFilterCount > 0 && (
+            <span
+              className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-accent-600 text-[11px] font-semibold"
+              style={{ color: "#ffffff" }}
+            >
+              {activeFilterCount}
+            </span>
+          )}
+        </span>
+        <span className={`transition ${mobileOpen ? "rotate-180" : ""}`}>
+          <ChevronIcon />
+        </span>
+      </button>
+
+      <div className={`${mobileOpen ? "block" : "hidden"} lg:block`}>
+      <p className="hidden lg:block font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium mb-4">
         Filtrele
       </p>
 
@@ -101,7 +127,42 @@ export default function WorkerFilters({
           {isPending ? "Yükleniyor…" : "Filtreleri temizle"}
         </button>
       )}
+      </div>
     </div>
+  );
+}
+
+function FilterIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M3 6h18M6 12h12M10 18h4" />
+    </svg>
+  );
+}
+
+function ChevronIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
   );
 }
 

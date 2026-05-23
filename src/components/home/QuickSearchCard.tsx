@@ -26,7 +26,7 @@ export default function QuickSearchCard({ popular, totalCount }: Props) {
   }
 
   return (
-    <div className="bg-white border border-ink-100 rounded-[14px] shadow-[0_8px_24px_-12px_rgba(15,17,16,0.10)] p-7">
+    <div className="bg-white border border-ink-100 rounded-[14px] shadow-[0_8px_24px_-12px_rgba(15,17,16,0.10)] p-5 sm:p-7">
       <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
         Hızlı arama
       </p>

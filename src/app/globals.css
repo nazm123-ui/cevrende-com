@@ -44,6 +44,25 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.005em;
+  /* Prevent horizontal scroll on small mobile */
+  overflow-x: hidden;
+}
+
+/* Tap highlight cleanup for iOS */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Critical: prevent iOS auto-zoom on form focus.
+   iOS Safari zooms whenever an input/select/textarea has font-size < 16px.
+   We override Tailwind text-* utilities on mobile, then let larger screens
+   use the designed sizes. */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 a {

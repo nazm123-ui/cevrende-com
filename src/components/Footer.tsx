@@ -3,7 +3,10 @@ import Logo from "@/components/Logo";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-ink-100 pt-14 pb-10 bg-ink-50 mt-12">
+    <footer
+      className="border-t border-ink-100 pt-14 pb-10 bg-ink-50 mt-12"
+      style={{ paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))" }}
+    >
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6 grid gap-10 sm:gap-12 grid-cols-2 sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div className="col-span-2 sm:col-span-1">
           <Logo size="sm" />
