@@ -103,7 +103,7 @@ export default function ChatThread({
         <button
           onClick={onClearMessages}
           disabled={clearing || messages.length === 0}
-          className="text-xs font-medium text-red-600 hover:text-red-700 disabled:text-ink-300 transition"
+          className="px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 disabled:text-ink-300 disabled:hover:bg-transparent transition rounded-md"
         >
           Temizle
         </button>

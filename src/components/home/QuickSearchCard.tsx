@@ -91,7 +91,7 @@ export default function QuickSearchCard({ popular, totalCount }: Props) {
                 onClick={() =>
                   router.push(`/iscilar?meslek=${encodeURIComponent(p.slug)}`)
                 }
-                className="shrink-0 inline-flex items-center h-8 px-3.5 rounded-full border border-ink-200 bg-white text-[12.5px] text-ink-700 hover:border-ink-900 hover:text-ink-900 transition"
+                className="shrink-0 inline-flex items-center h-10 px-4 rounded-full border border-ink-200 bg-white text-[14px] text-ink-700 hover:border-ink-900 hover:text-ink-900 transition"
               >
                 {p.name}
               </button>

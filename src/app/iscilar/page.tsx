@@ -87,20 +87,20 @@ export default async function IscilarPage({
             <p className="text-[15px] font-medium text-ink-900">
               İsim ve telefon detaylarını gizledik
             </p>
-            <p className="mt-0.5 text-[13.5px] text-ink-500">
+            <p className="mt-0.5 text-[14px] text-ink-500">
               Üyeler tam profili görür, mesaj yazabilir, talep gönderebilir.
             </p>
           </div>
           <div className="flex gap-2">
             <Link
               href="/giris"
-              className="inline-flex items-center h-10 px-4 rounded-full border border-ink-200 text-[13.5px] font-medium text-ink-900 hover:border-ink-900 transition"
+              className="inline-flex items-center h-10 px-4 rounded-full border border-ink-200 text-[14px] font-medium text-ink-900 hover:border-ink-900 transition"
             >
               Giriş
             </Link>
             <Link
               href="/kayit"
-              className="btn-ink h-10 px-4 rounded-full text-[13.5px]"
+              className="btn-ink h-10 px-4 rounded-full text-[14px]"
             >
               Ücretsiz kayıt
             </Link>

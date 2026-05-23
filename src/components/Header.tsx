@@ -111,7 +111,7 @@ export default async function Header() {
           ) : (
             <Link
               href="/kayit"
-              className="ml-1 btn-ink h-8 px-3 rounded-full text-[12.5px]"
+              className="ml-1 btn-ink h-10 px-4 rounded-full text-[14px]"
             >
               Kayıt ol
             </Link>
