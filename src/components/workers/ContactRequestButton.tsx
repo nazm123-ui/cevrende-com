@@ -5,9 +5,15 @@ import { useRouter } from "next/navigation";
 
 type Props = {
   workerId: string;
+  variant?: "primary" | "outline";
+  label?: string;
 };
 
-export default function ContactRequestButton({ workerId }: Props) {
+export default function ContactRequestButton({
+  workerId,
+  variant = "primary",
+  label = "İletişim talebi gönder",
+}: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -40,13 +46,13 @@ export default function ContactRequestButton({ workerId }: Props) {
   }
 
   if (!open) {
+    const className =
+      variant === "outline"
+        ? "inline-flex items-center h-9 px-4 rounded-full border border-ink-200 text-[13px] font-medium text-ink-900 hover:border-ink-900 transition"
+        : "btn-ink h-9 px-4 rounded-full text-[13px]";
     return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="btn-ink h-9 px-4 rounded-full text-[13px]"
-      >
-        İletişim talebi gönder
+      <button type="button" onClick={() => setOpen(true)} className={className}>
+        {label}
       </button>
     );
   }
