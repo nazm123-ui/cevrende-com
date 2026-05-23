@@ -44,28 +44,31 @@ export default function ContactRequestButton({ workerId }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 transition"
+        className="inline-flex items-center h-9 px-4 rounded-full bg-ink-900 text-white text-[13px] font-medium hover:bg-accent-600 transition"
       >
-        ✉️ Teklif Gönder
+        İletişim talebi gönder
       </button>
     );
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/40 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/40 backdrop-blur-[2px] p-4">
       <form
         onSubmit={onSubmit}
-        className="w-full max-w-md rounded-2xl bg-white p-5 shadow-lg"
+        className="w-full max-w-md rounded-[18px] bg-white border border-ink-100 p-8 shadow-[0_30px_80px_-20px_rgba(15,17,16,0.3)]"
       >
-        <h3 className="text-lg font-semibold text-ink-900">
-          İletişim Talebi
+        <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 mb-2">
+          Aramıza katıl
+        </p>
+        <h3 className="text-[22px] font-semibold tracking-[-0.012em] text-ink-900">
+          İletişim talebi
         </h3>
-        <p className="mt-1 text-sm text-ink-500">
+        <p className="mt-2 text-[14px] text-ink-500">
           Hangi iş için iletişime geçmek istediğini kısaca yaz. Karşı taraf
           onaylarsa mesajlaşma açılır.
         </p>
 
-        <label className="mt-4 block text-xs font-medium text-ink-700">
+        <label className="mt-5 block text-[13px] font-medium text-ink-700 mb-2">
           Kısa not (opsiyonel)
         </label>
         <textarea
@@ -73,36 +76,36 @@ export default function ContactRequestButton({ workerId }: Props) {
           onChange={(e) => setMessage(e.target.value)}
           maxLength={500}
           rows={4}
-          placeholder="Örn: Pendik'te bir dairenin boyası için ekibinize ihtiyacım var..."
-          className="mt-1 w-full resize-none rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+          placeholder="Örn: Pendik'te bir dairenin boyası için ekibinize ihtiyacım var…"
+          className="w-full resize-none rounded-[12px] border border-ink-200 bg-white px-3.5 py-3 text-[14px] text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
         />
-        <p className="mt-1 text-right text-[10px] text-ink-500">
+        <p className="mt-1 text-right font-mono text-[11px] text-ink-400">
           {message.length}/500
         </p>
 
         {error && (
-          <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
+          <p className="mt-3 rounded-[10px] bg-red-50 px-3 py-2 text-[13px] text-red-700">
             {error}
           </p>
         )}
 
-        <div className="mt-4 flex justify-end gap-2">
+        <div className="mt-6 flex justify-end gap-2">
           <button
             type="button"
             onClick={() => {
               setOpen(false);
               setError(null);
             }}
-            className="rounded-lg border border-ink-200 px-3 py-1.5 text-sm font-medium text-ink-700 hover:bg-ink-50"
+            className="inline-flex items-center h-10 px-4 rounded-full border border-ink-200 text-[13.5px] font-medium text-ink-700 hover:border-ink-700 transition"
           >
             Vazgeç
           </button>
           <button
             type="submit"
             disabled={sending}
-            className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:bg-ink-200 disabled:cursor-not-allowed"
+            className="inline-flex items-center h-10 px-5 rounded-full bg-ink-900 text-white text-[13.5px] font-medium hover:bg-accent-600 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
           >
-            {sending ? "Gönderiliyor..." : "Talep Gönder"}
+            {sending ? "Gönderiliyor..." : "Talebi gönder"}
           </button>
         </div>
       </form>

@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getUnreadCount } from "@/lib/messages";
 import { getPendingIncomingCount } from "@/lib/contact-requests";
 import { isAdminEmail } from "@/lib/constants/admin-emails";
+import Logo from "@/components/Logo";
 import LogoutButton from "@/components/auth/LogoutButton";
 
 export default async function Header() {
@@ -18,17 +19,15 @@ export default async function Header() {
     : [0, 0];
 
   return (
-    <header className="bg-white border-b border-ink-100 sticky top-0 z-40">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link
-          href="/"
-          className="font-bold text-xl text-brand-700 tracking-tight"
-        >
-          Cevrende<span className="text-accent-500">.com</span>
-        </Link>
+    <header className="sticky top-0 z-40 border-b border-ink-100 bg-ink-50/80 backdrop-blur-md backdrop-saturate-150">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 h-[72px] flex items-center justify-between">
+        <Logo />
 
-        <nav className="hidden sm:flex items-center gap-6 text-sm font-medium text-ink-700">
-          <Link href="/iscilar" className="hover:text-brand-700 transition">
+        <nav className="hidden sm:flex items-center gap-1 text-[14.5px]">
+          <Link
+            href="/iscilar"
+            className="px-3 py-2 text-ink-500 hover:text-ink-900 transition tracking-tight"
+          >
             Çevrendekiler
           </Link>
 
@@ -36,7 +35,7 @@ export default async function Header() {
             <>
               <Link
                 href="/panel/profil"
-                className="hover:text-brand-700 transition"
+                className="px-3 py-2 text-ink-500 hover:text-ink-900 transition tracking-tight"
               >
                 Profilim
               </Link>
@@ -44,109 +43,88 @@ export default async function Header() {
                 <>
                   <Link
                     href="/panel/talepler"
-                    className="relative hover:text-brand-700 transition"
+                    className="relative px-3 py-2 text-ink-500 hover:text-ink-900 transition tracking-tight"
                   >
                     Talepler
                     {pendingRequestCount > 0 && (
-                      <span className="ml-1 inline-flex items-center justify-center rounded-full bg-accent-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                        {pendingRequestCount}
-                      </span>
+                      <Badge>{pendingRequestCount}</Badge>
                     )}
                   </Link>
                   <Link
                     href="/panel/mesajlar"
-                    className="relative hover:text-brand-700 transition"
+                    className="relative px-3 py-2 text-ink-500 hover:text-ink-900 transition tracking-tight"
                   >
                     Mesajlar
-                    {unreadCount > 0 && (
-                      <span className="ml-1 inline-flex items-center justify-center rounded-full bg-accent-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                        {unreadCount}
-                      </span>
-                    )}
+                    {unreadCount > 0 && <Badge>{unreadCount}</Badge>}
                   </Link>
                 </>
               )}
               {isAdmin && (
                 <Link
                   href="/admin"
-                  className="hover:text-brand-700 transition"
+                  className="px-3 py-2 text-ink-500 hover:text-ink-900 transition tracking-tight"
                 >
                   Admin
                 </Link>
               )}
-              <span className="text-ink-500">
-                Merhaba,{" "}
-                <span className="font-semibold text-ink-900">{firstName}</span>
+              <span className="ml-3 text-sm text-ink-500">
+                {firstName}
               </span>
-              <LogoutButton />
+              <LogoutButton className="ml-2 inline-flex items-center justify-center h-9 px-4 rounded-full text-[13.5px] font-medium text-ink-700 hover:bg-ink-100 transition" />
             </>
           ) : (
-            <>
-              <Link href="/giris" className="hover:text-brand-700 transition">
+            <div className="ml-3 flex items-center gap-2">
+              <Link
+                href="/giris"
+                className="inline-flex items-center justify-center h-9 px-4 rounded-full text-[13.5px] font-medium text-ink-700 hover:bg-ink-100 transition"
+              >
                 Giriş
               </Link>
               <Link
                 href="/kayit"
-                className="rounded-lg bg-brand-600 px-4 py-2 text-white hover:bg-brand-700 transition"
+                className="inline-flex items-center justify-center h-9 px-4 rounded-full bg-ink-900 text-white text-[13.5px] font-medium hover:bg-accent-600 transition"
               >
-                Kayıt Ol
+                Kayıt ol
               </Link>
-            </>
+            </div>
           )}
         </nav>
 
-        <div className="sm:hidden flex items-center gap-2 text-sm font-medium">
-          <Link href="/iscilar" className="text-ink-700 hover:text-brand-700">
+        {/* Mobile */}
+        <nav className="sm:hidden flex items-center gap-2 text-[13px]">
+          <Link href="/iscilar" className="text-ink-700">
             Çevrendekiler
           </Link>
           {user ? (
             <>
-              <Link href="/panel/profil" className="text-brand-700">
+              <Link href="/panel/profil" className="ml-1 text-ink-700">
                 Profilim
               </Link>
               {!isAdmin && (
-                <>
-                  <Link href="/panel/talepler" className="relative text-brand-700">
-                    Talepler
-                    {pendingRequestCount > 0 && (
-                      <span className="ml-1 inline-flex items-center justify-center rounded-full bg-accent-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                        {pendingRequestCount}
-                      </span>
-                    )}
-                  </Link>
-                  <Link href="/panel/mesajlar" className="relative text-brand-700">
-                    Mesajlar
-                    {unreadCount > 0 && (
-                      <span className="ml-1 inline-flex items-center justify-center rounded-full bg-accent-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </Link>
-                </>
-              )}
-              {isAdmin && (
-                <Link href="/admin" className="text-brand-700">
-                  Admin
+                <Link href="/panel/mesajlar" className="relative ml-1 text-ink-700">
+                  Mesajlar
+                  {unreadCount > 0 && <Badge>{unreadCount}</Badge>}
                 </Link>
               )}
-              <span className="text-ink-700">{firstName}</span>
-              <LogoutButton className="text-brand-700 hover:underline" />
             </>
           ) : (
-            <>
-              <Link href="/giris" className="text-brand-700">
-                Giriş
-              </Link>
-              <Link
-                href="/kayit"
-                className="rounded bg-brand-600 px-2 py-1 text-white hover:bg-brand-700 transition"
-              >
-                Kayıt
-              </Link>
-            </>
+            <Link
+              href="/kayit"
+              className="ml-1 inline-flex items-center justify-center h-8 px-3 rounded-full bg-ink-900 text-white text-[12.5px] font-medium"
+            >
+              Kayıt ol
+            </Link>
           )}
-        </div>
+        </nav>
       </div>
     </header>
+  );
+}
+
+function Badge({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="ml-1 inline-flex items-center justify-center h-[18px] min-w-[18px] px-1 rounded-full bg-accent-600 text-[10.5px] font-semibold text-white">
+      {children}
+    </span>
   );
 }

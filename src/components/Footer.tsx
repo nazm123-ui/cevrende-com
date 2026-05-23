@@ -1,63 +1,85 @@
 import Link from "next/link";
+import Logo from "@/components/Logo";
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-ink-100 mt-16">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10 grid gap-8 sm:grid-cols-2 text-sm">
-        <div>
-          <p className="font-bold text-brand-700 text-base">
-            Cevrende<span className="text-accent-500">.com</span>
+    <footer className="border-t border-ink-100 pt-14 pb-10 bg-ink-50 mt-12">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 grid gap-10 sm:gap-12 grid-cols-2 sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="col-span-2 sm:col-span-1">
+          <Logo size="sm" />
+          <p className="mt-4 text-[13.5px] text-ink-500 max-w-[280px] leading-relaxed">
+            Pendik ve çevresinde meslek sahibi kişilerle aracısız iletişim için
+            yerel platform.
           </p>
-          <p className="text-ink-500 mt-2 leading-relaxed">
-            Pendik ve mahallelerinde meslek sahibi kişilerle tanışmak ve
-            mahallendeki yardıma hızlıca ulaşmak için ücretsiz platform.
-          </p>
-          <div className="mt-4 flex gap-3 text-ink-600">
-            <Link href="/iscilar" className="hover:text-brand-700 transition">
-              Çevrendekiler
-            </Link>
-            <span className="text-ink-300">·</span>
-            <Link href="/kayit" className="hover:text-brand-700 transition">
-              Kayıt Ol
-            </Link>
-            <span className="text-ink-300">·</span>
-            <Link href="/giris" className="hover:text-brand-700 transition">
-              Giriş
-            </Link>
-          </div>
         </div>
 
-        <div className="sm:text-right">
-          <p className="font-semibold text-ink-700 mb-3">Yasal</p>
-          <ul className="space-y-2 text-ink-500">
-            <li>
-              <Link
-                href="/kullanim-kosullari"
-                className="hover:text-brand-700 transition"
-              >
-                Kullanım Koşulları
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/gizlilik"
-                className="hover:text-brand-700 transition"
-              >
-                Gizlilik Politikası
-              </Link>
-            </li>
-            <li>
-              <Link href="/kvkk" className="hover:text-brand-700 transition">
-                KVKK Aydınlatma
-              </Link>
-            </li>
-          </ul>
-        </div>
+        <FooterCol title="Platform">
+          <FooterLink href="/iscilar">Çevrendekiler</FooterLink>
+          <FooterLink href="/kayit">Hesap aç</FooterLink>
+          <FooterLink href="/giris">Giriş</FooterLink>
+        </FooterCol>
+
+        <FooterCol title="Kurum">
+          <FooterLink href="/kullanim-kosullari">Kullanım koşulları</FooterLink>
+          <FooterLink href="/gizlilik">Gizlilik</FooterLink>
+          <FooterLink href="/kvkk">KVKK</FooterLink>
+        </FooterCol>
+
+        <FooterCol title="Destek">
+          <FooterLink href="/sifre-sifirla">Şifremi unuttum</FooterLink>
+          <span className="text-[14px] text-ink-700/40 cursor-default">
+            Yardım merkezi
+          </span>
+          <span className="text-[14px] text-ink-700/40 cursor-default">
+            Geri bildirim
+          </span>
+        </FooterCol>
       </div>
 
-      <div className="border-t border-ink-100 py-4 text-center text-xs text-ink-500">
-        © {new Date().getFullYear()} Cevrende.com — Tüm hakları saklıdır.
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 mt-12 flex flex-wrap items-center justify-between gap-3 text-[13px] text-ink-500">
+        <span>© {new Date().getFullYear()} çevrende · Pendik, İstanbul</span>
+        <span className="font-mono text-ink-400">v1.0</span>
       </div>
     </footer>
+  );
+}
+
+function FooterCol({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <p className="font-mono text-[12px] uppercase tracking-[0.06em] text-ink-400 mb-3.5">
+        {title}
+      </p>
+      <ul className="flex flex-col gap-2.5">
+        {Array.isArray(children) ? (
+          children.map((c, i) => <li key={i}>{c}</li>)
+        ) : (
+          <li>{children}</li>
+        )}
+      </ul>
+    </div>
+  );
+}
+
+function FooterLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className="text-[14px] text-ink-700 hover:text-ink-900 transition"
+    >
+      {children}
+    </Link>
   );
 }

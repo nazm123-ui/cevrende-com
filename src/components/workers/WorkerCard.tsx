@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { maskName } from "@/lib/masking";
-import { formatPhone } from "@/lib/format";
+import { formatPhone, formatRelative } from "@/lib/format";
 import { canSeePhone, getPhoneVisibility } from "@/lib/phone-visibility";
 import type { WorkerListItem } from "@/lib/workers";
 import type { ContactRequestStatus } from "@/lib/contact-requests";
@@ -38,46 +38,53 @@ export default function WorkerCard({
     .slice(0, 5);
 
   return (
-    <article className="rounded-2xl border border-ink-100 bg-white p-5 shadow-sm">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="text-base font-semibold text-ink-900 truncate">
-            {displayName}
-          </h3>
-          <p className="mt-0.5 text-xs text-ink-500">{location}</p>
+    <article className="group bg-white border border-ink-100 rounded-[14px] p-6 hover:border-ink-700 transition">
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2 text-[12.5px] text-ink-500">
+          <span className="font-mono">{formatRelative(worker.createdAt)}</span>
+          <span className="text-ink-300">·</span>
+          <span className="inline-flex items-center gap-1">
+            <PinIcon /> {location}
+          </span>
         </div>
         {showPhoneInline ? (
           <a
             href={`tel:${worker.phone}`}
-            className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 transition"
+            className="font-mono text-[12.5px] text-ink-900 hover:text-accent-600 transition"
           >
-            📞 {formatPhone(worker.phone)}
+            {formatPhone(worker.phone)}
           </a>
         ) : (
-          <span className="rounded-lg border border-ink-200 px-3 py-1.5 text-xs font-medium text-ink-500">
+          <span className="text-[12px] text-ink-400">
             {getPhoneVisibility(settings) === "private"
-              ? "Mesajla iletişim"
-              : "Onay sonrası iletişim"}
+              ? "Sadece mesaj"
+              : "Onay sonrası"}
           </span>
         )}
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <h3 className="text-[18px] font-medium tracking-[-0.012em] text-ink-900">
+        {displayName}
+      </h3>
+
+      {worker.bio && (
+        <p className="mt-2 text-[14.5px] text-ink-500 leading-relaxed line-clamp-2">
+          {worker.bio}
+        </p>
+      )}
+
+      <div className="mt-4 flex flex-wrap gap-1.5">
         {professionNames.map((name) => (
           <span
             key={name}
-            className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700"
+            className="inline-flex items-center h-7 px-3 rounded-full bg-[#f4f2eb] text-[12.5px] text-ink-700"
           >
             {name}
           </span>
         ))}
       </div>
 
-      {worker.bio && (
-        <p className="mt-3 text-sm text-ink-700 line-clamp-3">{worker.bio}</p>
-      )}
-
-      <div className="mt-4 flex justify-end">
+      <div className="mt-5 pt-4 border-t border-ink-100 flex items-center justify-end">
         {renderAction({ canContact, isSelf, requestStatus, worker })}
       </div>
     </article>
@@ -97,14 +104,19 @@ function renderAction({
 }) {
   if (isSelf) {
     return (
-      <span className="text-xs text-ink-500">Bu senin profilin</span>
+      <Link
+        href="/panel/profil"
+        className="text-[13.5px] text-ink-500 hover:text-ink-900 transition"
+      >
+        Profilini düzenle →
+      </Link>
     );
   }
   if (!canContact) {
     return (
       <Link
         href="/giris"
-        className="text-sm font-semibold text-brand-700 hover:underline"
+        className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-ink-900 hover:text-accent-600 transition"
       >
         İletişim için giriş yap →
       </Link>
@@ -114,25 +126,38 @@ function renderAction({
     return (
       <Link
         href={`/panel/mesajlar/${worker.id}`}
-        className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 transition"
+        className="inline-flex items-center h-9 px-4 rounded-full bg-ink-900 text-white text-[13px] font-medium hover:bg-accent-600 transition"
       >
-        💬 Mesaj Gönder
+        Mesaj gönder
       </Link>
     );
   }
   if (requestStatus === "pending") {
     return (
-      <span className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700">
-        ⏳ Onay bekleniyor
-      </span>
+      <span className="text-[13px] text-ink-500">⏳ Onay bekleniyor</span>
     );
   }
   if (requestStatus === "declined") {
-    return (
-      <span className="rounded-lg border border-ink-200 px-3 py-1.5 text-xs font-medium text-ink-500">
-        Talep reddedildi
-      </span>
-    );
+    return <span className="text-[13px] text-ink-400">Talep reddedildi</span>;
   }
   return <ContactRequestButton workerId={worker.id} />;
+}
+
+function PinIcon() {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="text-ink-400"
+    >
+      <path d="M12 21s-7-6.5-7-12a7 7 0 1 1 14 0c0 5.5-7 12-7 12Z" />
+      <circle cx="12" cy="9" r="2.4" />
+    </svg>
+  );
 }

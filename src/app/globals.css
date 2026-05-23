@@ -1,30 +1,39 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-50: #eff6ff;
-  --color-brand-100: #dbeafe;
-  --color-brand-200: #bfdbfe;
-  --color-brand-500: #3b82f6;
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
-  --color-brand-900: #1e3a8a;
+  /* Brand/Primary — ink + forest accent */
+  --color-brand-50: #f4f2eb;
+  --color-brand-100: #e5e0d2;
+  --color-brand-200: #d6cfb6;
+  --color-brand-500: #3f3f46;
+  --color-brand-600: #0f1110;
+  --color-brand-700: #1f5a45;
+  --color-brand-900: #0f1110;
 
-  --color-accent-50: #fff7ed;
-  --color-accent-100: #ffedd5;
-  --color-accent-500: #f97316;
-  --color-accent-600: #ea580c;
-  --color-accent-700: #c2410c;
+  /* Accent — forest green family */
+  --color-accent-50: #eaf1ed;
+  --color-accent-100: #d4e5dc;
+  --color-accent-500: #2d7259;
+  --color-accent-600: #1f5a45;
+  --color-accent-700: #1a4d3a;
 
-  --color-ink-50: #f8fafc;
-  --color-ink-100: #e2e8f0;
-  --color-ink-200: #cbd5e1;
-  --color-ink-300: #94a3b8;
-  --color-ink-500: #64748b;
-  --color-ink-700: #334155;
-  --color-ink-900: #0f172a;
+  /* Ink — warm cream → near-black */
+  --color-ink-50: #fafaf7;
+  --color-ink-100: #ecead7;
+  --color-ink-200: #e2e0d8;
+  --color-ink-300: #c9c5b8;
+  --color-ink-400: #9a9a92;
+  --color-ink-500: #6e6e68;
+  --color-ink-700: #26282a;
+  --color-ink-900: #0f1110;
 
-  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto,
-    sans-serif;
+  /* Warn — used rarely */
+  --color-warn-500: #b8552b;
+
+  --font-sans: var(--font-geist), "Söhne", ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
 }
 
 html,
@@ -34,9 +43,27 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.005em;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+::selection {
+  background: var(--color-accent-600);
+  color: #fff;
+}
+
+/* Horizontal chip scroll row */
+.scroll-x {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scroll-x::-webkit-scrollbar {
+  display: none;
 }

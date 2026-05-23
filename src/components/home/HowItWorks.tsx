@@ -1,44 +1,50 @@
 const steps = [
   {
-    n: "1",
+    n: "01",
     title: "Profilini aç",
-    desc: "Hesap aç, e-postanı doğrula. Çevrendekiler arasında görünmek istersen mesleklerini de ekle.",
+    body: "Hesap aç, e-postanı doğrula. Mahalleni ekle, çevrendeki kişilerle eşleş.",
   },
   {
-    n: "2",
-    title: "Çevrendekiler arasından ara veya bulun",
-    desc: "Meslek ve mahalleye göre filtrele. Sen de profilinle mahalledekiler tarafından bulun.",
+    n: "02",
+    title: "Çevrendekileri keşfet",
+    body: "Mesleğe ve mahalleye göre filtrele. Profilini açarsan sen de bulun.",
   },
   {
-    n: "3",
-    title: "Mesajlaş veya telefon et",
-    desc: "Platform üzerinden mesajlaş. Onay sonrası numaraya ulaş, hızlıca işi bitir.",
+    n: "03",
+    title: "Mesajlaş, tanış",
+    body: "Platform üzerinden mesajla. Onay sonrası telefonla aracısız iletişim.",
   },
 ];
 
 export default function HowItWorks() {
   return (
-    <section className="py-16 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center text-ink-900 tracking-tight">
-          Nasıl Çalışır?
-        </h2>
-        <p className="mt-2 text-center text-ink-500">
-          Üç adımda yerel iş bağlantısı.
-        </p>
+    <section className="py-20 sm:py-24">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
+        <div className="max-w-[600px] mb-14">
+          <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
+            Nasıl çalışır
+          </p>
+          <h2 className="mt-3 text-[32px] sm:text-[40px] font-semibold tracking-[-0.025em] leading-[1.08] text-balance">
+            Üç adımda, mahallenden iletişim.
+          </h2>
+        </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-3">
-          {steps.map((s) => (
+        <div className="grid sm:grid-cols-3 border-t border-ink-100">
+          {steps.map((s, i) => (
             <div
               key={s.n}
-              className="bg-white border border-ink-100 rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition"
+              className={`py-10 ${
+                i > 0 ? "sm:pl-8 sm:border-l sm:border-ink-100" : "sm:pr-8"
+              } ${i < 2 ? "sm:pr-8" : ""}`}
             >
-              <div className="mx-auto w-12 h-12 rounded-full bg-brand-50 text-brand-700 font-bold text-xl flex items-center justify-center">
+              <p className="font-mono text-[13px] text-accent-600 tracking-[0.04em] mb-4">
                 {s.n}
-              </div>
-              <h3 className="mt-4 font-semibold text-ink-900">{s.title}</h3>
-              <p className="mt-2 text-sm text-ink-500 leading-relaxed">
-                {s.desc}
+              </p>
+              <h3 className="text-[22px] font-semibold tracking-[-0.012em] mb-2">
+                {s.title}
+              </h3>
+              <p className="text-[15px] text-ink-500 max-w-[280px] leading-relaxed">
+                {s.body}
               </p>
             </div>
           ))}
