@@ -89,6 +89,19 @@ a {
 .btn-outline:hover {
   border-color: var(--color-ink-900);
 }
+.btn-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #ffffff;
+  color: var(--color-ink-900) !important;
+  font-weight: 500;
+  transition: background-color 150ms ease;
+}
+.btn-light:hover {
+  background-color: var(--color-ink-100);
+}
 
 /* Horizontal chip scroll row */
 .scroll-x {

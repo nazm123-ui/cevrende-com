@@ -26,7 +26,7 @@ export default function FinalCTA() {
           <div className="sm:justify-self-end">
             <Link
               href="/kayit"
-              className="inline-flex items-center h-12 px-7 rounded-full bg-white text-ink-900 text-[15px] font-medium hover:bg-ink-100 transition"
+              className="btn-light h-12 px-7 rounded-full text-[15px]"
             >
               Ücretsiz hesap aç
             </Link>

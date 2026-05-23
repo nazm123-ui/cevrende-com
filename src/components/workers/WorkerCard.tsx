@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { maskName, maskPhone } from "@/lib/masking";
+import { maskName } from "@/lib/masking";
 import { formatPhone, formatRelative } from "@/lib/format";
 import { canSeePhone, getPhoneVisibility } from "@/lib/phone-visibility";
 import type { WorkerListItem } from "@/lib/workers";
@@ -24,12 +24,12 @@ export default function WorkerCard({
   const settings = worker.workerSettings;
   const accepted = requestStatus === "accepted";
 
-  // Logged-out: always mask name regardless of showName
-  const displayName = canContact
-    ? settings.showName || accepted
+  // Name: worker's showName decision applies to everyone (logged in or out).
+  // After acceptance, name is also revealed.
+  const displayName =
+    settings.showName || accepted
       ? worker.fullName
-      : maskName(worker.fullName)
-    : maskName(worker.fullName);
+      : maskName(worker.fullName);
 
   const location =
     settings.showDistrict && worker.neighborhood
@@ -37,9 +37,11 @@ export default function WorkerCard({
       : worker.district;
 
   const phoneVisibility = getPhoneVisibility(settings);
-  const showFullPhoneInline = canContact && canSeePhone(settings, accepted);
-  // Logged-out: only show masked phone preview if worker is public
-  const showTeaserPhone = !canContact && phoneVisibility === "public";
+  // Phone follows the worker's choice:
+  // - "public": always visible (also to non-members — urgent jobs)
+  // - "after_approval": only after accepted contact (requires login)
+  // - "private": never
+  const showFullPhone = canSeePhone(settings, accepted);
 
   const professionNames = worker.professions
     .map((slug) => categoryNameBySlug.get(slug) ?? slug)
@@ -55,17 +57,13 @@ export default function WorkerCard({
             <PinIcon /> {location}
           </span>
         </div>
-        {showFullPhoneInline ? (
+        {showFullPhone ? (
           <a
             href={`tel:${worker.phone}`}
             className="font-mono text-[12.5px] text-ink-900 hover:text-accent-600 transition"
           >
             {formatPhone(worker.phone)}
           </a>
-        ) : showTeaserPhone ? (
-          <span className="font-mono text-[12.5px] text-ink-400">
-            {maskPhone(worker.phone)}
-          </span>
         ) : (
           <span className="text-[12px] text-ink-400">
             {phoneVisibility === "private"
@@ -79,7 +77,7 @@ export default function WorkerCard({
         {displayName}
       </h3>
 
-      {worker.bio && canContact && (
+      {worker.bio && (
         <p className="mt-2 text-[14.5px] text-ink-500 leading-relaxed line-clamp-2">
           {worker.bio}
         </p>
@@ -96,8 +94,14 @@ export default function WorkerCard({
         ))}
       </div>
 
-      <div className="mt-5 pt-4 border-t border-ink-100 flex items-center justify-end">
-        {renderAction({ canContact, isSelf, requestStatus, worker })}
+      <div className="mt-5 pt-4 border-t border-ink-100 flex items-center justify-end gap-2">
+        {renderAction({
+          canContact,
+          isSelf,
+          requestStatus,
+          worker,
+          showFullPhone,
+        })}
       </div>
     </article>
   );
@@ -108,11 +112,13 @@ function renderAction({
   isSelf,
   requestStatus,
   worker,
+  showFullPhone,
 }: {
   canContact: boolean;
   isSelf: boolean;
   requestStatus: ContactRequestStatus | null;
   worker: WorkerListItem;
+  showFullPhone: boolean;
 }) {
   if (isSelf) {
     return (
@@ -125,6 +131,25 @@ function renderAction({
     );
   }
   if (!canContact) {
+    // Non-member: if phone is public, show call CTA + secondary register prompt
+    if (showFullPhone) {
+      return (
+        <>
+          <a
+            href={`tel:${worker.phone}`}
+            className="inline-flex items-center h-9 px-4 rounded-full border border-ink-200 text-[13px] font-medium text-ink-900 hover:border-ink-900 transition"
+          >
+            Ara
+          </a>
+          <Link
+            href="/kayit"
+            className="btn-ink h-9 px-4 rounded-full text-[13px]"
+          >
+            Mesajlaş · Kayıt
+          </Link>
+        </>
+      );
+    }
     return (
       <Link
         href="/kayit"
