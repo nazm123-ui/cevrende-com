@@ -15,7 +15,6 @@ function getSecret(): Uint8Array {
 
 export type SessionPayload = {
   userId: string;
-  role: string;
 };
 
 export async function signSession(payload: SessionPayload): Promise<string> {
@@ -49,13 +48,10 @@ export async function getSessionPayload(): Promise<SessionPayload | null> {
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, getSecret());
-    if (
-      typeof payload.userId !== "string" ||
-      typeof payload.role !== "string"
-    ) {
+    if (typeof payload.userId !== "string") {
       return null;
     }
-    return { userId: payload.userId, role: payload.role };
+    return { userId: payload.userId };
   } catch {
     return null;
   }
@@ -68,7 +64,6 @@ export async function getCurrentUser() {
     where: { id: session.userId },
     select: {
       id: true,
-      role: true,
       fullName: true,
       email: true,
       phone: true,

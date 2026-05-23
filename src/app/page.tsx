@@ -3,10 +3,10 @@ import HowItWorks from "@/components/home/HowItWorks";
 import TrustMessage from "@/components/home/TrustMessage";
 
 export const metadata = {
-  title: "Cevrende.com — Pendik'te İş Bulma Platformu",
+  title: "Cevrende.com — Pendik'te İşçi Bulma Platformu",
   description:
-    "Pendik'te hızlı ve kolay iş bulun. Garson, muhasebeci, temizlik, kurye ve daha pek çok kategoride şimdi iş ilanları.",
-  keywords: "iş, işçi, garson, temizlik, kurye, Pendik, iş ilanları",
+    "Pendik'te meslek sahibi kişilerle tanış, kendi mesleğini profiline ekle. Garson, temizlikçi, kurye, boyacı ve daha fazlası.",
+  keywords: "işçi, garson, temizlikçi, kurye, boyacı, Pendik",
 };
 
 export default function HomePage() {

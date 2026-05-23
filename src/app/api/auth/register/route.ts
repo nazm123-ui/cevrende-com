@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const { role, fullName, email, phone, password, neighborhood } = parsed.data;
+  const { fullName, email, phone, password, neighborhood } = parsed.data;
 
   const existing = await prisma.user.findFirst({
     where: { OR: [{ email }, { phone }] },
@@ -57,7 +57,6 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.create({
     data: {
-      role,
       fullName,
       email,
       phone,

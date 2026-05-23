@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { maskName } from "@/lib/masking";
 import { formatPhone } from "@/lib/format";
+import { canSeePhone, getPhoneVisibility } from "@/lib/phone-visibility";
 import type { WorkerListItem } from "@/lib/workers";
 import type { ContactRequestStatus } from "@/lib/contact-requests";
 import ContactRequestButton from "@/components/workers/ContactRequestButton";
@@ -31,7 +32,7 @@ export default function WorkerCard({
       ? `${worker.neighborhood}, ${worker.district}`
       : worker.district;
 
-  const showPhoneInline = canContact && accepted;
+  const showPhoneInline = canContact && canSeePhone(settings, accepted);
   const professionNames = worker.professions
     .map((slug) => categoryNameBySlug.get(slug) ?? slug)
     .slice(0, 5);
@@ -54,7 +55,9 @@ export default function WorkerCard({
           </a>
         ) : (
           <span className="rounded-lg border border-ink-200 px-3 py-1.5 text-xs font-medium text-ink-500">
-            Onay sonrası iletişim
+            {getPhoneVisibility(settings) === "private"
+              ? "Mesajla iletişim"
+              : "Onay sonrası iletişim"}
           </span>
         )}
       </div>

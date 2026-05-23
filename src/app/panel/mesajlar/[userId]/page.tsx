@@ -6,9 +6,10 @@ import { getThread, markThreadAsRead } from "@/lib/messages";
 import { canMessageWorker, hasEstablishedContact } from "@/lib/contact-requests";
 import { maskName } from "@/lib/masking";
 import { formatPhone } from "@/lib/format";
+import { canSeePhone, type WorkerSettings as WS } from "@/lib/phone-visibility";
 import ChatThread, { type ChatMessage } from "@/components/messages/ChatThread";
 
-type WorkerSettings = { showName?: boolean };
+type WorkerSettings = WS & { showName?: boolean };
 
 export const metadata = { title: "Sohbet — Cevrende.com" };
 
@@ -28,14 +29,16 @@ export default async function ThreadPage({
       id: true,
       fullName: true,
       phone: true,
-      role: true,
+      professions: true,
       isActive: true,
       workerSettings: true,
     },
   });
   if (!other || !other.isActive) notFound();
 
-  if (other.role === "worker") {
+  const otherIsWorker = other.professions.length > 0;
+
+  if (otherIsWorker) {
     const allowed = await canMessageWorker(me.id, otherUserId);
     if (!allowed) {
       return (
@@ -73,7 +76,7 @@ export default async function ThreadPage({
   const contactAccepted = await hasEstablishedContact(me.id, otherUserId);
 
   const displayName =
-    other.role === "worker" && !settings.showName && !contactAccepted
+    otherIsWorker && !settings.showName && !contactAccepted
       ? maskName(other.fullName)
       : other.fullName;
 
@@ -102,15 +105,11 @@ export default async function ThreadPage({
       <header className="mb-4 flex flex-wrap items-start justify-between gap-3 rounded-2xl border border-ink-100 bg-white p-4 shadow-sm">
         <div className="min-w-0">
           <h1 className="text-lg font-semibold text-ink-900">{displayName}</h1>
-          <p className="text-xs text-ink-500">
-            {other.role === "worker"
-              ? "İş Arayan"
-              : other.role === "employer"
-                ? "İşveren"
-                : ""}
-          </p>
+          {otherIsWorker && (
+            <p className="text-xs text-ink-500">İşçi profili var</p>
+          )}
         </div>
-        {contactAccepted && (
+        {canSeePhone(settings, contactAccepted) && (
           <a
             href={`tel:${other.phone}`}
             className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"

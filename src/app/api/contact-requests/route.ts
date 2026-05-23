@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireVerifiedUser } from "@/lib/require-auth";
 import { contactRequestSchema } from "@/lib/validators";
-import { checkContent } from "@/lib/content-filter";
+import { checkContent, describeCategories } from "@/lib/content-filter";
 
 export async function POST(req: Request) {
   const user = await requireVerifiedUser();
@@ -35,7 +35,9 @@ export async function POST(req: Request) {
     const filter = checkContent(message);
     if (filter.blockedCategories.length > 0) {
       return NextResponse.json(
-        { error: "Not uygunsuz içerik barındırıyor." },
+        {
+          error: `Not uygunsuz içerik barındırıyor (${describeCategories(filter.blockedCategories)}).`,
+        },
         { status: 400 },
       );
     }
@@ -43,9 +45,9 @@ export async function POST(req: Request) {
 
   const worker = await prisma.user.findUnique({
     where: { id: toWorkerId },
-    select: { id: true, role: true, isActive: true },
+    select: { id: true, isActive: true, professions: true },
   });
-  if (!worker || !worker.isActive || worker.role !== "worker") {
+  if (!worker || !worker.isActive || worker.professions.length === 0) {
     return NextResponse.json({ error: "İşçi bulunamadı." }, { status: 404 });
   }
 

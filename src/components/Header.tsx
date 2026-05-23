@@ -2,20 +2,18 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { getUnreadCount } from "@/lib/messages";
 import { getPendingIncomingCount } from "@/lib/contact-requests";
+import { isAdminEmail } from "@/lib/constants/admin-emails";
 import LogoutButton from "@/components/auth/LogoutButton";
 
 export default async function Header() {
   const user = await getCurrentUser();
   const firstName = user?.fullName.split(" ")[0];
-  const roleLabel =
-    user?.role === "employer" ? "İşveren" : user?.role === "admin" ? "Admin" : "İş Arayan";
-  const showCounters = !!user && user.isEmailVerified && user.role !== "admin";
+  const isAdmin = isAdminEmail(user?.email);
+  const showCounters = !!user && user.isEmailVerified && !isAdmin;
   const [unreadCount, pendingRequestCount] = showCounters
     ? await Promise.all([
         getUnreadCount(user.id),
-        user.role === "worker"
-          ? getPendingIncomingCount(user.id)
-          : Promise.resolve(0),
+        getPendingIncomingCount(user.id),
       ])
     : [0, 0];
 
@@ -30,32 +28,19 @@ export default async function Header() {
         </Link>
 
         <nav className="hidden sm:flex items-center gap-6 text-sm font-medium text-ink-700">
-          <Link href="/ilanlar" className="hover:text-brand-700 transition">
-            İlanlar
-          </Link>
           <Link href="/iscilar" className="hover:text-brand-700 transition">
             İşçiler
           </Link>
 
           {user ? (
             <>
-              {user.role === "employer" && (
-                <Link
-                  href="/panel"
-                  className="hover:text-brand-700 transition"
-                >
-                  Panel
-                </Link>
-              )}
-              {user.role === "worker" && (
-                <Link
-                  href="/panel/profil"
-                  className="hover:text-brand-700 transition"
-                >
-                  Profilim
-                </Link>
-              )}
-              {user.role !== "admin" && (
+              <Link
+                href="/panel/profil"
+                className="hover:text-brand-700 transition"
+              >
+                Profilim
+              </Link>
+              {!isAdmin && (
                 <>
                   <Link
                     href="/panel/talepler"
@@ -81,7 +66,7 @@ export default async function Header() {
                   </Link>
                 </>
               )}
-              {user.role === "admin" && (
+              {isAdmin && (
                 <Link
                   href="/admin"
                   className="hover:text-brand-700 transition"
@@ -91,8 +76,7 @@ export default async function Header() {
               )}
               <span className="text-ink-500">
                 Merhaba,{" "}
-                <span className="font-semibold text-ink-900">{firstName}</span>{" "}
-                <span className="text-xs text-ink-500">({roleLabel})</span>
+                <span className="font-semibold text-ink-900">{firstName}</span>
               </span>
               <LogoutButton />
             </>
@@ -112,25 +96,15 @@ export default async function Header() {
         </nav>
 
         <div className="sm:hidden flex items-center gap-2 text-sm font-medium">
-          <Link href="/ilanlar" className="text-ink-700 hover:text-brand-700">
-            İlanlar
-          </Link>
           <Link href="/iscilar" className="text-ink-700 hover:text-brand-700">
             İşçiler
           </Link>
           {user ? (
             <>
-              {user.role === "employer" && (
-                <Link href="/panel" className="text-brand-700">
-                  Panel
-                </Link>
-              )}
-              {user.role === "worker" && (
-                <Link href="/panel/profil" className="text-brand-700">
-                  Profilim
-                </Link>
-              )}
-              {user.role !== "admin" && (
+              <Link href="/panel/profil" className="text-brand-700">
+                Profilim
+              </Link>
+              {!isAdmin && (
                 <>
                   <Link href="/panel/talepler" className="relative text-brand-700">
                     Talepler
@@ -150,7 +124,7 @@ export default async function Header() {
                   </Link>
                 </>
               )}
-              {user.role === "admin" && (
+              {isAdmin && (
                 <Link href="/admin" className="text-brand-700">
                   Admin
                 </Link>

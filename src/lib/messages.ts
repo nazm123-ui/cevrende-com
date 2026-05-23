@@ -4,7 +4,6 @@ import { maskName } from "@/lib/masking";
 export type ConversationSummary = {
   otherUserId: string;
   otherUserName: string;
-  otherUserRole: string;
   lastMessage: string;
   lastMessageAt: Date;
   lastMessageFromMe: boolean;
@@ -22,11 +21,11 @@ export type ThreadMessage = {
 type WorkerSettings = { showName?: boolean };
 
 function displayNameFor(
-  user: { fullName: string; role: string; workerSettings: unknown },
+  user: { fullName: string; professions: string[]; workerSettings: unknown },
   viewerIsCounterparty: boolean,
 ): string {
   if (viewerIsCounterparty) return user.fullName;
-  if (user.role !== "worker") return user.fullName;
+  if (user.professions.length === 0) return user.fullName;
   const settings = (user.workerSettings ?? {}) as WorkerSettings;
   return settings.showName ? user.fullName : maskName(user.fullName);
 }
@@ -80,7 +79,7 @@ export async function getConversations(
     select: {
       id: true,
       fullName: true,
-      role: true,
+      professions: true,
       workerSettings: true,
     },
   });
@@ -91,7 +90,6 @@ export async function getConversations(
       return {
         otherUserId: o.id,
         otherUserName: displayNameFor(o, true),
-        otherUserRole: o.role,
         lastMessage: conv.lastMessage,
         lastMessageAt: conv.lastMessageAt,
         lastMessageFromMe: conv.lastMessageFromMe,

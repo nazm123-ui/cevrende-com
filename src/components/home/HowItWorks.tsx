@@ -1,18 +1,18 @@
 const steps = [
   {
     n: "1",
-    title: "İşveren ilan oluşturur",
-    desc: "Birkaç dakikada ücretsiz ilan yayınla, mahalleni ve detayları belirle.",
+    title: "Profilini aç",
+    desc: "Hesap aç, e-postanı doğrula. İşçi olarak görünmek istersen mesleklerini de ekle.",
   },
   {
     n: "2",
-    title: "İş arayan uygun işi bulur",
-    desc: "Mahalleye, kategoriye ve iş tipine göre filtreleyip incele.",
+    title: "İşçi ara veya bulun",
+    desc: "Meslek ve mahalleye göre filtrele. Sen de profilinle mahalledekiler tarafından bulun.",
   },
   {
     n: "3",
-    title: "Taraflar doğrudan iletişime geçer",
-    desc: "Telefonla hızlıca iletişim kur, işi kolayca bitir.",
+    title: "Mesajlaş veya telefon et",
+    desc: "Platform üzerinden mesajlaş. Onay sonrası numaraya ulaş, hızlıca işi bitir.",
   },
 ];
 

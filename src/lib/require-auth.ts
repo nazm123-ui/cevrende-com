@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
+import { isAdminEmail } from "@/lib/constants/admin-emails";
 
 export async function requireUser() {
   const user = await getCurrentUser();
@@ -15,20 +16,8 @@ export async function requireVerifiedUser() {
   return user;
 }
 
-export async function requireEmployer() {
-  const user = await requireVerifiedUser();
-  if (user.role !== "employer") redirect("/");
-  return user;
-}
-
-export async function requireWorker() {
-  const user = await requireVerifiedUser();
-  if (user.role !== "worker") redirect("/");
-  return user;
-}
-
 export async function requireAdmin() {
   const user = await requireUser();
-  if (user.role !== "admin") redirect("/");
+  if (!isAdminEmail(user.email)) redirect("/");
   return user;
 }

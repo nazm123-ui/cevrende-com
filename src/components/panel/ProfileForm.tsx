@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PENDIK_NEIGHBORHOODS } from "@/lib/constants/pendik-neighborhoods";
+import type { PhoneVisibility } from "@/lib/phone-visibility";
 
 type Category = { slug: string; name: string };
 
@@ -12,7 +13,7 @@ export type ProfileFormInitial = {
   neighborhood: string;
   showName: boolean;
   showDistrict: boolean;
-  showPhone: boolean;
+  phoneVisibility: PhoneVisibility;
 };
 
 type Props = {
@@ -164,12 +165,30 @@ export default function ProfileForm({ categories, initial }: Props) {
           checked={state.showDistrict}
           onChange={(v) => set("showDistrict", v)}
         />
-        <Toggle
-          label="Telefon numaramı göster"
-          description="Kapalıysa platform üzerinden mesajla iletişime geçilir. Önerilen: Kapalı."
-          checked={state.showPhone}
-          onChange={(v) => set("showPhone", v)}
-        />
+        <div className="space-y-2 pt-1">
+          <p className="text-sm font-medium text-ink-900">Telefon görünürlüğü</p>
+          <PhoneRadio
+            value="after_approval"
+            current={state.phoneVisibility}
+            onChange={(v) => set("phoneVisibility", v)}
+            label="Sadece onayladığım kişiler görsün"
+            desc="Önerilen. Önce mesajlaşır, istersen iletişim talebini kabul edip numaranı paylaşırsın."
+          />
+          <PhoneRadio
+            value="public"
+            current={state.phoneVisibility}
+            onChange={(v) => set("phoneVisibility", v)}
+            label="Herkes telefonumu görsün"
+            desc="Acil işler için en hızlısı. Giriş yapmış kullanıcılar numaranı doğrudan görür."
+          />
+          <PhoneRadio
+            value="private"
+            current={state.phoneVisibility}
+            onChange={(v) => set("phoneVisibility", v)}
+            label="Telefonum hiç görünmesin"
+            desc="Sadece platform üzerinden mesajlaşma. Kabul edilen taleplerde bile numara açılmaz."
+          />
+        </div>
       </Section>
 
       {error && (
@@ -241,6 +260,46 @@ function Field({
       )}
       {errors && <p className="mt-1 text-xs text-red-600">{errors[0]}</p>}
     </div>
+  );
+}
+
+function PhoneRadio({
+  value,
+  current,
+  onChange,
+  label,
+  desc,
+}: {
+  value: PhoneVisibility;
+  current: PhoneVisibility;
+  onChange: (v: PhoneVisibility) => void;
+  label: string;
+  desc: string;
+}) {
+  const checked = value === current;
+  return (
+    <label
+      className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition ${
+        checked
+          ? "border-brand-500 bg-brand-50"
+          : "border-ink-200 bg-white hover:border-ink-300"
+      }`}
+    >
+      <input
+        type="radio"
+        name="phoneVisibility"
+        value={value}
+        checked={checked}
+        onChange={() => onChange(value)}
+        className="mt-1 h-4 w-4 border-ink-300 text-brand-600 focus:ring-brand-500"
+      />
+      <div>
+        <p className={`text-sm font-medium ${checked ? "text-brand-900" : "text-ink-900"}`}>
+          {label}
+        </p>
+        <p className="text-xs text-ink-600">{desc}</p>
+      </div>
+    </label>
   );
 }
 

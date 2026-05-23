@@ -7,10 +7,10 @@ export const metadata = { title: "Admin Paneli — Cevrende.com" };
 export default async function AdminPage() {
   await requireAdmin();
 
-  const [pendingCount, categoriesCount, totalJobsCount] = await Promise.all([
-    prisma.jobPost.count({ where: { status: "pending" } }),
+  const [categoriesCount, usersCount, workersCount] = await Promise.all([
     prisma.jobCategory.count(),
-    prisma.jobPost.count(),
+    prisma.user.count(),
+    prisma.user.count({ where: { professions: { isEmpty: false } } }),
   ]);
 
   return (
@@ -24,30 +24,23 @@ export default async function AdminPage() {
 
       <div className="grid gap-4 sm:grid-cols-3 mb-8">
         <Card
-          href="/admin/ilanlar"
-          title="İncelemede İlanlar"
-          count={pendingCount}
-          color="amber"
-        />
-        <Card
           href="/admin/kategoriler"
           title="Kategoriler"
           count={categoriesCount}
           color="blue"
         />
         <Card
-          href="/ilanlar"
-          title="Yayında İlanlar"
-          count={totalJobsCount - pendingCount}
+          href="/iscilar"
+          title="İşçi Profili Olanlar"
+          count={workersCount}
           color="green"
         />
-      </div>
-
-      <div className="rounded-2xl border border-ink-100 bg-white p-5 sm:p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-ink-900 mb-4">Son İşlemler</h2>
-        <p className="text-sm text-ink-500">
-          Burada son işlemler yer alacak.
-        </p>
+        <Card
+          href="#"
+          title="Toplam Kullanıcı"
+          count={usersCount}
+          color="amber"
+        />
       </div>
     </div>
   );

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { requireWorker } from "@/lib/require-auth";
+import { requireVerifiedUser } from "@/lib/require-auth";
 import { workerProfileSchema } from "@/lib/validators";
-import { checkContent } from "@/lib/content-filter";
+import { checkContent, describeCategories } from "@/lib/content-filter";
 
 export async function PATCH(req: Request) {
-  const user = await requireWorker();
+  const user = await requireVerifiedUser();
 
   let body: unknown;
   try {
@@ -22,8 +22,14 @@ export async function PATCH(req: Request) {
     );
   }
 
-  const { professions, bio, neighborhood, showName, showDistrict, showPhone } =
-    parsed.data;
+  const {
+    professions,
+    bio,
+    neighborhood,
+    showName,
+    showDistrict,
+    phoneVisibility,
+  } = parsed.data;
 
   const validSlugs = new Set(
     (
@@ -45,7 +51,9 @@ export async function PATCH(req: Request) {
     const filter = checkContent(bio);
     if (filter.blockedCategories.length > 0) {
       return NextResponse.json(
-        { error: "Tanıtım metni uygunsuz içerik barındırıyor." },
+        {
+          error: `Tanıtım metni uygunsuz içerik barındırıyor (${describeCategories(filter.blockedCategories)}).`,
+        },
         { status: 400 },
       );
     }
@@ -60,7 +68,7 @@ export async function PATCH(req: Request) {
       workerSettings: {
         showName,
         showDistrict,
-        showPhone,
+        phoneVisibility,
       },
     },
     select: {

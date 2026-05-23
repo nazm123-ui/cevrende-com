@@ -12,7 +12,6 @@ export const phoneSchema = z
   .transform((v) => (v.startsWith("05") ? v : `0${v}`));
 
 export const registerSchema = z.object({
-  role: z.enum(["employer", "worker"]),
   fullName: z
     .string()
     .trim()
@@ -77,7 +76,7 @@ export const workerProfileSchema = z.object({
     .or(z.literal("")),
   showName: z.boolean(),
   showDistrict: z.boolean(),
-  showPhone: z.boolean(),
+  phoneVisibility: z.enum(["public", "after_approval", "private"]),
 });
 
 export type WorkerProfileInput = z.infer<typeof workerProfileSchema>;

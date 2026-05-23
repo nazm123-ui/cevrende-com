@@ -1,17 +1,12 @@
-import { requireWorker } from "@/lib/require-auth";
+import { requireVerifiedUser } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
 import ProfileForm, { type ProfileFormInitial } from "@/components/panel/ProfileForm";
+import { getPhoneVisibility, type WorkerSettings } from "@/lib/phone-visibility";
 
 export const metadata = { title: "Profilim — Cevrende.com" };
 
-type WorkerSettings = {
-  showName?: boolean;
-  showDistrict?: boolean;
-  showPhone?: boolean;
-};
-
 export default async function ProfilPage() {
-  const session = await requireWorker();
+  const session = await requireVerifiedUser();
 
   const [user, categories] = await Promise.all([
     prisma.user.findUniqueOrThrow({
@@ -38,7 +33,7 @@ export default async function ProfilPage() {
     neighborhood: user.neighborhood ?? "",
     showName: settings.showName ?? false,
     showDistrict: settings.showDistrict ?? true,
-    showPhone: settings.showPhone ?? false,
+    phoneVisibility: getPhoneVisibility(settings),
   };
 
   return (

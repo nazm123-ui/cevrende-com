@@ -24,18 +24,15 @@ export default async function MesajlarPage() {
               Henüz mesajın yok.
             </p>
             <p className="mt-1 text-sm text-ink-500">
-              {user.role === "employer"
-                ? "İşçiler sayfasından profil görüntüleyip mesaj göndererek iletişime geçebilirsin."
-                : "İşverenler sana ulaştığında mesajları burada görürsün."}
+              İşçiler sayfasından bir profili açıp mesaj göndererek iletişime
+              geçebilirsin.
             </p>
-            {user.role === "employer" && (
-              <Link
-                href="/iscilar"
-                className="mt-5 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700 transition"
-              >
-                İşçileri İncele
-              </Link>
-            )}
+            <Link
+              href="/iscilar"
+              className="mt-5 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700 transition"
+            >
+              İşçileri İncele
+            </Link>
           </div>
         ) : (
           <ul className="divide-y divide-ink-100 rounded-2xl border border-ink-100 bg-white shadow-sm overflow-hidden">

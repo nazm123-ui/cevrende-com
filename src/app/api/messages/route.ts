@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireVerifiedUser } from "@/lib/require-auth";
 import { sendMessageSchema } from "@/lib/validators";
-import { checkContent } from "@/lib/content-filter";
+import { checkContent, describeCategories } from "@/lib/content-filter";
 import { getThread, markThreadAsRead } from "@/lib/messages";
 import { canMessageWorker } from "@/lib/contact-requests";
 
@@ -36,14 +36,16 @@ export async function POST(req: Request) {
   const filter = checkContent(content);
   if (filter.blockedCategories.length > 0) {
     return NextResponse.json(
-      { error: "Mesaj uygunsuz içerik barındırıyor." },
+      {
+        error: `Mesaj uygunsuz içerik barındırıyor (${describeCategories(filter.blockedCategories)}).`,
+      },
       { status: 400 },
     );
   }
 
   const recipient = await prisma.user.findUnique({
     where: { id: recipientId },
-    select: { id: true, isActive: true, role: true },
+    select: { id: true, isActive: true, professions: true },
   });
   if (!recipient || !recipient.isActive) {
     return NextResponse.json(
@@ -52,7 +54,7 @@ export async function POST(req: Request) {
     );
   }
 
-  if (recipient.role === "worker") {
+  if (recipient.professions.length > 0) {
     const allowed = await canMessageWorker(user.id, recipientId);
     if (!allowed) {
       return NextResponse.json(

@@ -43,7 +43,6 @@ export async function POST(req: Request) {
     where: where as { email: string } | { phone: string },
     select: {
       id: true,
-      role: true,
       email: true,
       passwordHash: true,
       isEmailVerified: true,
@@ -77,7 +76,7 @@ export async function POST(req: Request) {
     );
   }
 
-  await setSessionCookie({ userId: user.id, role: user.role });
+  await setSessionCookie({ userId: user.id });
 
   return NextResponse.json({ ok: true });
 }

@@ -11,10 +11,9 @@ export const metadata = { title: "İletişim Talepleri — Cevrende.com" };
 
 export default async function TaleplerPage() {
   const user = await requireVerifiedUser();
-  const isWorker = user.role === "worker";
 
   const [incoming, outgoing] = await Promise.all([
-    isWorker ? getIncomingRequests(user.id) : Promise.resolve([]),
+    getIncomingRequests(user.id),
     getOutgoingRequests(user.id),
   ]);
 
@@ -25,14 +24,11 @@ export default async function TaleplerPage() {
           İletişim Talepleri
         </h1>
         <p className="mt-1 text-sm text-ink-500">
-          {isWorker
-            ? "Sana gelen teklifler ve gönderdiğin talepler."
-            : "İşçilere gönderdiğin iletişim talepleri."}
+          Sana gelen teklifler ve gönderdiğin talepler.
         </p>
       </header>
 
-      {isWorker && (
-        <section className="mb-10">
+      <section className="mb-10">
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-500">
             Gelen Talepler
           </h2>
@@ -51,10 +47,7 @@ export default async function TaleplerPage() {
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-semibold text-ink-900">
-                        {r.fromUserName}{" "}
-                        <span className="text-xs font-normal text-ink-500">
-                          ({r.fromUserRole === "employer" ? "İşveren" : r.fromUserRole === "worker" ? "İşçi" : ""})
-                        </span>
+                        {r.fromUserName}
                       </p>
                       <p className="text-xs text-ink-500">
                         {r.fromUserNeighborhood
@@ -106,8 +99,7 @@ export default async function TaleplerPage() {
               ))}
             </ul>
           )}
-        </section>
-      )}
+      </section>
 
       <section>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-500">

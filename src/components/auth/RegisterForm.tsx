@@ -4,8 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import OtpForm from "./OtpForm";
 
-type Role = "employer" | "worker";
-
 export default function RegisterForm() {
   const [step, setStep] = useState<"form" | "otp">("form");
   const [userId, setUserId] = useState<string>("");
@@ -14,7 +12,6 @@ export default function RegisterForm() {
   const [needsPhone, setNeedsPhone] = useState(true);
   const [needsEmail, setNeedsEmail] = useState(true);
 
-  const [role, setRole] = useState<Role>("worker");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -38,7 +35,6 @@ export default function RegisterForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          role,
           fullName,
           email,
           phone,
@@ -93,26 +89,6 @@ export default function RegisterForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <div>
-        <p className="block text-sm font-medium text-ink-700 mb-2">
-          Hesap Tipi
-        </p>
-        <div className="grid grid-cols-2 gap-3">
-          <RoleCard
-            checked={role === "worker"}
-            onSelect={() => setRole("worker")}
-            title="İş Arayan"
-            desc="İlanlara göz at, işverenle iletişime geç."
-          />
-          <RoleCard
-            checked={role === "employer"}
-            onSelect={() => setRole("employer")}
-            title="İşveren"
-            desc="Ücretsiz ilan ver, çalışanını bul."
-          />
-        </div>
-      </div>
-
       <Field
         label="Ad Soyad"
         name="fullName"
@@ -223,39 +199,6 @@ function maskEmail(email: string): string {
   if (!domain) return email;
   if (local.length <= 2) return `${local[0]}***@${domain}`;
   return `${local[0]}${local[1]}***@${domain}`;
-}
-
-function RoleCard({
-  checked,
-  onSelect,
-  title,
-  desc,
-}: {
-  checked: boolean;
-  onSelect: () => void;
-  title: string;
-  desc: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onSelect}
-      className={`text-left rounded-xl border-2 p-4 transition ${
-        checked
-          ? "border-brand-500 bg-brand-50"
-          : "border-ink-200 bg-white hover:border-ink-300"
-      }`}
-    >
-      <p
-        className={`font-semibold ${
-          checked ? "text-brand-700" : "text-ink-900"
-        }`}
-      >
-        {title}
-      </p>
-      <p className="text-xs text-ink-500 mt-1">{desc}</p>
-    </button>
-  );
 }
 
 function Field({

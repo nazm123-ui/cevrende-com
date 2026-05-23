@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { maskName } from "@/lib/masking";
+import { canSeePhone, type WorkerSettings as PhoneSettings } from "@/lib/phone-visibility";
 
 export type ContactRequestStatus = "pending" | "accepted" | "declined";
 
@@ -7,7 +8,6 @@ export type IncomingRequest = {
   id: string;
   fromUserId: string;
   fromUserName: string;
-  fromUserRole: string;
   fromUserDistrict: string;
   fromUserNeighborhood: string | null;
   fromUserPhone: string | null;
@@ -28,7 +28,7 @@ export type OutgoingRequest = {
   respondedAt: Date | null;
 };
 
-type WorkerSettings = { showName?: boolean };
+type WorkerSettings = PhoneSettings & { showName?: boolean };
 
 export async function getRequestStatusMap(
   fromUserId: string,
@@ -107,7 +107,6 @@ export async function getIncomingRequests(
         select: {
           id: true,
           fullName: true,
-          role: true,
           district: true,
           neighborhood: true,
           phone: true,
@@ -120,7 +119,6 @@ export async function getIncomingRequests(
     id: r.id,
     fromUserId: r.fromUser.id,
     fromUserName: r.fromUser.fullName,
-    fromUserRole: r.fromUser.role,
     fromUserDistrict: r.fromUser.district,
     fromUserNeighborhood: r.fromUser.neighborhood,
     fromUserPhone: r.status === "accepted" ? r.fromUser.phone : null,
@@ -163,7 +161,7 @@ export async function getOutgoingRequests(
       toWorkerId: r.toWorker.id,
       toWorkerName:
         showName || accepted ? r.toWorker.fullName : maskName(r.toWorker.fullName),
-      toWorkerPhone: accepted ? r.toWorker.phone : null,
+      toWorkerPhone: canSeePhone(settings, accepted) ? r.toWorker.phone : null,
       message: r.message,
       status: r.status as ContactRequestStatus,
       createdAt: r.createdAt,

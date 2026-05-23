@@ -26,7 +26,6 @@ export async function POST(req: Request) {
     where: { id: userId },
     select: {
       id: true,
-      role: true,
       isActive: true,
       isPhoneVerified: true,
       isEmailVerified: true,
@@ -51,7 +50,7 @@ export async function POST(req: Request) {
   }
 
   if (user.isPhoneVerified) {
-    await setSessionCookie({ userId: user.id, role: user.role });
+    await setSessionCookie({ userId: user.id });
     return NextResponse.json({ ok: true, complete: true });
   }
 

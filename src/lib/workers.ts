@@ -1,11 +1,8 @@
 import { prisma } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
+import type { WorkerSettings } from "@/lib/phone-visibility";
 
-export type WorkerSettings = {
-  showName?: boolean;
-  showDistrict?: boolean;
-  showPhone?: boolean;
-};
+export type { WorkerSettings };
 
 export type WorkerListItem = {
   id: string;
@@ -27,7 +24,6 @@ export async function getActiveWorkers(filters: {
   const { profession, neighborhood, q } = filters;
 
   const where: Prisma.UserWhereInput = {
-    role: "worker",
     isActive: true,
     isEmailVerified: true,
     professions: profession ? { has: profession } : { isEmpty: false },
@@ -79,7 +75,6 @@ export async function getProfessionCounts(): Promise<
     }),
     prisma.user.findMany({
       where: {
-        role: "worker",
         isActive: true,
         isEmailVerified: true,
         professions: { isEmpty: false },
