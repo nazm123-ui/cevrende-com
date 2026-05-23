@@ -21,6 +21,12 @@ export async function requireEmployer() {
   return user;
 }
 
+export async function requireWorker() {
+  const user = await requireVerifiedUser();
+  if (user.role !== "worker") redirect("/");
+  return user;
+}
+
 export async function requireAdmin() {
   const user = await requireUser();
   if (user.role !== "admin") redirect("/");

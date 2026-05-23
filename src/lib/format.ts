@@ -31,6 +31,12 @@ export function formatSalary(
   return `${tl} TL / ${typeLabel.toLowerCase()}`;
 }
 
+export function formatPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length !== 11) return phone;
+  return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 9)} ${digits.slice(9)}`;
+}
+
 const dateFmt = new Intl.DateTimeFormat("tr-TR", {
   day: "numeric",
   month: "long",

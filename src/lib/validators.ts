@@ -57,3 +57,58 @@ export const loginSchema = z.object({
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export const workerProfileSchema = z.object({
+  professions: z
+    .array(z.string().min(1).max(60))
+    .min(1, "En az bir meslek seçin.")
+    .max(5, "En fazla 5 meslek seçebilirsin."),
+  bio: z
+    .string()
+    .trim()
+    .max(500, "Tanıtım en fazla 500 karakter olabilir.")
+    .optional()
+    .or(z.literal("")),
+  neighborhood: z
+    .string()
+    .trim()
+    .max(80, "Mahalle en fazla 80 karakter olabilir.")
+    .optional()
+    .or(z.literal("")),
+  showName: z.boolean(),
+  showDistrict: z.boolean(),
+  showPhone: z.boolean(),
+});
+
+export type WorkerProfileInput = z.infer<typeof workerProfileSchema>;
+
+export const contactRequestSchema = z.object({
+  toWorkerId: z.string().min(1, "Alıcı belirtilmedi."),
+  message: z
+    .string()
+    .trim()
+    .max(500, "Not en fazla 500 karakter olabilir.")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type ContactRequestInput = z.infer<typeof contactRequestSchema>;
+
+export const contactRequestRespondSchema = z.object({
+  decision: z.enum(["accepted", "declined"]),
+});
+
+export type ContactRequestRespondInput = z.infer<
+  typeof contactRequestRespondSchema
+>;
+
+export const sendMessageSchema = z.object({
+  recipientId: z.string().min(1, "Alıcı belirtilmedi."),
+  content: z
+    .string()
+    .trim()
+    .min(1, "Mesaj boş olamaz.")
+    .max(2000, "Mesaj en fazla 2000 karakter olabilir."),
+});
+
+export type SendMessageInput = z.infer<typeof sendMessageSchema>;

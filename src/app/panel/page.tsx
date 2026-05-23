@@ -1,12 +1,15 @@
 import Link from "next/link";
-import { requireEmployer } from "@/lib/require-auth";
+import { redirect } from "next/navigation";
+import { requireVerifiedUser } from "@/lib/require-auth";
 import { getOwnedJobs, jobLifecycle } from "@/lib/jobs";
 import JobRow from "@/components/panel/JobRow";
 
 export const metadata = { title: "İşveren Paneli — Cevrende.com" };
 
 export default async function PanelPage() {
-  const user = await requireEmployer();
+  const user = await requireVerifiedUser();
+  if (user.role === "worker") redirect("/panel/profil");
+  if (user.role !== "employer") redirect("/");
   const jobs = await getOwnedJobs(user.id);
 
   const pending = jobs.filter((j) => jobLifecycle(j) === "pending");
