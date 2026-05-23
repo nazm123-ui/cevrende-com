@@ -36,3 +36,26 @@ export async function sendOtpEmail(to: string, code: string) {
     `,
   });
 }
+
+export async function sendPasswordResetEmail(to: string, code: string) {
+  if (!transporter) {
+    console.log(`[DEV PASSWORD RESET] to=${to} code=${code}`);
+    return;
+  }
+  await transporter.sendMail({
+    from: `"Çevrende.com" <${process.env.GMAIL_USER}>`,
+    to,
+    subject: "Çevrende.com – Şifre Sıfırlama Kodu",
+    text: `Merhaba,\n\nŞifre sıfırlama kodunuz: ${code}\n\nKod 10 dakika geçerlidir. Bu işlemi siz başlatmadıysanız bu e-postayı görmezden gelin.\n\nÇevrende.com`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
+        <h2 style="color: #0f172a;">Şifre Sıfırlama</h2>
+        <p>Merhaba,</p>
+        <p>Şifrenizi sıfırlamak için aşağıdaki kodu kullanın:</p>
+        <p style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #2563eb; text-align: center; background: #f1f5f9; padding: 16px; border-radius: 8px;">${code}</p>
+        <p style="font-size: 14px; color: #64748b;">Kod 10 dakika geçerlidir. Bu işlemi siz başlatmadıysanız bu e-postayı görmezden gelin — hesabınız güvende.</p>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 32px;">Çevrende.com</p>
+      </div>
+    `,
+  });
+}

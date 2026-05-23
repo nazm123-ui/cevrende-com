@@ -6,7 +6,8 @@ const OTP_TTL_MINUTES = 10;
 export type OtpPurpose =
   | "phone_registration"
   | "email_registration"
-  | "login";
+  | "login"
+  | "password_reset";
 
 function generateCode(): string {
   let code = "";

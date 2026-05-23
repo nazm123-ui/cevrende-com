@@ -57,6 +57,22 @@ export const loginSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
+export const requestPasswordResetSchema = z.object({
+  email: z.string().trim().toLowerCase().email("Geçerli bir e-posta girin."),
+});
+
+export const resetPasswordSchema = z.object({
+  email: z.string().trim().toLowerCase().email("Geçerli bir e-posta girin."),
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "6 haneli kodu girin."),
+  password: z
+    .string()
+    .min(6, "Şifre en az 6 karakter olmalı.")
+    .max(120, "Şifre en fazla 120 karakter olabilir."),
+});
+
 export const workerProfileSchema = z.object({
   professions: z
     .array(z.string().min(1).max(60))

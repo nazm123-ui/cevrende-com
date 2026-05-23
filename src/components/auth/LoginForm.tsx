@@ -94,12 +94,20 @@ export default function LoginForm() {
       </div>
 
       <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-ink-700"
-        >
-          Şifre
-        </label>
+        <div className="flex items-baseline justify-between">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-ink-700"
+          >
+            Şifre
+          </label>
+          <Link
+            href="/sifre-sifirla"
+            className="text-xs text-brand-700 hover:underline"
+          >
+            Şifremi unuttum
+          </Link>
+        </div>
         <input
           id="password"
           name="password"
