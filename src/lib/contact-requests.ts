@@ -54,7 +54,41 @@ export async function canMessageWorker(
     where: { fromUserId_toWorkerId: { fromUserId, toWorkerId } },
     select: { status: true },
   });
-  return req?.status === "accepted";
+  if (req?.status === "accepted") return true;
+
+  const workerInitiated = await prisma.message.findFirst({
+    where: { senderId: toWorkerId, recipientId: fromUserId },
+    select: { id: true },
+  });
+  return !!workerInitiated;
+}
+
+export async function hasEstablishedContact(
+  userA: string,
+  userB: string,
+): Promise<boolean> {
+  const [acceptedReq, anyMessage] = await Promise.all([
+    prisma.contactRequest.findFirst({
+      where: {
+        status: "accepted",
+        OR: [
+          { fromUserId: userA, toWorkerId: userB },
+          { fromUserId: userB, toWorkerId: userA },
+        ],
+      },
+      select: { id: true },
+    }),
+    prisma.message.findFirst({
+      where: {
+        OR: [
+          { senderId: userA, recipientId: userB },
+          { senderId: userB, recipientId: userA },
+        ],
+      },
+      select: { id: true },
+    }),
+  ]);
+  return !!acceptedReq || !!anyMessage;
 }
 
 export async function getIncomingRequests(

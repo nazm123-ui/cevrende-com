@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { requireVerifiedUser } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
 import { getThread, markThreadAsRead } from "@/lib/messages";
-import { canMessageWorker } from "@/lib/contact-requests";
+import { canMessageWorker, hasEstablishedContact } from "@/lib/contact-requests";
 import { maskName } from "@/lib/masking";
 import { formatPhone } from "@/lib/format";
 import ChatThread, { type ChatMessage } from "@/components/messages/ChatThread";
@@ -70,17 +70,7 @@ export default async function ThreadPage({
 
   const settings = (other.workerSettings ?? {}) as WorkerSettings;
 
-  const acceptedRequest = await prisma.contactRequest.findFirst({
-    where: {
-      status: "accepted",
-      OR: [
-        { fromUserId: me.id, toWorkerId: otherUserId },
-        { fromUserId: otherUserId, toWorkerId: me.id },
-      ],
-    },
-    select: { id: true },
-  });
-  const contactAccepted = !!acceptedRequest;
+  const contactAccepted = await hasEstablishedContact(me.id, otherUserId);
 
   const displayName =
     other.role === "worker" && !settings.showName && !contactAccepted
