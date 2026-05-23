@@ -19,8 +19,18 @@ export default function QuickSearchCard({ popular, totalCount }: Props) {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (query.trim()) params.set("q", query.trim());
+    const q = query.trim();
+    if (q) params.set("q", q);
     if (mahalle) params.set("mahalle", mahalle);
+    // Fire-and-forget analytics log
+    if (q || mahalle) {
+      fetch("/api/search/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: q || null, neighborhood: mahalle || null }),
+        keepalive: true,
+      }).catch(() => {});
+    }
     const qs = params.toString();
     router.push(`/iscilar${qs ? `?${qs}` : ""}`);
   }
@@ -88,9 +98,15 @@ export default function QuickSearchCard({ popular, totalCount }: Props) {
               <button
                 key={p.slug}
                 type="button"
-                onClick={() =>
-                  router.push(`/iscilar?meslek=${encodeURIComponent(p.slug)}`)
-                }
+                onClick={() => {
+                  fetch("/api/search/log", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ professionSlug: p.slug }),
+                    keepalive: true,
+                  }).catch(() => {});
+                  router.push(`/iscilar?meslek=${encodeURIComponent(p.slug)}`);
+                }}
                 className="shrink-0 inline-flex items-center h-10 px-4 rounded-full border border-ink-200 bg-white text-[14px] text-ink-700 hover:border-ink-900 hover:text-ink-900 transition"
               >
                 {p.name}

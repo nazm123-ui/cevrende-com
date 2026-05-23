@@ -32,6 +32,8 @@ model User {
   receivedMessages   Message[]        @relation("MessageRecipient")
   sentRequests       ContactRequest[] @relation("RequestSender")
   receivedRequests   ContactRequest[] @relation("RequestRecipient")
+  searchEvents       SearchEvent[]
+  reportsFiled       MessageReport[]  @relation("ReportedBy")
 }
 
 model Message {
@@ -84,4 +86,32 @@ model JobCategory {
   order     Int       @default(0)
   isActive  Boolean   @default(true)
   createdAt DateTime  @default(now())
+}
+
+model SearchEvent {
+  id              String   @id @default(cuid())
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  query           String?
+  professionSlug  String?
+  neighborhood    String?
+  createdAt       DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([professionSlug])
+}
+
+model MessageReport {
+  id            String    @id @default(cuid())
+  messageId     String
+  reportedById  String
+  reportedBy    User      @relation("ReportedBy", fields: [reportedById], references: [id], onDelete: Cascade)
+  reason        String
+  status        String    @default("open")
+  createdAt     DateTime  @default(now())
+  resolvedAt    DateTime?
+  resolvedNote  String?
+
+  @@index([status, createdAt])
+  @@index([messageId])
 }

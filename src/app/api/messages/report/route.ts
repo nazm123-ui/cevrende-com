@@ -8,19 +8,23 @@ export async function POST(req: NextRequest) {
     if (!user?.isEmailVerified) {
       return NextResponse.json(
         { error: "Kimlik doğrulaması gereklidir." },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
-    const { messageId, reason } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const messageId =
+      typeof body.messageId === "string" ? body.messageId : null;
+    const reason =
+      typeof body.reason === "string" ? body.reason.slice(0, 500) : null;
+
     if (!messageId || !reason) {
       return NextResponse.json(
         { error: "messageId ve reason gereklidir." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Mesajı kontrol et (var mı, bana yönelik mi?)
     const message = await prisma.message.findUnique({
       where: { id: messageId },
     });
@@ -28,29 +32,24 @@ export async function POST(req: NextRequest) {
     if (!message) {
       return NextResponse.json(
         { error: "Mesaj bulunamadı." },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (message.recipientId !== user.id && message.senderId !== user.id) {
       return NextResponse.json(
         { error: "Bu mesajı rapor edemezsin." },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
-    // Report'u kaydet (opsiyonel: yeni MessageReport tablosu gerekebilir)
-    // Şu an admin logları için console/email gönderilebilir
-    console.log(`[REPORT] Message ID: ${messageId}, Reported by: ${user.id}, Reason: ${reason}`);
-
-    // İleride bir MessageReport tablosu eklenebilir:
-    // const report = await prisma.messageReport.create({
-    //   data: {
-    //     messageId,
-    //     reportedBy: user.id,
-    //     reason,
-    //   },
-    // });
+    await prisma.messageReport.create({
+      data: {
+        messageId,
+        reportedById: user.id,
+        reason,
+      },
+    });
 
     return NextResponse.json({
       success: true,
@@ -60,7 +59,7 @@ export async function POST(req: NextRequest) {
     console.error("Report message error:", error);
     return NextResponse.json(
       { error: "Rapor gönderilemedi." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

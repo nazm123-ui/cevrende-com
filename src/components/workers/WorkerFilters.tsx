@@ -28,6 +28,19 @@ export default function WorkerFilters({
     const next = new URLSearchParams(params.toString());
     if (value) next.set(key, value);
     else next.delete(key);
+    // Fire-and-forget analytics log for non-empty filter actions
+    if (value) {
+      const payload: Record<string, string> = {};
+      if (key === "q") payload.query = value;
+      if (key === "meslek") payload.professionSlug = value;
+      if (key === "mahalle") payload.neighborhood = value;
+      fetch("/api/search/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        keepalive: true,
+      }).catch(() => {});
+    }
     startTransition(() => {
       router.push(`/iscilar${next.toString() ? `?${next}` : ""}`);
     });
