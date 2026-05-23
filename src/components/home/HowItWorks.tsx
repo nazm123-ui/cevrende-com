@@ -2,11 +2,11 @@ const steps = [
   {
     n: "1",
     title: "Profilini aç",
-    desc: "Hesap aç, e-postanı doğrula. İşçi olarak görünmek istersen mesleklerini de ekle.",
+    desc: "Hesap aç, e-postanı doğrula. Çevrendekiler arasında görünmek istersen mesleklerini de ekle.",
   },
   {
     n: "2",
-    title: "İşçi ara veya bulun",
+    title: "Çevrendekiler arasından ara veya bulun",
     desc: "Meslek ve mahalleye göre filtrele. Sen de profilinle mahalledekiler tarafından bulun.",
   },
   {

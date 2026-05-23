@@ -48,7 +48,10 @@ export async function POST(req: Request) {
     select: { id: true, isActive: true, professions: true },
   });
   if (!worker || !worker.isActive || worker.professions.length === 0) {
-    return NextResponse.json({ error: "İşçi bulunamadı." }, { status: 404 });
+    return NextResponse.json(
+      { error: "Bu kişinin meslek profili yok." },
+      { status: 404 },
+    );
   }
 
   const existing = await prisma.contactRequest.findUnique({

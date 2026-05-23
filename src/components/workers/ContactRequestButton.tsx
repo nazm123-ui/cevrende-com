@@ -58,11 +58,11 @@ export default function ContactRequestButton({ workerId }: Props) {
         className="w-full max-w-md rounded-2xl bg-white p-5 shadow-lg"
       >
         <h3 className="text-lg font-semibold text-ink-900">
-          İşçiye İletişim Talebi
+          İletişim Talebi
         </h3>
         <p className="mt-1 text-sm text-ink-500">
-          Hangi iş için iletişime geçmek istediğini kısaca yaz. İşçi onaylarsa
-          mesajlaşma açılır.
+          Hangi iş için iletişime geçmek istediğini kısaca yaz. Karşı taraf
+          onaylarsa mesajlaşma açılır.
         </p>
 
         <label className="mt-4 block text-xs font-medium text-ink-700">

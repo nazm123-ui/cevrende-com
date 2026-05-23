@@ -48,15 +48,15 @@ export default async function ThreadPage({
               Mesajlaşma henüz açılmadı
             </h1>
             <p className="mt-2 text-sm text-amber-800">
-              Bu işçiyle mesajlaşmak için önce iletişim talebi gönder ve
-              işçinin onayını bekle.
+              Bu kişiyle mesajlaşmak için önce iletişim talebi gönder ve
+              onayını bekle.
             </p>
             <div className="mt-4 flex justify-center gap-3">
               <Link
                 href="/iscilar"
                 className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-700"
               >
-                İşçilere dön
+                Çevrendekilere dön
               </Link>
               <Link
                 href="/panel/talepler"
@@ -106,7 +106,7 @@ export default async function ThreadPage({
         <div className="min-w-0">
           <h1 className="text-lg font-semibold text-ink-900">{displayName}</h1>
           {otherIsWorker && (
-            <p className="text-xs text-ink-500">İşçi profili var</p>
+            <p className="text-xs text-ink-500">Meslek profili var</p>
           )}
         </div>
         {canSeePhone(settings, contactAccepted) && (

@@ -110,7 +110,7 @@ export default async function TaleplerPage() {
           <p className="rounded-2xl border border-dashed border-ink-200 bg-white p-8 text-center text-sm text-ink-500">
             Henüz talep göndermedin.{" "}
             <Link href="/iscilar" className="font-semibold text-brand-700 hover:underline">
-              İşçileri keşfet →
+              Çevrendekileri keşfet →
             </Link>
           </p>
         ) : (

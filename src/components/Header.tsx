@@ -29,7 +29,7 @@ export default async function Header() {
 
         <nav className="hidden sm:flex items-center gap-6 text-sm font-medium text-ink-700">
           <Link href="/iscilar" className="hover:text-brand-700 transition">
-            İşçiler
+            Çevrendekiler
           </Link>
 
           {user ? (
@@ -97,7 +97,7 @@ export default async function Header() {
 
         <div className="sm:hidden flex items-center gap-2 text-sm font-medium">
           <Link href="/iscilar" className="text-ink-700 hover:text-brand-700">
-            İşçiler
+            Çevrendekiler
           </Link>
           {user ? (
             <>

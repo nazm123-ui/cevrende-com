@@ -7,9 +7,9 @@ import WorkerCard from "@/components/workers/WorkerCard";
 import WorkerFilters from "@/components/workers/WorkerFilters";
 
 export const metadata = {
-  title: "İşçiler — Cevrende.com",
+  title: "Çevrendekiler — Cevrende.com",
   description:
-    "Pendik ve çevresinde mesleğine göre işçi ara. Garson, temizlik, kurye ve daha fazlası.",
+    "Pendik ve çevresinde mesleğine göre kişi ara. Garson, temizlik, kurye ve daha fazlası.",
 };
 
 type SearchParams = Promise<{
@@ -52,11 +52,11 @@ export default async function IscilarPage({
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-10">
       <header className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-ink-900 tracking-tight">
-          İşçiler
+          Çevrendekiler
         </h1>
         <p className="mt-1 text-sm text-ink-500">
-          Pendik ve mahallelerinde iş arayan kişiler. Mesleğe veya bölgeye göre
-          filtrele.
+          Pendik ve mahallelerinde meslek sahibi kişiler. Mesleğe veya bölgeye
+          göre filtrele.
         </p>
       </header>
 
@@ -71,7 +71,7 @@ export default async function IscilarPage({
           {!canContact && (
             <div className="mb-4 rounded-xl border border-brand-100 bg-brand-50 p-4 text-sm text-brand-900">
               <p>
-                İşçilerle iletişime geçmek için{" "}
+                Çevrendekilerle iletişime geçmek için{" "}
                 <Link href="/giris" className="underline font-semibold">
                   giriş yap
                 </Link>{" "}
@@ -87,7 +87,7 @@ export default async function IscilarPage({
           {workers.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-ink-200 bg-white p-10 text-center">
               <p className="text-base font-medium text-ink-900">
-                Aramayla eşleşen işçi bulunamadı.
+                Aramayla eşleşen kişi bulunamadı.
               </p>
               <p className="mt-1 text-sm text-ink-500">
                 Filtreleri temizleyip tekrar deneyin.

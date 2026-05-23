@@ -88,36 +88,39 @@ export default function RegisterForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
+    <form onSubmit={onSubmit} className="space-y-4">
       <Field
         label="Ad Soyad"
         name="fullName"
         value={fullName}
         onChange={setFullName}
         autoComplete="name"
+        placeholder="Örn: Ahmet Yılmaz"
         errors={fieldErrors.fullName}
       />
 
-      <Field
-        label="E-posta"
-        name="email"
-        type="email"
-        value={email}
-        onChange={setEmail}
-        autoComplete="email"
-        errors={fieldErrors.email}
-      />
-
-      <Field
-        label="Telefon"
-        name="phone"
-        type="tel"
-        value={phone}
-        onChange={setPhone}
-        placeholder="05XXXXXXXXX"
-        autoComplete="tel"
-        errors={fieldErrors.phone}
-      />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field
+          label="E-posta"
+          name="email"
+          type="email"
+          value={email}
+          onChange={setEmail}
+          autoComplete="email"
+          placeholder="ornek@mail.com"
+          errors={fieldErrors.email}
+        />
+        <Field
+          label="Telefon"
+          name="phone"
+          type="tel"
+          value={phone}
+          onChange={setPhone}
+          placeholder="05XXXXXXXXX"
+          autoComplete="tel"
+          errors={fieldErrors.phone}
+        />
+      </div>
 
       <Field
         label="Şifre"
@@ -131,15 +134,16 @@ export default function RegisterForm() {
       />
 
       <Field
-        label="Mahalle (opsiyonel)"
+        label="Mahalle"
         name="neighborhood"
         value={neighborhood}
         onChange={setNeighborhood}
         placeholder="Örn: Kaynarca, Yenişehir..."
         errors={fieldErrors.neighborhood}
+        hint="İsteğe bağlı. Yakındaki kişilerle eşleşmen daha kolay olur."
       />
 
-      <label className="flex items-start gap-2 text-sm text-ink-700">
+      <label className="flex items-start gap-2.5 rounded-xl border border-ink-100 bg-ink-50/60 px-3 py-3 text-sm text-ink-700 cursor-pointer">
         <input
           type="checkbox"
           checked={acceptTerms}
@@ -173,12 +177,12 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={loading || !acceptTerms}
-        className="w-full rounded-lg bg-brand-600 px-4 py-2.5 font-semibold text-white hover:bg-brand-700 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
+        className="w-full rounded-xl bg-brand-600 px-4 py-3 font-semibold text-white shadow-sm hover:bg-brand-700 transition disabled:bg-ink-200 disabled:cursor-not-allowed"
       >
-        {loading ? "Kayıt oluşturuluyor..." : "Kayıt Ol"}
+        {loading ? "Kayıt oluşturuluyor..." : "Hesabımı Oluştur"}
       </button>
 
-      <p className="text-center text-sm text-ink-500">
+      <p className="text-center text-sm text-ink-500 pt-1">
         Hesabın var mı?{" "}
         <Link href="/giris" className="text-brand-700 font-medium hover:underline">
           Giriş yap
@@ -226,7 +230,7 @@ function Field({
     <div>
       <label
         htmlFor={name}
-        className="block text-sm font-medium text-ink-700"
+        className="block text-sm font-medium text-ink-800 mb-1.5"
       >
         {label}
       </label>
@@ -238,7 +242,11 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="mt-1 block w-full rounded-lg border border-ink-200 px-3 py-2 text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+        className={`block w-full rounded-xl border bg-white px-3.5 py-2.5 text-ink-900 outline-none transition placeholder:text-ink-300 focus:ring-2 focus:ring-brand-100 ${
+          errors
+            ? "border-red-300 focus:border-red-500"
+            : "border-ink-200 focus:border-brand-500"
+        }`}
       />
       {hint && !errors && (
         <p className="mt-1 text-xs text-ink-500">{hint}</p>

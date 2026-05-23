@@ -24,14 +24,14 @@ export default async function MesajlarPage() {
               Henüz mesajın yok.
             </p>
             <p className="mt-1 text-sm text-ink-500">
-              İşçiler sayfasından bir profili açıp mesaj göndererek iletişime
-              geçebilirsin.
+              Çevrendekiler sayfasından bir profili açıp mesaj göndererek
+              iletişime geçebilirsin.
             </p>
             <Link
               href="/iscilar"
               className="mt-5 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700 transition"
             >
-              İşçileri İncele
+              Çevrendekileri İncele
             </Link>
           </div>
         ) : (
