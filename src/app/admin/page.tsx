@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
+import { formatRelative } from "@/lib/format";
 
 export const metadata = { title: "Admin Paneli — Cevrende.com" };
 
@@ -22,6 +23,7 @@ export default async function AdminPage() {
     topProfessions,
     topNeighborhoods,
     recentSignups,
+    recentUsers,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { professions: { isEmpty: false } } }),
@@ -51,6 +53,17 @@ export default async function AdminPage() {
       take: 8,
     }),
     prisma.user.count({ where: { createdAt: { gte: last7d } } }),
+    prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 6,
+      select: {
+        id: true,
+        fullName: true,
+        neighborhood: true,
+        professions: true,
+        createdAt: true,
+      },
+    }),
   ]);
 
   const topWorkerIds = topMessageSenders.map((w) => w.recipientId);
@@ -79,12 +92,12 @@ export default async function AdminPage() {
   const profNameBySlug = new Map(categoriesByName.map((c) => [c.slug, c.name]));
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-10">
+    <div className="mx-auto max-w-[1200px] px-5 sm:px-6 py-8 sm:py-10">
       <div className="mb-8">
         <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
           Yönetim
         </p>
-        <h1 className="mt-2 text-2xl sm:text-3xl font-bold text-ink-900 tracking-tight">
+        <h1 className="!mt-2 !text-[26px] sm:!text-[32px] !font-semibold !tracking-[-0.02em] !leading-tight text-ink-900">
           Admin Paneli
         </h1>
         <p className="mt-1 text-sm text-ink-500">
@@ -101,11 +114,11 @@ export default async function AdminPage() {
       </div>
 
       <section className="mb-10">
-        <h2 className="text-[13px] font-mono uppercase tracking-[0.08em] text-ink-500 mb-3">
+        <h2 className="!text-[13px] !font-mono uppercase tracking-[0.08em] !text-ink-500 !font-medium mb-3">
           Genel
         </h2>
         <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
-          <Stat label="Kullanıcı" value={usersCount} sub={`+${recentSignups} (7g)`} />
+          <Stat label="Kullanıcı" value={usersCount} trend={recentSignups} trendLabel="7g" />
           <Stat label="İşçi profili" value={workersCount} />
           <Stat label="Kategori" value={categoriesCount} />
           <Stat
@@ -117,11 +130,11 @@ export default async function AdminPage() {
       </section>
 
       <section className="mb-10">
-        <h2 className="text-[13px] font-mono uppercase tracking-[0.08em] text-ink-500 mb-3">
+        <h2 className="!text-[13px] !font-mono uppercase tracking-[0.08em] !text-ink-500 !font-medium mb-3">
           Etkileşim
         </h2>
         <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
-          <Stat label="Toplam arama" value={searchCount} sub={`${searchCount7d} (7g)`} />
+          <Stat label="Toplam arama" value={searchCount} trend={searchCount7d} trendLabel="7g" />
           <Stat label="Toplam mesaj" value={messagesCount} />
         </div>
       </section>
@@ -142,7 +155,7 @@ export default async function AdminPage() {
                   key={row.recipientId}
                   className="py-3 flex items-center gap-3"
                 >
-                  <span className="font-mono text-[12px] text-ink-400 w-5">
+                  <span className="font-mono text-[12px] text-ink-400 w-6 text-right shrink-0">
                     {i + 1}
                   </span>
                   <div className="flex-1 min-w-0">
@@ -154,7 +167,7 @@ export default async function AdminPage() {
                       {user.professions.slice(0, 2).join(", ") || "Profilsiz"}
                     </p>
                   </div>
-                  <span className="font-mono text-[13px] text-ink-900">
+                  <span className="font-mono text-[13px] text-ink-900 shrink-0">
                     {row._count.recipientId}
                   </span>
                 </li>
@@ -175,7 +188,7 @@ export default async function AdminPage() {
                 key={row.professionSlug ?? `unknown-${i}`}
                 className="py-3 flex items-center gap-3"
               >
-                <span className="font-mono text-[12px] text-ink-400 w-5">
+                <span className="font-mono text-[12px] text-ink-400 w-6 text-right shrink-0">
                   {i + 1}
                 </span>
                 <p className="flex-1 text-[14px] text-ink-900 truncate">
@@ -183,7 +196,7 @@ export default async function AdminPage() {
                     ? profNameBySlug.get(row.professionSlug) ?? row.professionSlug
                     : "—"}
                 </p>
-                <span className="font-mono text-[13px] text-ink-900">
+                <span className="font-mono text-[13px] text-ink-900 shrink-0">
                   {row._count.professionSlug}
                 </span>
               </li>
@@ -203,13 +216,13 @@ export default async function AdminPage() {
                 key={row.neighborhood ?? `unk-${i}`}
                 className="py-3 flex items-center gap-3"
               >
-                <span className="font-mono text-[12px] text-ink-400 w-5">
+                <span className="font-mono text-[12px] text-ink-400 w-6 text-right shrink-0">
                   {i + 1}
                 </span>
                 <p className="flex-1 text-[14px] text-ink-900 truncate">
                   {row.neighborhood ?? "—"}
                 </p>
-                <span className="font-mono text-[13px] text-ink-900">
+                <span className="font-mono text-[13px] text-ink-900 shrink-0">
                   {row._count.neighborhood}
                 </span>
               </li>
@@ -217,35 +230,35 @@ export default async function AdminPage() {
           </ul>
         </Panel>
 
-        <Panel title="Hızlı eylemler" subtitle="Yönetim sayfaları">
-          <div className="grid gap-2">
-            <Link
-              href="/admin/kullanicilar"
-              className="flex items-center justify-between rounded-[10px] border border-ink-100 px-4 py-3 text-[14px] text-ink-900 hover:border-ink-900 transition"
-            >
-              Kullanıcı yönetimi
-              <span className="text-ink-400">→</span>
-            </Link>
-            <Link
-              href="/admin/raporlar"
-              className="flex items-center justify-between rounded-[10px] border border-ink-100 px-4 py-3 text-[14px] text-ink-900 hover:border-ink-900 transition"
-            >
-              Mesaj raporları{" "}
-              {openReportsCount > 0 && (
-                <span className="ml-2 inline-flex items-center justify-center h-[20px] min-w-[20px] px-1.5 rounded-full bg-accent-600 text-[11px] font-semibold" style={{ color: "#ffffff" }}>
-                  {openReportsCount}
+        <Panel
+          title="Son kayıt olanlar"
+          subtitle="Son 6 kullanıcı"
+          empty={recentUsers.length === 0}
+          emptyText="Henüz kullanıcı yok."
+        >
+          <ul className="divide-y divide-ink-100">
+            {recentUsers.map((u) => (
+              <li key={u.id} className="py-3 flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <Link
+                    href={`/cevrendekiler/${u.id}`}
+                    className="text-[14px] font-medium text-ink-900 truncate hover:text-accent-600 transition block"
+                  >
+                    {u.fullName}
+                  </Link>
+                  <p className="text-[12.5px] text-ink-500 truncate">
+                    {u.neighborhood ?? "—"} ·{" "}
+                    {u.professions.length > 0
+                      ? u.professions.slice(0, 2).join(", ")
+                      : "Profilsiz"}
+                  </p>
+                </div>
+                <span className="font-mono text-[12px] text-ink-400 shrink-0">
+                  {formatRelative(u.createdAt)}
                 </span>
-              )}
-              <span className="text-ink-400 ml-auto">→</span>
-            </Link>
-            <Link
-              href="/admin/kategoriler"
-              className="flex items-center justify-between rounded-[10px] border border-ink-100 px-4 py-3 text-[14px] text-ink-900 hover:border-ink-900 transition"
-            >
-              Kategoriler
-              <span className="text-ink-400">→</span>
-            </Link>
-          </div>
+              </li>
+            ))}
+          </ul>
         </Panel>
       </div>
     </div>
@@ -282,21 +295,21 @@ function NavPill({
 function Stat({
   label,
   value,
-  sub,
+  trend,
+  trendLabel,
   highlight,
-  className,
 }: {
   label: string;
   value: number;
-  sub?: string;
+  trend?: number;
+  trendLabel?: string;
   highlight?: boolean;
-  className?: string;
 }) {
   return (
     <div
       className={`rounded-[14px] border p-4 bg-white ${
         highlight ? "border-accent-600" : "border-ink-100"
-      } ${className ?? ""}`}
+      }`}
     >
       <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-ink-500">
         {label}
@@ -304,10 +317,35 @@ function Stat({
       <p className="mt-1.5 text-[26px] font-semibold tracking-[-0.02em] text-ink-900">
         {value}
       </p>
-      {sub && (
-        <p className="mt-1 text-[12px] font-mono text-ink-500">{sub}</p>
+      {trend !== undefined && trend > 0 && (
+        <p className="mt-1 inline-flex items-center gap-1 text-[12px] font-mono text-accent-600">
+          <ArrowUp /> +{trend} {trendLabel}
+        </p>
+      )}
+      {trend !== undefined && trend === 0 && trendLabel && (
+        <p className="mt-1 text-[12px] font-mono text-ink-400">
+          ±0 {trendLabel}
+        </p>
       )}
     </div>
+  );
+}
+
+function ArrowUp() {
+  return (
+    <svg
+      width="10"
+      height="10"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
   );
 }
 
@@ -327,7 +365,7 @@ function Panel({
   return (
     <div className="rounded-[14px] border border-ink-100 bg-white p-5">
       <div className="mb-3">
-        <h3 className="text-[15px] font-semibold text-ink-900">{title}</h3>
+        <h3 className="!text-[15px] !font-semibold text-ink-900">{title}</h3>
         {subtitle && (
           <p className="text-[12.5px] text-ink-500 mt-0.5">{subtitle}</p>
         )}
