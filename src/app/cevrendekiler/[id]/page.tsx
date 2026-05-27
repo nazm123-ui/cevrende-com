@@ -91,29 +91,20 @@ export default async function WorkerProfilePage({
   return (
     <div className="page">
       {/* Breadcrumb */}
-      <section style={{ padding: "32px 0 0" }}>
-        <div className="container">
+      <section className="pt-8">
+        <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
           <Link
             href="/cevrendekiler"
-            style={{
-              background: "none",
-              border: 0,
-              padding: 0,
-              font: "inherit",
-              cursor: "pointer",
-              color: "var(--color-ink-500)",
-              fontSize: 13.5,
-              textDecoration: "none",
-            }}
+            className="text-[13.5px] text-ink-500 hover:text-ink-900 transition inline-flex items-center gap-1"
           >
-            ← Çevrendekiler
+            <span aria-hidden>←</span> Çevrendekiler
           </Link>
         </div>
       </section>
 
-      <section style={{ padding: "24px 0 96px" }}>
+      <section className="pt-6 pb-24">
         <div
-          className="container worker-grid"
+          className="mx-auto max-w-[1200px] px-5 sm:px-6 worker-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 340px",
@@ -123,118 +114,43 @@ export default async function WorkerProfilePage({
         >
           {/* Sol — profil */}
           <div>
-            <div
-              style={{
-                display: "flex",
-                gap: 20,
-                alignItems: "flex-start",
-                flexWrap: "wrap",
-              }}
-            >
-              <div
-                style={{
-                  width: 84,
-                  height: 84,
-                  borderRadius: "50%",
-                  background: "#F4F2EB",
-                  color: "var(--color-ink-900)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 30,
-                  fontWeight: 500,
-                  letterSpacing: "-0.01em",
-                  flex: "0 0 84px",
-                  border: "1px solid var(--color-ink-200)",
-                }}
-              >
+            <div className="flex gap-5 items-start flex-wrap">
+              {/* Avatar */}
+              <div className="flex h-[84px] w-[84px] items-center justify-center rounded-full bg-brand-50 border border-ink-200 text-ink-900 text-[30px] font-medium tracking-[-0.01em] shrink-0">
                 {initials}
               </div>
 
-              <div style={{ flex: "1 1 280px", minWidth: 0 }}>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                    marginBottom: 8,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <span
-                    className="font-mono"
-                    style={{ fontSize: 13.5, color: "var(--color-ink-500)" }}
-                  >
+              {/* Ad + meta + headline */}
+              <div className="flex-1 min-w-[280px] flex flex-col gap-2">
+                <div className="flex items-center gap-2 flex-wrap text-[13.5px] text-ink-500">
+                  <span className="font-mono">
                     {formatRelative(worker.createdAt)}
                   </span>
-                  <span style={{ color: "var(--color-ink-400)" }}>·</span>
-                  <span
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 4,
-                      fontSize: 13.5,
-                      color: "var(--color-ink-500)",
-                    }}
-                  >
+                  <span className="text-ink-400">·</span>
+                  <span className="inline-flex items-center gap-1">
                     <Icon name="pin" size={13} /> {location}
                   </span>
                 </div>
-                <h1
-                  style={{
-                    fontSize: 36,
-                    letterSpacing: "-0.025em",
-                    lineHeight: 1.1,
-                    margin: 0,
-                  }}
-                >
+                <h1 className="text-[32px] sm:text-[36px] font-semibold tracking-[-0.025em] leading-[1.1] m-0">
                   {worker.fullName}
                 </h1>
-                <div
-                  style={{
-                    marginTop: 8,
-                    fontSize: 17,
-                    color: "var(--color-ink-700)",
-                  }}
-                >
+                <p className="text-[17px] text-ink-700 leading-snug m-0">
                   {headline}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 8,
-                    marginTop: 18,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {professionNames.slice(0, 1).map((name) => (
-                    <span key={name} className="chip chip-muted">
-                      {name}
-                    </span>
-                  ))}
-                </div>
+                </p>
               </div>
             </div>
 
-            <div className="divider" style={{ margin: "40px 0" }} />
+            <div className="divider mt-10 mb-10" />
 
             {/* Hakkında */}
-            <h3 style={{ marginBottom: 14 }}>Hakkında</h3>
-            <p
-              style={{
-                fontSize: 16,
-                lineHeight: 1.65,
-                color: "var(--color-ink-700)",
-                maxWidth: 640,
-                whiteSpace: "pre-wrap",
-              }}
-            >
+            <h3 className="mb-4">Hakkında</h3>
+            <p className="text-[16px] text-ink-700 leading-[1.65] max-w-[640px] whitespace-pre-wrap">
               {bioRest || worker.bio || "Profil sahibi henüz tanıtım yazısı eklememiş."}
             </p>
 
             {/* Yetkinlikler */}
-            <h3 style={{ marginTop: 40, marginBottom: 14 }}>Yetkinlikler</h3>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <h3 className="mt-10 mb-4">Yetkinlikler</h3>
+            <div className="flex gap-2 flex-wrap">
               {skills.map((s) => (
                 <span
                   key={s}
@@ -247,42 +163,20 @@ export default async function WorkerProfilePage({
             </div>
 
             {/* İş geçmişi */}
-            <h3 style={{ marginTop: 40, marginBottom: 18 }}>İş geçmişi</h3>
+            <h3 className="mt-10 mb-5">İş geçmişi</h3>
             {experiences.length === 0 ? (
-              <div
-                style={{
-                  padding: "20px 24px",
-                  border: "1px dashed var(--color-ink-200)",
-                  borderRadius: 14,
-                  color: "var(--color-ink-500)",
-                  fontSize: 14,
-                  lineHeight: 1.55,
-                }}
-              >
+              <div className="px-6 py-5 border border-dashed border-ink-200 rounded-[14px] text-ink-500 text-[14px] leading-[1.55]">
                 {isSelf
                   ? "Henüz iş deneyimi eklemedin. Profilini düzenleyerek geçmiş işlerini ekleyebilirsin."
                   : "Bu kullanıcı henüz iş deneyimi eklememiş."}
               </div>
             ) : (
-              <div
-                style={{
-                  borderLeft: "1px solid var(--color-ink-200)",
-                  paddingLeft: 24,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 24,
-                }}
-              >
+              <div className="border-l border-ink-200 pl-6 flex flex-col gap-6">
                 {experiences.map((h, i) => (
-                  <div key={i} style={{ position: "relative" }}>
+                  <div key={i} className="relative">
                     <span
+                      className="absolute -left-[29px] top-2 w-2.5 h-2.5 rounded-full"
                       style={{
-                        position: "absolute",
-                        left: -29,
-                        top: 8,
-                        width: 9,
-                        height: 9,
-                        borderRadius: "50%",
                         background:
                           i === 0
                             ? "var(--color-accent-600)"
@@ -293,51 +187,19 @@ export default async function WorkerProfilePage({
                             : "none",
                       }}
                     />
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        flexWrap: "wrap",
-                        gap: 8,
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: 16,
-                          fontWeight: 500,
-                          letterSpacing: "-0.01em",
-                        }}
-                      >
+                    <div className="flex justify-between flex-wrap gap-2">
+                      <div className="text-[16px] font-medium tracking-[-0.01em]">
                         {h.role}
                       </div>
-                      <div
-                        className="font-mono"
-                        style={{
-                          fontSize: 13.5,
-                          color: "var(--color-ink-500)",
-                        }}
-                      >
+                      <div className="font-mono text-[13.5px] text-ink-500">
                         {formatYearRange(h)}
                       </div>
                     </div>
-                    <div
-                      style={{
-                        fontSize: 13.5,
-                        color: "var(--color-ink-700)",
-                        marginTop: 4,
-                      }}
-                    >
+                    <div className="text-[13.5px] text-ink-700 mt-1">
                       {h.workplace}
                     </div>
                     {h.description && (
-                      <div
-                        style={{
-                          fontSize: 13.5,
-                          color: "var(--color-ink-500)",
-                          marginTop: 2,
-                          lineHeight: 1.55,
-                        }}
-                      >
+                      <div className="text-[13.5px] text-ink-500 mt-0.5 leading-[1.55]">
                         {h.description}
                       </div>
                     )}
@@ -361,30 +223,17 @@ export default async function WorkerProfilePage({
               initialSaved={initialSaved}
             />
 
-            <div
-              style={{
-                padding: "18px 24px",
-                color: "var(--color-ink-500)",
-                fontSize: 12.5,
-                lineHeight: 1.55,
-              }}
-            >
-              Sorunlu profil mi?{" "}
-              <button
-                style={{
-                  background: "none",
-                  border: 0,
-                  padding: 0,
-                  font: "inherit",
-                  cursor: "pointer",
-                  color: "var(--color-ink-700)",
-                  textDecoration: "underline",
-                  textUnderlineOffset: 3,
-                }}
-              >
-                Bildir
-              </button>
-            </div>
+            {!isSelf && (
+              <div className="px-6 pt-5 pb-1 text-ink-500 text-[12.5px] leading-[1.55]">
+                Sorunlu profil mi?{" "}
+                <Link
+                  href={`/geri-bildirim?profile=${worker.id}`}
+                  className="text-ink-700 underline underline-offset-[3px] hover:text-ink-900 transition"
+                >
+                  Bildir
+                </Link>
+              </div>
+            )}
           </aside>
         </div>
       </section>
