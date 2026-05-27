@@ -35,9 +35,24 @@ export async function getActiveWorkers(filters: {
 
   if (q && q.trim()) {
     const query = q.trim();
+    const matchingCategories = await prisma.jobCategory.findMany({
+      where: {
+        isActive: true,
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { slug: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      select: { slug: true },
+    });
+    const matchingSlugs = matchingCategories.map((c) => c.slug);
+
     where.OR = [
       { fullName: { contains: query, mode: "insensitive" } },
       { bio: { contains: query, mode: "insensitive" } },
+      ...(matchingSlugs.length > 0
+        ? [{ professions: { hasSome: matchingSlugs } }]
+        : []),
     ];
   }
 

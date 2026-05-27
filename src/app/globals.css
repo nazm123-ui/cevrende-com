@@ -108,6 +108,19 @@ h1, h2, h3 {
   }
 }
 
+/* Register form: email + phone side-by-side on desktop, stacked on mobile
+   so placeholder ve hint metni kesilmesin. */
+.register-email-phone-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 520px) {
+  .register-email-phone-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 a {
   color: inherit;
   text-decoration: none;

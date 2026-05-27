@@ -48,8 +48,12 @@ export default function RegisterForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Kayıt başarısız.");
-        if (data.issues) setFieldErrors(data.issues);
+        if (data.issues) {
+          setFieldErrors(data.issues);
+          setError(null);
+        } else {
+          setError(data.error || "Kayıt başarısız.");
+        }
         return;
       }
       setUserId(data.userId);
@@ -119,7 +123,7 @@ export default function RegisterForm() {
         errors={fieldErrors.fullName}
       />
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+      <div className="register-email-phone-grid">
         <Field
           label="E-posta"
           name="email"

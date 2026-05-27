@@ -131,7 +131,7 @@ export default function MobileMenu({
         <div className="mx-6 border-t border-ink-100" />
 
         <nav className="flex-1 overflow-y-auto px-6 py-5">
-          {isLoggedIn && (
+          {isLoggedIn ? (
             <>
               {!isAdmin && (
                 <>
@@ -142,6 +142,20 @@ export default function MobileMenu({
                 </>
               )}
               {isAdmin && <MenuLink href="/admin">Admin</MenuLink>}
+              <MenuLink href="/cevrendekiler">Çevrendekiler</MenuLink>
+              <div className="mt-4 pt-4 border-t border-ink-100 flex flex-col gap-1">
+                <MenuSecondaryLink href="/yardim">Yardım merkezi</MenuSecondaryLink>
+                <MenuSecondaryLink href="/geri-bildirim">Geri bildirim</MenuSecondaryLink>
+              </div>
+            </>
+          ) : (
+            <>
+              <MenuLink href="/cevrendekiler">Çevrendekiler</MenuLink>
+              <div className="mt-4 pt-4 border-t border-ink-100 flex flex-col gap-1">
+                <MenuSecondaryLink href="/yardim">Yardım merkezi</MenuSecondaryLink>
+                <MenuSecondaryLink href="/geri-bildirim">Geri bildirim</MenuSecondaryLink>
+                <MenuSecondaryLink href="/sifre-sifirla">Şifremi unuttum</MenuSecondaryLink>
+              </div>
             </>
           )}
         </nav>
@@ -160,7 +174,9 @@ export default function MobileMenu({
         onClick={() => setOpen(true)}
         aria-label="Menüyü aç"
         aria-expanded={open}
-        className="relative inline-flex items-center justify-center h-11 w-11 -mr-2 rounded-full text-ink-900 hover:bg-ink-100 transition"
+        className={`relative inline-flex items-center justify-center h-11 w-11 -mr-2 rounded-full text-ink-900 hover:bg-ink-100 transition ${
+          open ? "opacity-0 pointer-events-none" : ""
+        }`}
       >
         <svg
           width="22"
@@ -206,6 +222,23 @@ function MenuLink({
           {badge}
         </span>
       ) : null}
+    </Link>
+  );
+}
+
+function MenuSecondaryLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className="py-2 text-[14.5px] text-ink-500 hover:text-ink-900 transition"
+    >
+      {children}
     </Link>
   );
 }
