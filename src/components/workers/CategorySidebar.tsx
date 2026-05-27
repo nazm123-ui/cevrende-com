@@ -74,7 +74,7 @@ function CategoryRow({
       }`}
     >
       <span className="text-[14.5px] tracking-[-0.005em]">{label}</span>
-      <span className="font-mono text-ink-400 text-[13.5px]">{count}</span>
+      <span className="font-mono text-ink-500 text-[13.5px]">{count}</span>
     </button>
   );
 }

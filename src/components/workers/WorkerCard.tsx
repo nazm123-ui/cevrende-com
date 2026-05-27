@@ -42,7 +42,7 @@ export default function WorkerCard({
           </span>
         </div>
         {!showFullPhone && (
-          <span className="text-[12px] text-ink-400">Sadece mesaj</span>
+          <span className="text-[12px] text-ink-500">Sadece mesaj</span>
         )}
       </div>
 

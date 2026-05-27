@@ -92,7 +92,7 @@ export default async function PreviewListings() {
                     </span>
                   </div>
                   {phoneVisibility === "private" && (
-                    <span className="text-[12px] text-ink-400">Sadece mesaj</span>
+                    <span className="text-[12px] text-ink-500">Sadece mesaj</span>
                   )}
                 </div>
 

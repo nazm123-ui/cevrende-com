@@ -212,7 +212,7 @@ export default function QuickSearchCard({
           <div className="mt-6 border-t border-ink-100" />
           <div className="mt-5 flex items-center justify-between">
             <span className="text-[13.5px] text-ink-500">Popüler</span>
-            <span className="font-mono text-[12.5px] text-ink-400">
+            <span className="font-mono text-[12.5px] text-ink-500">
               {totalCount} kişi
             </span>
           </div>

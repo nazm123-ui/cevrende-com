@@ -37,7 +37,7 @@ export default function Footer() {
 
       <div className="footer-bottom mx-auto max-w-[1200px] px-5 sm:px-6 mt-12 flex flex-wrap items-center justify-between gap-3 text-[13px] text-ink-500">
         <span>© {new Date().getFullYear()} çevrende · Pendik, İstanbul</span>
-        <span className="font-mono text-ink-400">v1.0</span>
+        <span className="font-mono text-ink-500">v1.0</span>
       </div>
     </footer>
   );
@@ -52,7 +52,7 @@ function FooterCol({
 }) {
   return (
     <div>
-      <p className="font-mono text-[12px] uppercase tracking-[0.06em] text-ink-400 mb-3.5">
+      <p className="font-mono text-[12px] uppercase tracking-[0.06em] text-ink-500 mb-3.5">
         {title}
       </p>
       <ul className="flex flex-col gap-2.5">

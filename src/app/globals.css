@@ -63,37 +63,77 @@
     monospace;
 }
 
-html,
-body {
-  background-color: var(--color-ink-50);
-  color: var(--color-ink-900);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.005em;
-  /* Lock width to viewport — prevents any descendant from creating horizontal scroll */
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+/* Element-level defaults — @layer base ile sarılı
+   Tailwind utilities (@layer utilities) bunları override edebilsin diye. */
+@layer base {
+  html,
+  body {
+    background-color: var(--color-ink-50);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.005em;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
 
-html {
-  /* iOS Safari sometimes ignores html width — pin it */
-  width: 100%;
-}
+  html {
+    width: 100%;
+  }
 
-body {
-  width: 100%;
-}
+  body {
+    width: 100%;
+  }
 
-/* Tap highlight cleanup for iOS */
-* {
-  -webkit-tap-highlight-color: transparent;
-}
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
 
-/* Headings should never overflow their container on small screens */
-h1, h2, h3 {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
+  h1, h2, h3 {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ::selection {
+    background: var(--color-accent-600);
+    color: #fff;
+  }
+
+  h1 {
+    font-size: clamp(32px, 1.75rem + 3vw, 64px);
+    font-weight: 600;
+    letter-spacing: -0.032em;
+    line-height: 1.05;
+  }
+  h2 {
+    font-size: clamp(24px, 1.4rem + 1.5vw, 40px);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+  h3 {
+    font-size: clamp(20px, 1.15rem + 0.2vw, 22px);
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    line-height: 1.2;
+  }
+  h4 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+
+  p, body {
+    color: var(--color-ink-700);
+    line-height: 1.6;
+    font-size: 15px;
+  }
 }
 
 /* Critical: prevent iOS auto-zoom on form focus.
@@ -119,52 +159,6 @@ h1, h2, h3 {
   .register-email-phone-grid {
     grid-template-columns: 1fr;
   }
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-::selection {
-  background: var(--color-accent-600);
-  color: #fff;
-}
-
-/* Typographic hierarchy — clamp tabanlı responsive
-   min/mobile : max/desktop hedef
-   h1: 32 → 64px  (büyük landing başlık)
-   h2: 24 → 40px  (section başlık)
-   h3: 20 → 22px  (alt başlık)
-   h4: 16px       (meta başlık) */
-h1 {
-  font-size: clamp(32px, 1.75rem + 3vw, 64px);
-  font-weight: 600;
-  letter-spacing: -0.032em;
-  line-height: 1.05;
-}
-h2 {
-  font-size: clamp(24px, 1.4rem + 1.5vw, 40px);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
-}
-h3 {
-  font-size: clamp(20px, 1.15rem + 0.2vw, 22px);
-  font-weight: 600;
-  letter-spacing: -0.012em;
-  line-height: 1.2;
-}
-h4 {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-}
-
-p, body {
-  color: var(--color-ink-700);
-  line-height: 1.6;
-  font-size: 15px;
 }
 
 .text-sm {
