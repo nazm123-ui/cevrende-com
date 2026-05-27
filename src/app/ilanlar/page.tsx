@@ -1,17 +1,18 @@
-import { Suspense } from "react";
-import ListingsClient from "@/components/listings/ListingsClient";
+import { permanentRedirect } from "next/navigation";
 
-export const metadata = {
-  title: "İşçi Arama | Cevrende",
-  description: "Pendik ve çevresindeki işçileri meslek ve bölgeyle filtrele.",
-};
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
-export default async function IlanlariPage() {
-  return (
-    <>
-      <Suspense fallback={<div className="p-8">Yükleniyor...</div>}>
-        <ListingsClient />
-      </Suspense>
-    </>
-  );
+export default async function IlanlarPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const sp = await searchParams;
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(sp)) {
+    if (typeof value === "string") params.set(key, value);
+    else if (Array.isArray(value) && value[0]) params.set(key, value[0]);
+  }
+  const qs = params.toString();
+  permanentRedirect(`/cevrendekiler${qs ? `?${qs}` : ""}`);
 }
