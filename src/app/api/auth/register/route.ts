@@ -4,8 +4,12 @@ import { hashPassword } from "@/lib/password";
 import { createOtp, isDevMode } from "@/lib/otp";
 import { sendOtpEmail } from "@/lib/email";
 import { registerSchema } from "@/lib/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
+  const limited = await checkRateLimit(req, "auth-strict");
+  if (limited) return limited;
+
   let body: unknown;
   try {
     body = await req.json();

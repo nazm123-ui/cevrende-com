@@ -3,8 +3,12 @@ import { prisma } from "@/lib/db";
 import { verifyOtp } from "@/lib/otp";
 import { setSessionCookie } from "@/lib/auth";
 import { verifyOtpSchema } from "@/lib/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
+  const limited = await checkRateLimit(req, "auth");
+  if (limited) return limited;
+
   let body: unknown;
   try {
     body = await req.json();

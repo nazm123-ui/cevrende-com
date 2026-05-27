@@ -3,8 +3,12 @@ import { prisma } from "@/lib/db";
 import { createOtp, isDevMode } from "@/lib/otp";
 import { sendPasswordResetEmail } from "@/lib/email";
 import { requestPasswordResetSchema } from "@/lib/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
+  const limited = await checkRateLimit(req, "auth-strict");
+  if (limited) return limited;
+
   let body: unknown;
   try {
     body = await req.json();

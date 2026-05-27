@@ -42,26 +42,33 @@ export async function clearSessionCookie() {
   cookieStore.delete(SESSION_COOKIE);
 }
 
-export async function getSessionPayload(): Promise<SessionPayload | null> {
+type VerifiedSession = SessionPayload & { iat: number };
+
+async function verifyToken(): Promise<VerifiedSession | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, getSecret());
-    if (typeof payload.userId !== "string") {
-      return null;
-    }
-    return { userId: payload.userId };
+    if (typeof payload.userId !== "string") return null;
+    if (typeof payload.iat !== "number") return null;
+    return { userId: payload.userId, iat: payload.iat };
   } catch {
     return null;
   }
 }
 
+export async function getSessionPayload(): Promise<SessionPayload | null> {
+  const verified = await verifyToken();
+  if (!verified) return null;
+  return { userId: verified.userId };
+}
+
 export async function getCurrentUser() {
-  const session = await getSessionPayload();
-  if (!session) return null;
+  const verified = await verifyToken();
+  if (!verified) return null;
   const user = await prisma.user.findUnique({
-    where: { id: session.userId },
+    where: { id: verified.userId },
     select: {
       id: true,
       fullName: true,
@@ -73,8 +80,20 @@ export async function getCurrentUser() {
       city: true,
       district: true,
       neighborhood: true,
+      passwordChangedAt: true,
     },
   });
   if (!user || !user.isActive) return null;
-  return user;
+
+  if (user.passwordChangedAt) {
+    const passwordChangedAtSec = Math.floor(
+      user.passwordChangedAt.getTime() / 1000,
+    );
+    if (verified.iat < passwordChangedAtSec) return null;
+  }
+
+  // Don't leak passwordChangedAt to callers
+  const { passwordChangedAt: _pca, ...safe } = user;
+  void _pca;
+  return safe;
 }

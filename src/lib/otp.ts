@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 
 const OTP_LENGTH = 6;
 const OTP_TTL_MINUTES = 10;
+const MAX_OTP_ATTEMPTS = 5;
 
 export type OtpPurpose =
   | "phone_registration"
@@ -45,7 +46,39 @@ export async function verifyOtp(
   if (!otp) return { ok: false, reason: "OTP bulunamadı." };
   if (otp.expiresAt < new Date())
     return { ok: false, reason: "Doğrulama kodu süresi doldu." };
-  if (otp.code !== code) return { ok: false, reason: "Kod hatalı." };
+
+  if (otp.attempts >= MAX_OTP_ATTEMPTS) {
+    await prisma.otpCode.update({
+      where: { id: otp.id },
+      data: { consumedAt: new Date() },
+    });
+    return {
+      ok: false,
+      reason: "Çok fazla hatalı deneme. Yeni kod isteyin.",
+    };
+  }
+
+  if (otp.code !== code) {
+    const nextAttempts = otp.attempts + 1;
+    await prisma.otpCode.update({
+      where: { id: otp.id },
+      data:
+        nextAttempts >= MAX_OTP_ATTEMPTS
+          ? { attempts: nextAttempts, consumedAt: new Date() }
+          : { attempts: nextAttempts },
+    });
+    const remaining = MAX_OTP_ATTEMPTS - nextAttempts;
+    if (remaining <= 0) {
+      return {
+        ok: false,
+        reason: "Çok fazla hatalı deneme. Yeni kod isteyin.",
+      };
+    }
+    return {
+      ok: false,
+      reason: `Kod hatalı. Kalan deneme: ${remaining}.`,
+    };
+  }
 
   await prisma.otpCode.update({
     where: { id: otp.id },
@@ -56,5 +89,5 @@ export async function verifyOtp(
 }
 
 export function isDevMode(): boolean {
-  return process.env.NODE_ENV !== "production";
+  return process.env.EXPOSE_DEV_OTPS === "true";
 }

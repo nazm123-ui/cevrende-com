@@ -5,8 +5,12 @@ import { setSessionCookie } from "@/lib/auth";
 import { createOtp, isDevMode } from "@/lib/otp";
 import { sendOtpEmail } from "@/lib/email";
 import { loginSchema, phoneSchema } from "@/lib/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
+  const limited = await checkRateLimit(req, "auth");
+  if (limited) return limited;
+
   let body: unknown;
   try {
     body = await req.json();

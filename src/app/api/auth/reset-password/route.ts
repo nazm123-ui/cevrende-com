@@ -3,8 +3,12 @@ import { prisma } from "@/lib/db";
 import { verifyOtp } from "@/lib/otp";
 import { hashPassword } from "@/lib/password";
 import { resetPasswordSchema } from "@/lib/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
+  const limited = await checkRateLimit(req, "auth");
+  if (limited) return limited;
+
   let body: unknown;
   try {
     body = await req.json();
@@ -41,7 +45,7 @@ export async function POST(req: Request) {
   const passwordHash = await hashPassword(password);
   await prisma.user.update({
     where: { id: user.id },
-    data: { passwordHash },
+    data: { passwordHash, passwordChangedAt: new Date() },
   });
 
   return NextResponse.json({ ok: true });

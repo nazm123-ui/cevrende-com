@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { createOtp, isDevMode } from "@/lib/otp";
 import { sendOtpEmail } from "@/lib/email";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const schema = z.object({
   userId: z.string().min(1),
@@ -10,6 +11,9 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const limited = await checkRateLimit(req, "auth-strict");
+  if (limited) return limited;
+
   let body: unknown;
   try {
     body = await req.json();
