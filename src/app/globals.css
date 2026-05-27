@@ -131,21 +131,26 @@ a {
   color: #fff;
 }
 
-/* Typographic hierarchy */
+/* Typographic hierarchy — clamp tabanlı responsive
+   min/mobile : max/desktop hedef
+   h1: 32 → 64px  (büyük landing başlık)
+   h2: 24 → 40px  (section başlık)
+   h3: 20 → 22px  (alt başlık)
+   h4: 16px       (meta başlık) */
 h1 {
-  font-size: 64px;
+  font-size: clamp(32px, 1.75rem + 3vw, 64px);
   font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 1.02;
+  letter-spacing: -0.032em;
+  line-height: 1.05;
 }
 h2 {
-  font-size: 40px;
+  font-size: clamp(24px, 1.4rem + 1.5vw, 40px);
   font-weight: 600;
   letter-spacing: -0.025em;
-  line-height: 1.08;
+  line-height: 1.1;
 }
 h3 {
-  font-size: 22px;
+  font-size: clamp(20px, 1.15rem + 0.2vw, 22px);
   font-weight: 600;
   letter-spacing: -0.012em;
   line-height: 1.2;
@@ -538,16 +543,7 @@ section.tight {
     padding: 0 18px;
   }
 
-  h1 {
-    font-size: 38px !important;
-    letter-spacing: -0.028em !important;
-  }
-  h2 {
-    font-size: 28px !important;
-  }
-  h3 {
-    font-size: 20px !important;
-  }
+  /* h1/h2/h3 boyutları clamp() ile dinamik — burada override yok */
 
   section {
     padding: 56px 0;
@@ -679,15 +675,7 @@ section.tight {
   }
 }
 
-/* Çok küçük (≤480) */
-@media (max-width: 480px) {
-  h1 {
-    font-size: 32px !important;
-  }
-  h2 {
-    font-size: 24px !important;
-  }
-}
+/* Çok küçük (≤480) — h1/h2 clamp() ile zaten alt sınırı sağlıyor */
 
 /* Horizontal chip scroll row */
 .scroll-x {

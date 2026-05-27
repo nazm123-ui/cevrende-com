@@ -97,7 +97,7 @@ export default async function AdminPage() {
         <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
           Yönetim
         </p>
-        <h1 className="!mt-2 !text-[26px] sm:!text-[32px] !font-semibold !tracking-[-0.02em] !leading-tight text-ink-900">
+        <h1 className="mt-2 text-[26px] sm:text-[32px] font-semibold tracking-[-0.02em] leading-tight text-ink-900">
           Admin Paneli
         </h1>
         <p className="mt-1 text-sm text-ink-500">
@@ -114,7 +114,7 @@ export default async function AdminPage() {
       </div>
 
       <section className="mb-10">
-        <h2 className="!text-[13px] !font-mono uppercase tracking-[0.08em] !text-ink-500 !font-medium mb-3">
+        <h2 className="text-[13px] font-mono uppercase tracking-[0.08em] text-ink-500 font-medium mb-3">
           Genel
         </h2>
         <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
@@ -130,7 +130,7 @@ export default async function AdminPage() {
       </section>
 
       <section className="mb-10">
-        <h2 className="!text-[13px] !font-mono uppercase tracking-[0.08em] !text-ink-500 !font-medium mb-3">
+        <h2 className="text-[13px] font-mono uppercase tracking-[0.08em] text-ink-500 font-medium mb-3">
           Etkileşim
         </h2>
         <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
@@ -365,7 +365,7 @@ function Panel({
   return (
     <div className="rounded-[14px] border border-ink-100 bg-white p-5">
       <div className="mb-3">
-        <h3 className="!text-[15px] !font-semibold text-ink-900">{title}</h3>
+        <h3 className="text-[15px] font-semibold text-ink-900">{title}</h3>
         {subtitle && (
           <p className="text-[12.5px] text-ink-500 mt-0.5">{subtitle}</p>
         )}

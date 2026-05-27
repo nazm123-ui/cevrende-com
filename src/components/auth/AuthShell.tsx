@@ -17,7 +17,7 @@ export default function AuthShell({
             {eyebrow}
           </p>
         )}
-        <h1 className="!text-[26px] sm:!text-[30px] !font-semibold !tracking-[-0.02em] !leading-[1.15] m-0 text-ink-900">
+        <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-[-0.02em] leading-[1.15] m-0 text-ink-900">
           {title}
         </h1>
         {subtitle && (
