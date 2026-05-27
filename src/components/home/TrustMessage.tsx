@@ -15,37 +15,14 @@ const items = [
 
 export default function TrustMessage() {
   return (
-    <section
-      style={{ padding: "64px 0", background: "#F4F2EB" }}
-      className="tight"
-    >
-      <div
-        className="container trust-grid"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 48,
-        }}
-      >
+    <section className="section-py-sm bg-[#F0EDE3]">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 grid grid-cols-1 sm:grid-cols-3 gap-x-12 gap-y-8">
         {items.map((it, i) => (
           <div key={i}>
-            <h4
-              style={{
-                marginBottom: 8,
-                fontSize: 16,
-                fontWeight: 500,
-                color: "var(--color-ink-900)",
-              }}
-            >
+            <h4 className="mb-2 text-[16px] font-medium text-ink-900">
               {it.title}
             </h4>
-            <p
-              style={{
-                fontSize: 14,
-                color: "var(--color-ink-500)",
-                lineHeight: 1.55,
-              }}
-            >
+            <p className="text-[14px] text-ink-500 leading-[1.55]">
               {it.body}
             </p>
           </div>

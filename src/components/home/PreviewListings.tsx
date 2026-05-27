@@ -32,36 +32,18 @@ export default async function PreviewListings() {
   const categoryNameBySlug = new Map(categories.map((c) => [c.slug, c.name]));
 
   return (
-    <section style={{ padding: "96px 0" }}>
-      <div className="container">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            marginBottom: 36,
-            flexWrap: "wrap",
-            gap: 12,
-          }}
-        >
+    <section className="section-py-lg">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
+        <div className="flex justify-between items-end mb-9 flex-wrap gap-3">
           <div>
-            <div className="eyebrow" style={{ marginBottom: 12 }}>
+            <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium mb-3">
               Yeni profiller
-            </div>
-            <h2>Bu hafta katılanlar</h2>
+            </p>
+            <h2 className="text-balance">Bu hafta katılanlar</h2>
           </div>
           <Link
             href="/cevrendekiler"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "8px 14px",
-              color: "var(--color-ink-900)",
-              fontSize: 14,
-              fontWeight: 500,
-              borderRadius: 999,
-            }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-ink-900 text-[14px] font-medium rounded-full hover:bg-ink-100 transition"
           >
             Tümünü gör
             <svg
@@ -80,7 +62,7 @@ export default async function PreviewListings() {
           </Link>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div className="flex flex-col gap-3">
           {workers.map((w) => {
             const settings = (w.workerSettings ?? {}) as WorkerSettings;
             const location =
@@ -97,105 +79,35 @@ export default async function PreviewListings() {
               <Link
                 key={w.id}
                 href={`/cevrendekiler/${w.id}`}
-                style={{
-                  padding: "22px 26px",
-                  background: "#fff",
-                  border: "1px solid var(--color-ink-100)",
-                  borderRadius: 14,
-                  textDecoration: "none",
-                  color: "inherit",
-                  display: "block",
-                  transition: "border-color .15s ease",
-                }}
+                className="block px-6 py-5 bg-white border border-ink-100 rounded-[14px] hover:border-ink-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ink-900 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-50"
               >
-                {/* Üst meta */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: 8,
-                    marginBottom: 14,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      color: "var(--color-ink-500)",
-                      fontSize: 13,
-                    }}
-                  >
+                <div className="flex items-center justify-between gap-2 mb-3.5 flex-wrap">
+                  <div className="flex items-center gap-2 text-ink-500 text-[13px]">
                     <span className="font-mono">
                       {formatRelative(w.createdAt)}
                     </span>
-                    <span style={{ color: "var(--color-ink-400)" }}>·</span>
-                    <span
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 4,
-                      }}
-                    >
+                    <span className="text-ink-400">·</span>
+                    <span className="inline-flex items-center gap-1">
                       <PinIcon /> {location}
                     </span>
                   </div>
                   {phoneVisibility === "private" && (
-                    <span
-                      style={{ fontSize: 12, color: "var(--color-ink-400)" }}
-                    >
-                      Sadece mesaj
-                    </span>
+                    <span className="text-[12px] text-ink-400">Sadece mesaj</span>
                   )}
                 </div>
 
-                {/* Avatar + isim + headline + chips */}
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 16,
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 52,
-                      height: 52,
-                      borderRadius: "50%",
-                      background: "#F4F2EB",
-                      color: "var(--color-ink-900)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 18,
-                      fontWeight: 500,
-                      letterSpacing: "-0.01em",
-                      flex: "0 0 52px",
-                      border: "1px solid var(--color-ink-200)",
-                    }}
-                  >
+                <div className="flex gap-4 items-start">
+                  <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-brand-50 border border-ink-200 text-ink-900 text-[18px] font-medium tracking-[-0.01em] shrink-0">
                     {initials}
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <h3
-                      style={{
-                        fontSize: 18,
-                        fontWeight: 500,
-                        letterSpacing: "-0.015em",
-                        margin: 0,
-                      }}
-                    >
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-[18px] font-medium tracking-[-0.015em] m-0">
                       {w.fullName}
                     </h3>
                     {w.bio && (
                       <p
+                        className="text-[14px] text-ink-500 mt-1 leading-[1.5] line-clamp-2"
                         style={{
-                          fontSize: 14,
-                          color: "var(--color-ink-500)",
-                          marginTop: 4,
-                          lineHeight: 1.5,
                           display: "-webkit-box",
                           WebkitLineClamp: 2,
                           WebkitBoxOrient: "vertical",
@@ -205,27 +117,11 @@ export default async function PreviewListings() {
                         {w.bio}
                       </p>
                     )}
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: 6,
-                        marginTop: 12,
-                        flexWrap: "wrap",
-                      }}
-                    >
+                    <div className="flex gap-1.5 mt-3 flex-wrap">
                       {professionNames.map((name) => (
                         <span
                           key={name}
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            height: 26,
-                            padding: "0 10px",
-                            borderRadius: 999,
-                            background: "#F4F2EB",
-                            fontSize: 12,
-                            color: "var(--color-ink-700)",
-                          }}
+                          className="inline-flex items-center h-[26px] px-2.5 rounded-full bg-brand-50 text-[12px] text-ink-700"
                         >
                           {name}
                         </span>
@@ -262,7 +158,7 @@ function PinIcon() {
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-      style={{ color: "var(--color-ink-400)" }}
+      className="text-ink-400"
     >
       <path d="M12 21s-7-6.5-7-12a7 7 0 1 1 14 0c0 5.5-7 12-7 12Z" />
       <circle cx="12" cy="9" r="2.4" />

@@ -2,74 +2,24 @@ import Link from "next/link";
 
 export default function FinalCTA() {
   return (
-    <section style={{ padding: "48px 0 96px" }}>
-      <div className="container">
-        <div
-          className="final-cta"
-          style={{
-            background: "var(--color-ink-900)",
-            color: "#fff",
-            borderRadius: 18,
-            padding: "64px 56px",
-            display: "grid",
-            gridTemplateColumns: "1.4fr auto",
-            gap: 32,
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <h2
-              style={{
-                color: "#fff",
-                maxWidth: 520,
-                textWrap: "balance",
-              }}
-            >
+    <section className="py-12 sm:pt-12 sm:pb-24">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
+        <div className="bg-ink-900 text-white rounded-[18px] p-7 sm:p-12 lg:p-14 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 sm:gap-8">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-balance text-white max-w-[520px]">
               İş arıyorsan, çevren seni görsün.
             </h2>
-            <p
-              style={{
-                color: "rgba(255,255,255,.7)",
-                marginTop: 14,
-                maxWidth: 480,
-                fontSize: 16,
-                lineHeight: 1.55,
-              }}
-            >
+            <p className="text-[15px] sm:text-[16px] mt-3 sm:mt-3.5 text-white/70 max-w-[480px] leading-[1.55]">
               İki dakikada profilini oluştur. Sadece çevrendeki işverenler
               görür, doğrudan ulaşır.
             </p>
           </div>
-          <div
-            className="final-cta-actions"
-            style={{
-              display: "flex",
-              gap: 12,
-              justifySelf: "end",
-            }}
+          <Link
+            href="/kayit"
+            className="btn-light h-[54px] px-7 rounded-full text-[16px] shrink-0 self-start sm:self-auto"
           >
-            <Link
-              href="/kayit"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 54,
-                padding: "0 28px",
-                borderRadius: 999,
-                background: "#fff",
-                color: "var(--color-ink-900)",
-                border: "1px solid #fff",
-                fontSize: 16,
-                fontWeight: 500,
-                letterSpacing: "-0.005em",
-                whiteSpace: "nowrap",
-                textDecoration: "none",
-              }}
-            >
-              Ücretsiz profil oluştur
-            </Link>
-          </div>
+            Ücretsiz profil oluştur
+          </Link>
         </div>
       </div>
     </section>

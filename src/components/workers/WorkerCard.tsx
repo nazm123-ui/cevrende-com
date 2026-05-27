@@ -32,101 +32,35 @@ export default function WorkerCard({
   const initials = getInitials(worker.fullName);
 
   return (
-    <article
-      style={{
-        padding: "22px 26px",
-        background: "#fff",
-        border: "1px solid var(--color-ink-100)",
-        borderRadius: 14,
-        transition: "border-color .15s ease",
-      }}
-      className="hover:!border-ink-900"
-    >
-      {/* Üst meta */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 8,
-          marginBottom: 14,
-          flexWrap: "wrap",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            color: "var(--color-ink-500)",
-            fontSize: 13,
-            flexWrap: "wrap",
-          }}
-        >
+    <article className="px-6 py-5 bg-white border border-ink-100 rounded-[14px] transition hover:border-ink-700">
+      <div className="flex items-center justify-between gap-2 mb-3.5 flex-wrap">
+        <div className="flex items-center gap-2 text-ink-500 text-[13px] flex-wrap">
           <span className="font-mono">{formatRelative(worker.createdAt)}</span>
-          <span style={{ color: "var(--color-ink-400)" }}>·</span>
-          <span
-            style={{ display: "inline-flex", alignItems: "center", gap: 4 }}
-          >
+          <span className="text-ink-400">·</span>
+          <span className="inline-flex items-center gap-1">
             <PinIcon /> {location}
           </span>
         </div>
         {!showFullPhone && (
-          <span style={{ fontSize: 12, color: "var(--color-ink-400)" }}>
-            Sadece mesaj
-          </span>
+          <span className="text-[12px] text-ink-400">Sadece mesaj</span>
         )}
       </div>
 
-      {/* Avatar + name + bio + chips — tıklanır alan, profile gider */}
       <Link
         href={`/cevrendekiler/${worker.id}`}
-        style={{
-          display: "flex",
-          gap: 16,
-          alignItems: "flex-start",
-          textDecoration: "none",
-          color: "inherit",
-        }}
+        className="flex gap-4 items-start rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ink-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
       >
-        <div
-          style={{
-            width: 52,
-            height: 52,
-            borderRadius: "50%",
-            background: "#F4F2EB",
-            color: "var(--color-ink-900)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 18,
-            fontWeight: 500,
-            letterSpacing: "-0.01em",
-            flex: "0 0 52px",
-            border: "1px solid var(--color-ink-200)",
-          }}
-        >
+        <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-brand-50 border border-ink-200 text-ink-900 text-[18px] font-medium tracking-[-0.01em] shrink-0">
           {initials}
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <h3
-            style={{
-              fontSize: 18,
-              fontWeight: 500,
-              letterSpacing: "-0.015em",
-              color: "var(--color-ink-900)",
-              margin: 0,
-            }}
-          >
+        <div className="flex-1 min-w-0">
+          <h3 className="text-[18px] font-medium tracking-[-0.015em] text-ink-900 m-0">
             {worker.fullName}
           </h3>
           {worker.bio && (
             <p
+              className="text-[14px] text-ink-500 mt-1 leading-[1.5]"
               style={{
-                fontSize: 14,
-                color: "var(--color-ink-500)",
-                marginTop: 4,
-                lineHeight: 1.5,
                 display: "-webkit-box",
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: "vertical",
@@ -136,27 +70,11 @@ export default function WorkerCard({
               {worker.bio}
             </p>
           )}
-          <div
-            style={{
-              display: "flex",
-              gap: 6,
-              marginTop: 12,
-              flexWrap: "wrap",
-            }}
-          >
+          <div className="flex gap-1.5 mt-3 flex-wrap">
             {professionNames.map((name) => (
               <span
                 key={name}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  height: 26,
-                  padding: "0 10px",
-                  borderRadius: 999,
-                  background: "#F4F2EB",
-                  fontSize: 12,
-                  color: "var(--color-ink-700)",
-                }}
+                className="inline-flex items-center h-[26px] px-2.5 rounded-full bg-brand-50 text-[12px] text-ink-700"
               >
                 {name}
               </span>
@@ -165,23 +83,9 @@ export default function WorkerCard({
         </div>
       </Link>
 
-      <div
-        style={{
-          height: 1,
-          background: "var(--color-ink-100)",
-          margin: "20px 0 16px",
-        }}
-      />
+      <div className="h-px bg-ink-100 mt-5 mb-4" />
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: 10,
-          flexWrap: "wrap",
-          alignItems: "center",
-        }}
-      >
+      <div className="flex justify-end gap-2.5 flex-wrap items-center">
         {renderAction({
           canContact,
           isSelf,
@@ -202,44 +106,6 @@ function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-const btnPrimarySm: React.CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: 6,
-  height: 36,
-  padding: "0 14px",
-  borderRadius: 999,
-  background: "var(--color-ink-900)",
-  color: "#fff",
-  border: "1px solid var(--color-ink-900)",
-  fontSize: 13,
-  fontWeight: 500,
-  letterSpacing: "-0.005em",
-  whiteSpace: "nowrap",
-  cursor: "pointer",
-  textDecoration: "none",
-};
-
-const btnSecondarySm: React.CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: 6,
-  height: 36,
-  padding: "0 14px",
-  borderRadius: 999,
-  background: "transparent",
-  color: "var(--color-ink-900)",
-  border: "1px solid var(--color-ink-200)",
-  fontSize: 13,
-  fontWeight: 500,
-  letterSpacing: "-0.005em",
-  whiteSpace: "nowrap",
-  cursor: "pointer",
-  textDecoration: "none",
-};
-
 function renderAction({
   canContact,
   isSelf,
@@ -255,11 +121,7 @@ function renderAction({
     return (
       <Link
         href="/panel/profil"
-        style={{
-          fontSize: 13,
-          color: "var(--color-ink-500)",
-          textDecoration: "none",
-        }}
+        className="text-[13px] text-ink-500 hover:text-ink-900 transition"
       >
         Profilini düzenle →
       </Link>
@@ -268,7 +130,10 @@ function renderAction({
 
   if (!canContact) {
     return (
-      <Link href="/kayit" style={btnPrimarySm}>
+      <Link
+        href="/kayit"
+        className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-full bg-ink-900 text-white border border-ink-900 text-[13px] font-medium hover:bg-accent-600 hover:border-accent-600 transition"
+      >
         Ücretsiz kayıt ol
       </Link>
     );
@@ -276,11 +141,17 @@ function renderAction({
 
   return (
     <>
-      <Link href={`/panel/mesajlar/${worker.id}`} style={btnSecondarySm}>
+      <Link
+        href={`/panel/mesajlar/${worker.id}`}
+        className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-full border border-ink-200 text-ink-900 text-[13px] font-medium hover:border-ink-900 transition"
+      >
         Mesaj gönder
       </Link>
       {showFullPhone && (
-        <a href={`tel:${worker.phone}`} style={btnPrimarySm}>
+        <a
+          href={`tel:${worker.phone}`}
+          className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-full bg-ink-900 text-white border border-ink-900 text-[13px] font-medium hover:bg-accent-600 hover:border-accent-600 transition"
+        >
           <PhoneIcon /> {formatPhone(worker.phone)}
         </a>
       )}
@@ -316,7 +187,7 @@ function PinIcon() {
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-      style={{ color: "var(--color-ink-400)" }}
+      className="text-ink-400"
     >
       <path d="M12 21s-7-6.5-7-12a7 7 0 1 1 14 0c0 5.5-7 12-7 12Z" />
       <circle cx="12" cy="9" r="2.4" />
