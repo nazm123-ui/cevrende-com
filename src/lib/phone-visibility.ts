@@ -1,7 +1,6 @@
-export type PhoneVisibility = "public" | "after_approval" | "private";
+export type PhoneVisibility = "public" | "private";
 
 export type WorkerSettings = {
-  showName?: boolean;
   showDistrict?: boolean;
   phoneVisibility?: PhoneVisibility;
 };
@@ -9,15 +8,11 @@ export type WorkerSettings = {
 export function getPhoneVisibility(
   settings: WorkerSettings | null | undefined,
 ): PhoneVisibility {
-  return settings?.phoneVisibility ?? "after_approval";
+  return settings?.phoneVisibility ?? "private";
 }
 
 export function canSeePhone(
   settings: WorkerSettings | null | undefined,
-  hasContact: boolean,
 ): boolean {
-  const v = getPhoneVisibility(settings);
-  if (v === "private") return false;
-  if (v === "public") return true;
-  return hasContact;
+  return getPhoneVisibility(settings) === "public";
 }

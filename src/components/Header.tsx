@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { getUnreadCount } from "@/lib/messages";
-import { getPendingIncomingCount } from "@/lib/contact-requests";
 import { isAdminEmail } from "@/lib/constants/admin-emails";
 import Logo from "@/components/Logo";
 import LogoutButton from "@/components/auth/LogoutButton";
@@ -12,12 +11,7 @@ export default async function Header() {
   const firstName = user?.fullName.split(" ")[0];
   const isAdmin = isAdminEmail(user?.email);
   const showCounters = !!user && user.isEmailVerified && !isAdmin;
-  const [unreadCount, pendingRequestCount] = showCounters
-    ? await Promise.all([
-        getUnreadCount(user.id),
-        getPendingIncomingCount(user.id),
-      ])
-    : [0, 0];
+  const unreadCount = showCounters ? await getUnreadCount(user.id) : 0;
 
   return (
     <header
@@ -27,14 +21,7 @@ export default async function Header() {
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6 h-[72px] flex items-center justify-between">
         <Logo />
 
-        <nav className="hidden sm:flex items-center gap-1 text-[14.5px]">
-          <Link
-            href="/iscilar"
-            className="px-3 py-2 text-ink-500 hover:text-ink-900 transition tracking-tight"
-          >
-            Çevrendekiler
-          </Link>
-
+        <nav className="hidden sm:flex items-center gap-4 text-[14.5px]">
           {user ? (
             <>
               {!isAdmin && (
@@ -44,15 +31,6 @@ export default async function Header() {
                     className="px-3 py-2 text-ink-500 hover:text-ink-900 transition tracking-tight"
                   >
                     Profilim
-                  </Link>
-                  <Link
-                    href="/panel/talepler"
-                    className="relative px-3 py-2 text-ink-500 hover:text-ink-900 transition tracking-tight"
-                  >
-                    Talepler
-                    {pendingRequestCount > 0 && (
-                      <Badge>{pendingRequestCount}</Badge>
-                    )}
                   </Link>
                   <Link
                     href="/panel/mesajlar"
@@ -100,7 +78,6 @@ export default async function Header() {
             firstName={firstName}
             isAdmin={isAdmin}
             unreadCount={unreadCount}
-            pendingRequestCount={pendingRequestCount}
           />
         </div>
       </div>

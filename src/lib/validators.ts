@@ -1,38 +1,57 @@
 import { z } from "zod";
+import { experiencesSchema } from "@/lib/experience";
 
-const turkishPhoneRegex = /^(05\d{9}|5\d{9})$/;
-
+// Telefon kuralları:
+// +90 5XX XXX XX XX → 0XXXXXXXXXX
+// 90 5XX XXX XX XX  → 0XXXXXXXXXX
+// 0 5XX XXX XX XX   → 0XXXXXXXXXX
+// 5XX XXX XX XX     → 0XXXXXXXXXX (sistem başına 0 ekler)
 export const phoneSchema = z
   .string()
   .trim()
-  .transform((v) => v.replace(/\s|-|\(|\)/g, ""))
-  .refine((v) => turkishPhoneRegex.test(v), {
-    message: "Geçerli bir telefon numarası girin. Örn: 05XXXXXXXXX",
+  .transform((v) => v.replace(/[\s\-()+]/g, ""))
+  .transform((v) => {
+    if (v.startsWith("90") && v.length === 12) return "0" + v.slice(2);
+    if (/^5\d{9}$/.test(v)) return "0" + v;
+    return v;
   })
-  .transform((v) => (v.startsWith("05") ? v : `0${v}`));
+  .refine((v) => /^05\d{9}$/.test(v), {
+    message: "Geçerli bir telefon girin. Örn: 0555 555 55 55",
+  });
 
-export const registerSchema = z.object({
-  fullName: z
-    .string()
-    .trim()
-    .min(2, "Ad soyad en az 2 karakter olmalı.")
-    .max(80, "Ad soyad en fazla 80 karakter olabilir."),
-  email: z.string().trim().toLowerCase().email("Geçerli bir e-posta girin."),
-  phone: phoneSchema,
-  password: z
-    .string()
-    .min(6, "Şifre en az 6 karakter olmalı.")
-    .max(120, "Şifre en fazla 120 karakter olabilir."),
-  neighborhood: z
-    .string()
-    .trim()
-    .max(80, "Mahalle en fazla 80 karakter olabilir.")
-    .optional()
-    .or(z.literal("")),
-  acceptTerms: z.boolean().refine((v) => v === true, {
-    message: "Kullanım koşullarını kabul etmelisiniz.",
-  }),
-});
+// Şifre: 8+ karakter, 1 büyük harf, 1 sayı, 1 noktalama/özel karakter
+const passwordRule = z
+  .string()
+  .min(8, "Şifre en az 8 karakter olmalı.")
+  .max(120, "Şifre en fazla 120 karakter olabilir.")
+  .regex(/[A-ZĞÜŞİÖÇ]/, "Şifrede en az 1 büyük harf olmalı.")
+  .regex(/\d/, "Şifrede en az 1 sayı olmalı.")
+  .regex(/[^A-Za-z0-9ğüşıöçĞÜŞİÖÇ]/, "Şifrede en az 1 noktalama veya özel karakter olmalı (örn: . , ! ? * @).");
+
+export const registerSchema = z
+  .object({
+    fullName: z
+      .string()
+      .trim()
+      .min(2, "Ad soyad en az 2 karakter olmalı.")
+      .max(80, "Ad soyad en fazla 80 karakter olabilir."),
+    email: z.string().trim().toLowerCase().email("Geçerli bir e-posta girin."),
+    phone: phoneSchema,
+    password: passwordRule,
+    confirmPassword: z.string().min(1, "Şifreyi tekrar girin."),
+    neighborhood: z
+      .string()
+      .trim()
+      .min(1, "Mahalle seçmelisin.")
+      .max(80, "Mahalle en fazla 80 karakter olabilir."),
+    acceptTerms: z.boolean().refine((v) => v === true, {
+      message: "Kullanım koşullarını kabul etmelisiniz.",
+    }),
+  })
+  .refine((d) => d.password === d.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Şifreler eşleşmiyor.",
+  });
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 
@@ -67,11 +86,23 @@ export const resetPasswordSchema = z.object({
     .string()
     .trim()
     .regex(/^\d{6}$/, "6 haneli kodu girin."),
-  password: z
-    .string()
-    .min(6, "Şifre en az 6 karakter olmalı.")
-    .max(120, "Şifre en fazla 120 karakter olabilir."),
+  password: passwordRule,
 });
+
+export const accountInfoSchema = z.object({
+  fullName: z
+    .string()
+    .trim()
+    .min(2, "Ad soyad en az 2 karakter olmalı.")
+    .max(80, "Ad soyad en fazla 80 karakter olabilir."),
+  neighborhood: z
+    .string()
+    .trim()
+    .min(1, "Mahalle seçmelisin.")
+    .max(80),
+});
+
+export type AccountInfoInput = z.infer<typeof accountInfoSchema>;
 
 export const workerProfileSchema = z.object({
   professions: z
@@ -81,41 +112,14 @@ export const workerProfileSchema = z.object({
   bio: z
     .string()
     .trim()
-    .max(500, "Tanıtım en fazla 500 karakter olabilir.")
-    .optional()
-    .or(z.literal("")),
-  neighborhood: z
-    .string()
-    .trim()
-    .max(80, "Mahalle en fazla 80 karakter olabilir.")
-    .optional()
-    .or(z.literal("")),
-  showName: z.boolean(),
+    .min(30, "Hakkımda en az 30 karakter olmalı.")
+    .max(500, "Hakkımda en fazla 500 karakter olabilir."),
   showDistrict: z.boolean(),
-  phoneVisibility: z.enum(["public", "after_approval", "private"]),
+  phoneVisibility: z.enum(["public", "private"]),
+  experiences: experiencesSchema.optional().default([]),
 });
 
 export type WorkerProfileInput = z.infer<typeof workerProfileSchema>;
-
-export const contactRequestSchema = z.object({
-  toWorkerId: z.string().min(1, "Alıcı belirtilmedi."),
-  message: z
-    .string()
-    .trim()
-    .max(500, "Not en fazla 500 karakter olabilir.")
-    .optional()
-    .or(z.literal("")),
-});
-
-export type ContactRequestInput = z.infer<typeof contactRequestSchema>;
-
-export const contactRequestRespondSchema = z.object({
-  decision: z.enum(["accepted", "declined"]),
-});
-
-export type ContactRequestRespondInput = z.infer<
-  typeof contactRequestRespondSchema
->;
 
 export const sendMessageSchema = z.object({
   recipientId: z.string().min(1, "Alıcı belirtilmedi."),

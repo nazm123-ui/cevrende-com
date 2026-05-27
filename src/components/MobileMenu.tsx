@@ -12,7 +12,6 @@ type Props = {
   firstName?: string;
   isAdmin: boolean;
   unreadCount: number;
-  pendingRequestCount: number;
 };
 
 export default function MobileMenu({
@@ -20,12 +19,11 @@ export default function MobileMenu({
   firstName,
   isAdmin,
   unreadCount,
-  pendingRequestCount,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-  const hasAlert = unreadCount > 0 || pendingRequestCount > 0;
+  const hasAlert = unreadCount > 0;
 
   useEffect(() => {
     setMounted(true);
@@ -133,16 +131,11 @@ export default function MobileMenu({
         <div className="mx-6 border-t border-ink-100" />
 
         <nav className="flex-1 overflow-y-auto px-6 py-5">
-          <MenuLink href="/iscilar">Çevrendekiler</MenuLink>
-
           {isLoggedIn && (
             <>
               {!isAdmin && (
                 <>
                   <MenuLink href="/panel/profil">Profilim</MenuLink>
-                  <MenuLink href="/panel/talepler" badge={pendingRequestCount}>
-                    Talepler
-                  </MenuLink>
                   <MenuLink href="/panel/mesajlar" badge={unreadCount}>
                     Mesajlar
                   </MenuLink>

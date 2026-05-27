@@ -25,10 +25,9 @@ export async function PATCH(req: Request) {
   const {
     professions,
     bio,
-    neighborhood,
-    showName,
     showDistrict,
     phoneVisibility,
+    experiences,
   } = parsed.data;
 
   const validSlugs = new Set(
@@ -47,36 +46,33 @@ export async function PATCH(req: Request) {
     );
   }
 
-  if (bio && bio.trim()) {
-    const filter = checkContent(bio);
-    if (filter.blockedCategories.length > 0) {
-      return NextResponse.json(
-        {
-          error: `Tanıtım metni uygunsuz içerik barındırıyor (${describeCategories(filter.blockedCategories)}).`,
-        },
-        { status: 400 },
-      );
-    }
+  const filter = checkContent(bio);
+  if (filter.blockedCategories.length > 0) {
+    return NextResponse.json(
+      {
+        error: `Tanıtım metni uygunsuz içerik barındırıyor (${describeCategories(filter.blockedCategories)}).`,
+      },
+      { status: 400 },
+    );
   }
 
   const updated = await prisma.user.update({
     where: { id: user.id },
     data: {
       professions,
-      bio: bio?.trim() || null,
-      neighborhood: neighborhood?.trim() || null,
+      bio: bio.trim(),
       workerSettings: {
-        showName,
         showDistrict,
         phoneVisibility,
       },
+      experiences,
     },
     select: {
       id: true,
       professions: true,
       bio: true,
-      neighborhood: true,
       workerSettings: true,
+      experiences: true,
     },
   });
 

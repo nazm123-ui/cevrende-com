@@ -55,7 +55,6 @@ export default async function AdminUsersPage({
         select: {
           sentMessages: true,
           receivedMessages: true,
-          receivedRequests: true,
         },
       },
     },

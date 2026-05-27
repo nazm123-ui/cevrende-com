@@ -23,6 +23,7 @@ model User {
   professions     String[]  @default([])
   bio             String?
   workerSettings  Json?
+  experiences     Json?
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -30,10 +31,10 @@ model User {
 
   sentMessages       Message[]        @relation("MessageSender")
   receivedMessages   Message[]        @relation("MessageRecipient")
-  sentRequests       ContactRequest[] @relation("RequestSender")
-  receivedRequests   ContactRequest[] @relation("RequestRecipient")
   searchEvents       SearchEvent[]
   reportsFiled       MessageReport[]  @relation("ReportedBy")
+  savedProfiles      SavedProfile[]   @relation("SavedBy")
+  savedByOthers      SavedProfile[]   @relation("SavedAs")
 }
 
 model Message {
@@ -49,21 +50,6 @@ model Message {
 
   @@index([senderId, recipientId, createdAt])
   @@index([recipientId, read])
-}
-
-model ContactRequest {
-  id            String   @id @default(cuid())
-  fromUserId    String
-  fromUser      User     @relation("RequestSender", fields: [fromUserId], references: [id], onDelete: Cascade)
-  toWorkerId    String
-  toWorker      User     @relation("RequestRecipient", fields: [toWorkerId], references: [id], onDelete: Cascade)
-  status        String   @default("pending")
-  message       String?
-  createdAt     DateTime @default(now())
-  respondedAt   DateTime?
-
-  @@unique([fromUserId, toWorkerId])
-  @@index([toWorkerId, status])
 }
 
 model OtpCode {
@@ -99,6 +85,18 @@ model SearchEvent {
 
   @@index([createdAt])
   @@index([professionSlug])
+}
+
+model SavedProfile {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation("SavedBy", fields: [userId], references: [id], onDelete: Cascade)
+  savedUserId  String
+  savedUser    User     @relation("SavedAs", fields: [savedUserId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+
+  @@unique([userId, savedUserId])
+  @@index([userId, createdAt])
 }
 
 model MessageReport {

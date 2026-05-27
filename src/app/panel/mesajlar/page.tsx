@@ -1,97 +1,38 @@
-import Link from "next/link";
 import { requireVerifiedUser } from "@/lib/require-auth";
 import { getConversations } from "@/lib/messages";
+import MessagesClient from "@/components/messages/MessagesClient";
 
 export const metadata = { title: "Mesajlar — Cevrende.com" };
+export const dynamic = "force-dynamic";
+
+function initialsOf(name: string): string {
+  return name
+    .replace(/\*+/g, "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? "")
+    .join("");
+}
 
 export default async function MesajlarPage() {
   const user = await requireVerifiedUser();
   const conversations = await getConversations(user.id);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 sm:py-10">
-      <h1 className="text-2xl sm:text-3xl font-bold text-ink-900 tracking-tight">
-        Mesajlar
-      </h1>
-      <p className="mt-1 text-sm text-ink-500">
-        Platform içi mesajlaşma. Numaranı paylaşmadan iletişim kurabilirsin.
-      </p>
-
-      <div className="mt-6">
-        {conversations.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-ink-200 bg-white p-10 text-center">
-            <p className="text-base font-medium text-ink-900">
-              Henüz mesajın yok.
-            </p>
-            <p className="mt-1 text-sm text-ink-500">
-              Çevrendekiler sayfasından bir profili açıp mesaj göndererek
-              iletişime geçebilirsin.
-            </p>
-            <Link
-              href="/iscilar"
-              className="mt-5 btn-ink h-12 px-6 rounded-full text-[15px]"
-            >
-              Çevrendekileri İncele
-            </Link>
-          </div>
-        ) : (
-          <ul className="divide-y divide-ink-100 rounded-2xl border border-ink-100 bg-white shadow-sm overflow-hidden">
-            {conversations.map((c) => (
-              <li key={c.otherUserId}>
-                <Link
-                  href={`/panel/mesajlar/${c.otherUserId}`}
-                  className="flex items-start gap-3 p-4 hover:bg-ink-50 transition"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline justify-between gap-2">
-                      <p className="font-semibold text-ink-900 truncate">
-                        {c.otherUserName}
-                      </p>
-                      <span className="text-xs text-ink-500 shrink-0">
-                        {formatTime(c.lastMessageAt)}
-                      </span>
-                    </div>
-                    <p
-                      className={`mt-0.5 text-sm truncate ${
-                        c.unreadCount > 0 && !c.lastMessageFromMe
-                          ? "font-semibold text-ink-900"
-                          : "text-ink-500"
-                      }`}
-                    >
-                      {c.lastMessageFromMe && "Sen: "}
-                      {c.lastMessage}
-                    </p>
-                  </div>
-                  {c.unreadCount > 0 && (
-                    <span
-                      className="inline-flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full bg-accent-600 text-[11px] font-semibold"
-                      style={{ color: "#ffffff" }}
-                    >
-                      {c.unreadCount}
-                    </span>
-                  )}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
+    <MessagesClient
+      meId={user.id}
+      conversations={conversations.map((c) => ({
+        otherUserId: c.otherUserId,
+        otherUserName: c.otherUserName,
+        initials: initialsOf(c.otherUserName),
+        lastMessage: c.lastMessage,
+        lastMessageAt: c.lastMessageAt.toISOString(),
+        lastMessageFromMe: c.lastMessageFromMe,
+        unreadCount: c.unreadCount,
+      }))}
+      activeUserId={null}
+      activeMessages={[]}
+    />
   );
-}
-
-function formatTime(date: Date): string {
-  const now = new Date();
-  const sameDay =
-    date.getFullYear() === now.getFullYear() &&
-    date.getMonth() === now.getMonth() &&
-    date.getDate() === now.getDate();
-
-  if (sameDay) {
-    return date.toLocaleTimeString("tr-TR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
-  return date.toLocaleDateString("tr-TR", { day: "2-digit", month: "short" });
 }

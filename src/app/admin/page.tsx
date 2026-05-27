@@ -15,13 +15,10 @@ export default async function AdminPage() {
     workersCount,
     categoriesCount,
     messagesCount,
-    requestsCount,
-    pendingRequestsCount,
-    acceptedRequestsCount,
     searchCount,
     searchCount7d,
     openReportsCount,
-    topWorkers,
+    topMessageSenders,
     topProfessions,
     topNeighborhoods,
     recentSignups,
@@ -30,16 +27,13 @@ export default async function AdminPage() {
     prisma.user.count({ where: { professions: { isEmpty: false } } }),
     prisma.jobCategory.count({ where: { isActive: true } }),
     prisma.message.count(),
-    prisma.contactRequest.count(),
-    prisma.contactRequest.count({ where: { status: "pending" } }),
-    prisma.contactRequest.count({ where: { status: "accepted" } }),
     prisma.searchEvent.count(),
     prisma.searchEvent.count({ where: { createdAt: { gte: last7d } } }),
     prisma.messageReport.count({ where: { status: "open" } }),
-    prisma.contactRequest.groupBy({
-      by: ["toWorkerId"],
-      _count: { toWorkerId: true },
-      orderBy: { _count: { toWorkerId: "desc" } },
+    prisma.message.groupBy({
+      by: ["recipientId"],
+      _count: { recipientId: true },
+      orderBy: { _count: { recipientId: "desc" } },
       take: 10,
     }),
     prisma.searchEvent.groupBy({
@@ -59,7 +53,7 @@ export default async function AdminPage() {
     prisma.user.count({ where: { createdAt: { gte: last7d } } }),
   ]);
 
-  const topWorkerIds = topWorkers.map((w) => w.toWorkerId);
+  const topWorkerIds = topMessageSenders.map((w) => w.recipientId);
   const topWorkerUsers = topWorkerIds.length
     ? await prisma.user.findMany({
         where: { id: { in: topWorkerIds } },
@@ -128,31 +122,24 @@ export default async function AdminPage() {
         </h2>
         <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
           <Stat label="Toplam arama" value={searchCount} sub={`${searchCount7d} (7g)`} />
-          <Stat label="Toplam talep" value={requestsCount} />
-          <Stat label="Bekleyen talep" value={pendingRequestsCount} />
-          <Stat label="Kabul edilen talep" value={acceptedRequestsCount} />
+          <Stat label="Toplam mesaj" value={messagesCount} />
         </div>
-        <Stat
-          className="mt-3 sm:max-w-xs"
-          label="Toplam mesaj"
-          value={messagesCount}
-        />
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Panel
-          title="En çok tercih edilen işçiler"
-          subtitle="Aldığı talep sayısına göre"
-          empty={topWorkers.length === 0}
-          emptyText="Henüz talep yok."
+          title="En çok mesaj alan işçiler"
+          subtitle="Aldığı mesaj sayısına göre"
+          empty={topMessageSenders.length === 0}
+          emptyText="Henüz mesaj yok."
         >
           <ul className="divide-y divide-ink-100">
-            {topWorkers.map((row, i) => {
-              const user = topWorkerMap.get(row.toWorkerId);
+            {topMessageSenders.map((row, i) => {
+              const user = topWorkerMap.get(row.recipientId);
               if (!user) return null;
               return (
                 <li
-                  key={row.toWorkerId}
+                  key={row.recipientId}
                   className="py-3 flex items-center gap-3"
                 >
                   <span className="font-mono text-[12px] text-ink-400 w-5">
@@ -168,7 +155,7 @@ export default async function AdminPage() {
                     </p>
                   </div>
                   <span className="font-mono text-[13px] text-ink-900">
-                    {row._count.toWorkerId}
+                    {row._count.recipientId}
                   </span>
                 </li>
               );

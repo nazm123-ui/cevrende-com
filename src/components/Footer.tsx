@@ -7,17 +7,17 @@ export default function Footer() {
       className="border-t border-ink-100 pt-14 pb-10 bg-ink-50 mt-12"
       style={{ paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))" }}
     >
-      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 grid gap-10 sm:gap-12 grid-cols-2 sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div className="footer-grid mx-auto max-w-[1200px] px-5 sm:px-6 grid gap-10 sm:gap-12 grid-cols-2 sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div className="col-span-2 sm:col-span-1">
           <Logo size="sm" />
           <p className="mt-4 text-[13.5px] text-ink-500 max-w-[280px] leading-relaxed">
-            Pendik ve çevresinde meslek sahibi kişilerle aracısız iletişim için
-            yerel platform.
+            Pendik ve çevresindeki iş arayanlarla işverenleri doğrudan
+            buluşturur.
           </p>
         </div>
 
         <FooterCol title="Platform">
-          <FooterLink href="/iscilar">Çevrendekiler</FooterLink>
+          <FooterLink href="/cevrendekiler">Çevrendekiler</FooterLink>
           <FooterLink href="/kayit">Hesap aç</FooterLink>
           <FooterLink href="/giris">Giriş</FooterLink>
         </FooterCol>
@@ -30,16 +30,12 @@ export default function Footer() {
 
         <FooterCol title="Destek">
           <FooterLink href="/sifre-sifirla">Şifremi unuttum</FooterLink>
-          <span className="text-[14px] text-ink-700/40 cursor-default">
-            Yardım merkezi
-          </span>
-          <span className="text-[14px] text-ink-700/40 cursor-default">
-            Geri bildirim
-          </span>
+          <FooterLink href="/yardim">Yardım merkezi</FooterLink>
+          <FooterLink href="/geri-bildirim">Geri bildirim</FooterLink>
         </FooterCol>
       </div>
 
-      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 mt-12 flex flex-wrap items-center justify-between gap-3 text-[13px] text-ink-500">
+      <div className="footer-bottom mx-auto max-w-[1200px] px-5 sm:px-6 mt-12 flex flex-wrap items-center justify-between gap-3 text-[13px] text-ink-500">
         <span>© {new Date().getFullYear()} çevrende · Pendik, İstanbul</span>
         <span className="font-mono text-ink-400">v1.0</span>
       </div>

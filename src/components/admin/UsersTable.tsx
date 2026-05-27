@@ -19,7 +19,6 @@ export type AdminUserRow = {
   _count: {
     sentMessages: number;
     receivedMessages: number;
-    receivedRequests: number;
   };
 };
 
@@ -124,8 +123,7 @@ export default function UsersTable({ users }: { users: AdminUserRow[] }) {
                 </p>
                 <p className="mt-1.5 font-mono text-[11.5px] text-ink-400">
                   Kayıt: {new Date(u.createdAt).toLocaleDateString("tr-TR")} ·
-                  Mesaj: {u._count.sentMessages + u._count.receivedMessages} ·
-                  Talep al: {u._count.receivedRequests}
+                  Mesaj: {u._count.sentMessages + u._count.receivedMessages}
                 </p>
               </div>
 

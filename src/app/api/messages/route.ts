@@ -4,7 +4,6 @@ import { requireVerifiedUser } from "@/lib/require-auth";
 import { sendMessageSchema } from "@/lib/validators";
 import { checkContent, describeCategories } from "@/lib/content-filter";
 import { getThread, markThreadAsRead } from "@/lib/messages";
-import { canMessageWorker } from "@/lib/contact-requests";
 
 export async function POST(req: Request) {
   const user = await requireVerifiedUser();
@@ -45,27 +44,13 @@ export async function POST(req: Request) {
 
   const recipient = await prisma.user.findUnique({
     where: { id: recipientId },
-    select: { id: true, isActive: true, professions: true },
+    select: { id: true, isActive: true },
   });
   if (!recipient || !recipient.isActive) {
     return NextResponse.json(
       { error: "Alıcı bulunamadı." },
       { status: 404 },
     );
-  }
-
-  if (recipient.professions.length > 0) {
-    const allowed = await canMessageWorker(user.id, recipientId);
-    if (!allowed) {
-      return NextResponse.json(
-        {
-          error:
-            "Mesaj göndermek için önce işçinin onayını alman gerekiyor. Talep gönder ve onaylanmasını bekle.",
-          requiresApproval: true,
-        },
-        { status: 403 },
-      );
-    }
   }
 
   const message = await prisma.message.create({

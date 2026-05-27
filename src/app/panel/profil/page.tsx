@@ -1,21 +1,31 @@
-import { requireVerifiedUser } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
-import ProfileForm, { type ProfileFormInitial } from "@/components/panel/ProfileForm";
-import { getPhoneVisibility, type WorkerSettings } from "@/lib/phone-visibility";
+import { requireVerifiedUser } from "@/lib/require-auth";
+import { getConversations } from "@/lib/messages";
+import { getPhoneVisibility } from "@/lib/phone-visibility";
+import { parseExperiences } from "@/lib/experience";
+import ProfileClient from "@/components/profile/ProfileClient";
 
 export const metadata = { title: "Profilim — Cevrende.com" };
+export const dynamic = "force-dynamic";
 
 export default async function ProfilPage() {
   const session = await requireVerifiedUser();
 
-  const [user, categories] = await Promise.all([
+  const [user, categories, conversations, savedRows] = await Promise.all([
     prisma.user.findUniqueOrThrow({
       where: { id: session.id },
       select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        district: true,
+        neighborhood: true,
         professions: true,
         bio: true,
-        neighborhood: true,
         workerSettings: true,
+        experiences: true,
+        createdAt: true,
       },
     }),
     prisma.jobCategory.findMany({
@@ -23,32 +33,93 @@ export default async function ProfilPage() {
       orderBy: { order: "asc" },
       select: { slug: true, name: true },
     }),
+    getConversations(session.id),
+    prisma.savedProfile.findMany({
+      where: { userId: session.id },
+      orderBy: { createdAt: "desc" },
+      select: {
+        savedUser: {
+          select: {
+            id: true,
+            fullName: true,
+            professions: true,
+          },
+        },
+      },
+    }),
   ]);
 
-  const settings = (user.workerSettings ?? {}) as WorkerSettings;
+  const categoryNameBySlug = new Map(categories.map((c) => [c.slug, c.name]));
+  const savedProfiles = savedRows.map((r) => {
+    const initials = r.savedUser.fullName
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((n) => n[0]?.toUpperCase() ?? "")
+      .join("");
+    return {
+      id: r.savedUser.id,
+      fullName: r.savedUser.fullName,
+      initials,
+      professionNames: r.savedUser.professions
+        .map((s) => categoryNameBySlug.get(s) ?? s)
+        .slice(0, 3),
+    };
+  });
 
-  const initial: ProfileFormInitial = {
-    professions: user.professions,
-    bio: user.bio ?? "",
-    neighborhood: user.neighborhood ?? "",
-    showName: settings.showName ?? false,
-    showDistrict: settings.showDistrict ?? true,
-    phoneVisibility: getPhoneVisibility(settings),
+  const settings = (user.workerSettings ?? {}) as {
+    showDistrict?: boolean;
   };
+  const experiences = parseExperiences(user.experiences);
+  const initials = user.fullName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((n) => n[0]?.toUpperCase() ?? "")
+    .join("");
+
+  const recentConvos = conversations.slice(0, 3).map((c) => ({
+    otherUserId: c.otherUserId,
+    name: c.otherUserName,
+    initials: c.otherUserName
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((n) => n[0]?.toUpperCase() ?? "")
+      .join(""),
+    lastMessage: c.lastMessage,
+    lastMessageAt: c.lastMessageAt.toISOString(),
+    unread: c.unreadCount,
+  }));
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 sm:py-10">
-      <h1 className="text-2xl sm:text-3xl font-bold text-ink-900 tracking-tight">
-        Profilim
-      </h1>
-      <p className="mt-1 text-sm text-ink-500">
-        İşverenler seni bu bilgilerle bulacak. Numaranı paylaşmak zorunda
-        değilsin — platform üzerinden mesajlaşabilirsin.
-      </p>
-
-      <div className="mt-6">
-        <ProfileForm categories={categories} initial={initial} />
-      </div>
-    </div>
+    <ProfileClient
+      user={{
+        id: user.id,
+        fullName: user.fullName,
+        initials,
+        email: user.email,
+        phone: user.phone,
+        district: user.district,
+        neighborhood: user.neighborhood,
+        professions: user.professions,
+        bio: user.bio ?? "",
+        createdAt: user.createdAt.toISOString(),
+      }}
+      stats={{
+        professionCount: user.professions.length,
+        experienceCount: experiences.length,
+      }}
+      recentConversations={recentConvos}
+      savedProfiles={savedProfiles}
+      categories={categories}
+      initialFormState={{
+        professions: user.professions,
+        bio: user.bio ?? "",
+        showDistrict: settings.showDistrict ?? false,
+        phoneVisibility: getPhoneVisibility(user.workerSettings as never),
+        experiences,
+      }}
+    />
   );
 }

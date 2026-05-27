@@ -42,13 +42,13 @@ export default function WorkerFilters({
       }).catch(() => {});
     }
     startTransition(() => {
-      router.push(`/iscilar${next.toString() ? `?${next}` : ""}`);
+      router.push(`/cevrendekiler${next.toString() ? `?${next}` : ""}`);
     });
   }
 
   function reset() {
     startTransition(() => {
-      router.push("/iscilar");
+      router.push("/cevrendekiler");
     });
   }
 

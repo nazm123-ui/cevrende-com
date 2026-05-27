@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db";
-import { maskName } from "@/lib/masking";
 
 export type ConversationSummary = {
   otherUserId: string;
@@ -17,18 +16,6 @@ export type ThreadMessage = {
   createdAt: Date;
   read: boolean;
 };
-
-type WorkerSettings = { showName?: boolean };
-
-function displayNameFor(
-  user: { fullName: string; professions: string[]; workerSettings: unknown },
-  viewerIsCounterparty: boolean,
-): string {
-  if (viewerIsCounterparty) return user.fullName;
-  if (user.professions.length === 0) return user.fullName;
-  const settings = (user.workerSettings ?? {}) as WorkerSettings;
-  return settings.showName ? user.fullName : maskName(user.fullName);
-}
 
 export async function getConversations(
   userId: string,
@@ -79,8 +66,6 @@ export async function getConversations(
     select: {
       id: true,
       fullName: true,
-      professions: true,
-      workerSettings: true,
     },
   });
 
@@ -89,7 +74,7 @@ export async function getConversations(
       const conv = byOtherUser.get(o.id)!;
       return {
         otherUserId: o.id,
-        otherUserName: displayNameFor(o, true),
+        otherUserName: o.fullName,
         lastMessage: conv.lastMessage,
         lastMessageAt: conv.lastMessageAt,
         lastMessageFromMe: conv.lastMessageFromMe,

@@ -68,7 +68,7 @@ export default function RootLayout({
                 target: {
                   "@type": "EntryPoint",
                   urlTemplate:
-                    "https://cevrende.com/iscilar?q={search_term_string}",
+                    "https://cevrende.com/cevrendekiler?q={search_term_string}",
                 },
               },
             }),
