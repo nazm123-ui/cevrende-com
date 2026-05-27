@@ -449,6 +449,23 @@ section.tight {
   padding: 64px 0;
 }
 
+/* Section spacing scale — tek bir vertical rhythm
+   lg → major (Hero, HowItWorks, PreviewListings)
+   md → default (FAQ, FinalCTA)
+   sm → compact (TrustMessage, CountStrip alt section)
+   xs → embedded subsection */
+.section-py-lg { padding-block: 112px; }
+.section-py-md { padding-block: 80px; }
+.section-py-sm { padding-block: 56px; }
+.section-py-xs { padding-block: 32px; }
+
+@media (max-width: 880px) {
+  .section-py-lg { padding-block: 72px; }
+  .section-py-md { padding-block: 56px; }
+  .section-py-sm { padding-block: 40px; }
+  .section-py-xs { padding-block: 24px; }
+}
+
 /* Row utility */
 .row {
   display: flex;

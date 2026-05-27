@@ -38,13 +38,22 @@ export default async function Hero() {
           </p>
 
           {!user && (
-            <div className="mt-7 sm:mt-8 flex flex-col sm:flex-row sm:flex-wrap gap-3">
+            <div className="mt-7 sm:mt-8 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
               <Link
                 href="/kayit"
                 className="btn-ink h-12 px-6 rounded-full text-[15px] w-full sm:w-auto"
               >
                 Ücretsiz profil oluştur
                 <ArrowRight />
+              </Link>
+              <Link
+                href="/cevrendekiler"
+                className="inline-flex items-center gap-1.5 text-[14px] text-ink-700 hover:text-ink-900 transition self-start sm:self-auto group"
+              >
+                <span className="underline underline-offset-[6px] decoration-ink-300 group-hover:decoration-ink-900 transition">
+                  Önce çevrendekilere bak
+                </span>
+                <span aria-hidden className="transition group-hover:translate-x-0.5">→</span>
               </Link>
             </div>
           )}

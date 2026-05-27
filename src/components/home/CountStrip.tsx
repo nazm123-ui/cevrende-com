@@ -7,7 +7,6 @@ export default async function CountStrip() {
     }),
   ]);
 
-  // Formatlanmış sayı — 1000+ ise "1.4K" şeklinde
   const workersDisplay =
     workersCount >= 1000
       ? `${(workersCount / 1000).toFixed(1)}K`
@@ -15,45 +14,26 @@ export default async function CountStrip() {
 
   const stats = [
     { n: workersDisplay, lbl: "iş arayan" },
-    { n: "7 semt", lbl: "Pendik & çevresi" },
-    { n: "2 saat", lbl: "ortalama yanıt" },
+    { n: "7", lbl: "semt — Pendik & çevresi" },
+    { n: "~2 sa", lbl: "ortalama yanıt" },
     { n: "%0", lbl: "komisyon" },
   ];
 
   return (
-    <section
-      style={{
-        padding: "36px 0",
-        borderTop: "1px solid var(--color-ink-100)",
-        borderBottom: "1px solid var(--color-ink-100)",
-      }}
-    >
-      <div
-        className="container count-grid"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 32,
-        }}
-      >
-        {stats.map((s, i) => (
-          <div
-            key={i}
-            style={{ display: "flex", flexDirection: "column", gap: 4 }}
-          >
-            <div
-              style={{
-                fontSize: 28,
-                fontWeight: 500,
-                letterSpacing: "-0.02em",
-                color: "var(--color-ink-900)",
-              }}
-            >
-              {s.n}
+    <section className="py-9 sm:py-10 border-y border-ink-100">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-7 gap-x-6 sm:gap-x-10">
+          {stats.map((s, i) => (
+            <div key={i} className="flex flex-col gap-1.5">
+              <div className="text-[28px] sm:text-[30px] font-medium tracking-[-0.02em] text-ink-900 leading-none">
+                {s.n}
+              </div>
+              <div className="text-[13px] sm:text-[13.5px] text-ink-500 leading-snug">
+                {s.lbl}
+              </div>
             </div>
-            <div className="text-sm text-muted">{s.lbl}</div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
