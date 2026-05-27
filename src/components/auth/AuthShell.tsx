@@ -10,56 +10,22 @@ export default function AuthShell({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        padding: "48px 24px",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 420,
-          background: "#fff",
-          border: "1px solid var(--color-ink-100)",
-          borderRadius: 18,
-          padding: 36,
-          boxShadow:
-            "0 1px 0 rgba(15,17,16,.02), 0 8px 24px -12px rgba(15,17,16,.10)",
-        }}
-      >
+    <div className="flex justify-center px-5 sm:px-6 py-10 sm:py-14">
+      <div className="w-full max-w-[480px] bg-white border border-ink-100 rounded-[18px] p-7 sm:p-10 shadow-[0_1px_0_rgba(15,17,16,.02),0_8px_24px_-12px_rgba(15,17,16,.10)]">
         {eyebrow && (
-          <div className="eyebrow" style={{ marginBottom: 8 }}>
+          <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium mb-2.5">
             {eyebrow}
-          </div>
+          </p>
         )}
-        <h3
-          style={{
-            fontSize: 22,
-            fontWeight: 600,
-            letterSpacing: "-0.012em",
-            lineHeight: 1.2,
-            margin: 0,
-            color: "var(--color-ink-900)",
-          }}
-        >
+        <h1 className="!text-[26px] sm:!text-[30px] !font-semibold !tracking-[-0.02em] !leading-[1.15] m-0 text-ink-900">
           {title}
-        </h3>
+        </h1>
         {subtitle && (
-          <p
-            style={{
-              color: "var(--color-ink-500)",
-              fontSize: 14,
-              marginTop: 8,
-              marginBottom: 0,
-              lineHeight: 1.55,
-            }}
-          >
+          <p className="text-ink-500 text-[14.5px] mt-2.5 mb-0 leading-[1.55]">
             {subtitle}
           </p>
         )}
-        <div style={{ marginTop: 24 }}>{children}</div>
+        <div className="mt-7">{children}</div>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { PENDIK_NEIGHBORHOODS } from "@/lib/constants/pendik-neighborhoods";
 import OtpForm from "./OtpForm";
+import Spinner from "@/components/ui/Spinner";
 
 export default function RegisterForm() {
   const [step, setStep] = useState<"form" | "otp">("form");
@@ -257,13 +258,9 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={loading || !acceptTerms}
-        style={{
-          ...btnPrimaryFull,
-          marginTop: 4,
-          opacity: loading || !acceptTerms ? 0.5 : 1,
-          cursor: loading || !acceptTerms ? "not-allowed" : "pointer",
-        }}
+        className="mt-1 inline-flex items-center justify-center gap-2 w-full h-12 px-5 rounded-full bg-ink-900 text-white border border-ink-900 text-[15px] font-medium hover:bg-accent-600 hover:border-accent-600 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-ink-900 disabled:hover:border-ink-900"
       >
+        {loading && <Spinner size={16} />}
         {loading ? "Hesap oluşturuluyor..." : "Hesap oluştur"}
       </button>
 
@@ -472,18 +469,3 @@ const inputStyle: React.CSSProperties = {
   outline: "none",
 };
 
-const btnPrimaryFull: React.CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "100%",
-  height: 48,
-  padding: "0 22px",
-  borderRadius: 999,
-  background: "var(--color-ink-900)",
-  color: "#fff",
-  border: "1px solid var(--color-ink-900)",
-  fontSize: 15,
-  fontWeight: 500,
-  cursor: "pointer",
-};
