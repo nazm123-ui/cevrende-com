@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { reportMessageSchema } from "@/lib/validators";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,18 +13,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json().catch(() => ({}));
-    const messageId =
-      typeof body.messageId === "string" ? body.messageId : null;
-    const reason =
-      typeof body.reason === "string" ? body.reason.slice(0, 500) : null;
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
+    }
 
-    if (!messageId || !reason) {
+    const parsed = reportMessageSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "messageId ve reason gereklidir." },
+        { error: "Form hatalı.", issues: parsed.error.flatten().fieldErrors },
         { status: 400 },
       );
     }
+
+    const { messageId, reason } = parsed.data;
 
     const message = await prisma.message.findUnique({
       where: { id: messageId },

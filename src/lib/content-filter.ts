@@ -87,8 +87,15 @@ const SOFT_PATTERNS = Object.entries(SOFT_FLAG).map(
     [category as FilterCategory, buildPattern(words)] as const,
 );
 
+// Zero-width + invisible chars used to bypass keyword filters:
+// ZWSP, ZWNJ, ZWJ, LRM/RLM, WJ, BOM, soft hyphen
+const ZERO_WIDTH_RE = /[​-‏⁠﻿­]/g;
+
 function normalize(text: string): string {
-  return text.toLocaleLowerCase("tr-TR");
+  return text
+    .normalize("NFKC")
+    .replace(ZERO_WIDTH_RE, "")
+    .toLocaleLowerCase("tr-TR");
 }
 
 export type ContentCheckResult = {

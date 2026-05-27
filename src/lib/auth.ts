@@ -3,7 +3,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { prisma } from "@/lib/db";
 
 const SESSION_COOKIE = "cev_session";
-const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 gün
+const SESSION_MAX_AGE = 60 * 60 * 24 * 14; // 14 gün
 
 function getSecret(): Uint8Array {
   const secret = process.env.SESSION_SECRET || process.env.JWT_SECRET;
@@ -31,7 +31,7 @@ export async function setSessionCookie(payload: SessionPayload) {
   cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "strict",
     path: "/",
     maxAge: SESSION_MAX_AGE,
   });

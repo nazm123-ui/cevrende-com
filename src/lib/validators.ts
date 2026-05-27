@@ -121,6 +121,19 @@ export const workerProfileSchema = z.object({
 
 export type WorkerProfileInput = z.infer<typeof workerProfileSchema>;
 
+export const clearConversationSchema = z.object({
+  otherUserId: z.string().min(1, "Kullanıcı belirtilmedi.").max(40),
+});
+
+export const reportMessageSchema = z.object({
+  messageId: z.string().min(1, "Mesaj belirtilmedi.").max(40),
+  reason: z
+    .string()
+    .trim()
+    .min(1, "Rapor sebebi gereklidir.")
+    .max(500, "Rapor sebebi en fazla 500 karakter olabilir."),
+});
+
 export const sendMessageSchema = z.object({
   recipientId: z.string().min(1, "Alıcı belirtilmedi."),
   content: z

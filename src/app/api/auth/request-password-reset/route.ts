@@ -26,18 +26,29 @@ export async function POST(req: Request) {
 
   const { email } = parsed.data;
 
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: { id: true, email: true, isActive: true },
-  });
+  // Email enumeration ataklarını engellemek için kayıtlı/kayıtsız akışları
+  // arka planda paralel çalıştırıp toplam süreyi normalize ediyoruz.
+  const work = (async () => {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, isActive: true },
+    });
 
-  if (user && user.isActive) {
-    const otp = await createOtp(user.id, "password_reset");
-    await sendPasswordResetEmail(user.email, otp.code);
-    if (isDevMode()) {
-      return NextResponse.json({ ok: true, devCode: otp.code });
+    if (user && user.isActive) {
+      const otp = await createOtp(user.id, "password_reset");
+      await sendPasswordResetEmail(user.email, otp.code);
+      return otp.code;
     }
-  }
+    return null;
+  })();
 
+  const [code] = await Promise.all([
+    work,
+    new Promise((resolve) => setTimeout(resolve, 600)),
+  ]);
+
+  if (code && isDevMode()) {
+    return NextResponse.json({ ok: true, devCode: code });
+  }
   return NextResponse.json({ ok: true });
 }

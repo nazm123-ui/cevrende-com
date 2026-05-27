@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { clearConversationSchema } from "@/lib/validators";
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -8,19 +9,27 @@ export async function DELETE(req: NextRequest) {
     if (!user?.isEmailVerified) {
       return NextResponse.json(
         { error: "Kimlik doğrulaması gereklidir." },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
-    const { otherUserId } = await req.json();
-    if (!otherUserId) {
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
+    }
+
+    const parsed = clearConversationSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "otherUserId gereklidir." },
-        { status: 400 }
+        { error: "Form hatalı.", issues: parsed.error.flatten().fieldErrors },
+        { status: 400 },
       );
     }
 
-    // Sil: kullanıcı ve otherUser arasındaki tüm mesajlar
+    const { otherUserId } = parsed.data;
+
     const result = await prisma.message.deleteMany({
       where: {
         OR: [
@@ -38,7 +47,7 @@ export async function DELETE(req: NextRequest) {
     console.error("Clear messages error:", error);
     return NextResponse.json(
       { error: "Mesajlar temizlenemedi." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
