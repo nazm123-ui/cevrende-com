@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { prisma } from "@/lib/db";
 import { createOtp, isDevMode } from "@/lib/otp";
 import { sendPasswordResetEmail } from "@/lib/email";
@@ -26,8 +26,10 @@ export async function POST(req: Request) {
 
   const { email } = parsed.data;
 
-  // Email enumeration ataklarını engellemek için kayıtlı/kayıtsız akışları
-  // arka planda paralel çalıştırıp toplam süreyi normalize ediyoruz.
+  // Email enumeration timing attack koruması:
+  // 1) DB + OTP yazma response'a dahil (hızlı işler, ~200ms)
+  // 2) Mail gönderimi after() ile response sonrasına ertelendi (2-3s SMTP latency'si gizlenir)
+  // 3) 600ms taban gecikme: registered/unregistered yanıt süresi normalize edilir
   const work = (async () => {
     const user = await prisma.user.findUnique({
       where: { email },
@@ -36,7 +38,13 @@ export async function POST(req: Request) {
 
     if (user && user.isActive) {
       const otp = await createOtp(user.id, "password_reset");
-      await sendPasswordResetEmail(user.email, otp.code);
+      after(async () => {
+        try {
+          await sendPasswordResetEmail(user.email, otp.code);
+        } catch (err) {
+          console.error("[request-password-reset] mail send failed:", err);
+        }
+      });
       return otp.code;
     }
     return null;
