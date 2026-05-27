@@ -1,49 +1,73 @@
 const steps = [
   {
     n: "01",
-    title: "Profilini aç",
-    body: "Hesap aç, e-postanı doğrula. Mahalleni ekle, çevrendeki kişilerle eşleş.",
+    title: "Profilini yayınla",
+    body: "Ne iş yaptığını, deneyimini ve nerede çalışmak istediğini birkaç adımda yaz.",
   },
   {
     n: "02",
-    title: "Çevrendekileri keşfet",
-    body: "Mesleğe ve mahalleye göre filtrele. Profilini açarsan sen de bulun.",
+    title: "İşveren seni bulur",
+    body: "Pendik'te sana uygun iş arayan işverenler profilini görür.",
   },
   {
     n: "03",
-    title: "Mesajlaş, tanış",
-    body: "Platform üzerinden mesajla. Onay sonrası telefonla aracısız iletişim.",
+    title: "Doğrudan iletişim",
+    body: "Telefon ya da mesajla aracısız konuşur, vakit kaybetmezsin.",
   },
 ];
 
 export default function HowItWorks() {
   return (
-    <section className="py-20 sm:py-24">
-      <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
-        <div className="max-w-[600px] mb-14">
-          <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
+    <section style={{ padding: "96px 0" }}>
+      <div className="container">
+        <div style={{ maxWidth: 600, marginBottom: 56 }}>
+          <div className="eyebrow" style={{ marginBottom: 14 }}>
             Nasıl çalışır
-          </p>
-          <h2 className="mt-3 text-[32px] sm:text-[40px] font-semibold tracking-[-0.025em] leading-[1.08] text-balance">
-            Üç Adım: Pendik'te Usta Bul, Mesajla, Aracısız İletişim
+          </div>
+          <h2 style={{ textWrap: "balance" }}>
+            Üç adımda, mahallenden iş.
           </h2>
         </div>
-
-        <div className="grid sm:grid-cols-3 border-t border-ink-100">
+        <div
+          className="how-grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: 0,
+            borderTop: "1px solid var(--color-ink-100)",
+          }}
+        >
           {steps.map((s, i) => (
             <div
-              key={s.n}
-              className={`py-10 ${
-                i > 0 ? "sm:pl-8 sm:border-l sm:border-ink-100" : "sm:pr-8"
-              } ${i < 2 ? "sm:pr-8" : ""}`}
+              key={i}
+              className="how-step"
+              style={{
+                padding: "40px 32px 36px 0",
+                borderRight:
+                  i < 2 ? "1px solid var(--color-ink-100)" : "none",
+                paddingLeft: i > 0 ? 32 : 0,
+              }}
             >
-              <p className="font-mono text-[13px] text-accent-600 tracking-[0.04em] mb-4">
+              <div
+                className="font-mono"
+                style={{
+                  fontSize: 13,
+                  color: "var(--color-accent-600)",
+                  marginBottom: 18,
+                  letterSpacing: "0.04em",
+                }}
+              >
                 {s.n}
-              </p>
-              <h3 className="text-[22px] font-semibold tracking-[-0.012em] mb-2">
-                {s.title}
-              </h3>
-              <p className="text-[15px] text-ink-500 max-w-[280px] leading-relaxed">
+              </div>
+              <h3 style={{ marginBottom: 10 }}>{s.title}</h3>
+              <p
+                style={{
+                  color: "var(--color-ink-500)",
+                  fontSize: 15,
+                  maxWidth: 280,
+                  lineHeight: 1.6,
+                }}
+              >
                 {s.body}
               </p>
             </div>

@@ -1,34 +1,55 @@
 const items = [
   {
     title: "Yerel",
-    body: "Sadece Pendik ve çevre mahalleler. Uzak hissetmezsin.",
+    body: "Sadece Pendik ve çevre semtler. Uzak kalmaz.",
   },
   {
     title: "Ücretsiz",
-    body: "Profil açmak ve çevrendekilere ulaşmak tamamen ücretsiz.",
+    body: "Profil oluşturmak ve görüntülemek tamamen ücretsizdir.",
   },
   {
-    title: "Aracısız",
-    body: "Onay sonrası telefon veya platform mesajıyla doğrudan iletişim.",
+    title: "Hızlı iletişim",
+    body: "Aracısız telefon veya mesaj. Vakit kaybı yok.",
   },
 ];
 
 export default function TrustMessage() {
   return (
-    <section className="py-16">
-      <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
-        <div className="bg-[#f4f2eb] rounded-[14px] px-8 sm:px-12 py-12 grid gap-10 sm:grid-cols-3">
-          {items.map((it) => (
-            <div key={it.title}>
-              <h3 className="text-[16px] font-medium text-ink-900 mb-2">
-                {it.title}
-              </h3>
-              <p className="text-[14px] text-ink-500 leading-relaxed">
-                {it.body}
-              </p>
-            </div>
-          ))}
-        </div>
+    <section
+      style={{ padding: "64px 0", background: "#F4F2EB" }}
+      className="tight"
+    >
+      <div
+        className="container trust-grid"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 48,
+        }}
+      >
+        {items.map((it, i) => (
+          <div key={i}>
+            <h4
+              style={{
+                marginBottom: 8,
+                fontSize: 16,
+                fontWeight: 500,
+                color: "var(--color-ink-900)",
+              }}
+            >
+              {it.title}
+            </h4>
+            <p
+              style={{
+                fontSize: 14,
+                color: "var(--color-ink-500)",
+                lineHeight: 1.55,
+              }}
+            >
+              {it.body}
+            </p>
+          </div>
+        ))}
       </div>
     </section>
   );

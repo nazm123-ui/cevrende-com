@@ -80,6 +80,7 @@ export default async function DogrulamaPage({
 
   return (
     <AuthShell
+      eyebrow="Son adım"
       title="Hesabını Doğrula"
       subtitle="Telefonuna SMS ve e-postana doğrulama kodu gönderildi. İkisini de gir."
     >

@@ -1,29 +1,57 @@
 import { prisma } from "@/lib/db";
 
 export default async function CountStrip() {
-  const [workersCount, usersCount] = await Promise.all([
+  const [workersCount] = await Promise.all([
     prisma.user.count({
       where: { professions: { isEmpty: false }, isActive: true },
     }),
-    prisma.user.count({ where: { isActive: true } }),
   ]);
 
+  // Formatlanmış sayı — 1000+ ise "1.4K" şeklinde
+  const workersDisplay =
+    workersCount >= 1000
+      ? `${(workersCount / 1000).toFixed(1)}K`
+      : workersCount.toString();
+
   const stats = [
-    { n: workersCount.toString(), lbl: "meslek sahibi" },
-    { n: usersCount.toString(), lbl: "kayıtlı kişi" },
-    { n: "Pendik", lbl: "ve mahalleleri" },
+    { n: workersDisplay, lbl: "iş arayan" },
+    { n: "7 semt", lbl: "Pendik & çevresi" },
+    { n: "2 saat", lbl: "ortalama yanıt" },
     { n: "%0", lbl: "komisyon" },
   ];
 
   return (
-    <section className="border-y border-ink-100 py-9">
-      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 grid grid-cols-2 sm:grid-cols-4 gap-8">
-        {stats.map((s) => (
-          <div key={s.lbl} className="flex flex-col gap-1">
-            <div className="text-[26px] sm:text-[28px] font-medium tracking-[-0.02em] text-ink-900">
+    <section
+      style={{
+        padding: "36px 0",
+        borderTop: "1px solid var(--color-ink-100)",
+        borderBottom: "1px solid var(--color-ink-100)",
+      }}
+    >
+      <div
+        className="container count-grid"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: 32,
+        }}
+      >
+        {stats.map((s, i) => (
+          <div
+            key={i}
+            style={{ display: "flex", flexDirection: "column", gap: 4 }}
+          >
+            <div
+              style={{
+                fontSize: 28,
+                fontWeight: 500,
+                letterSpacing: "-0.02em",
+                color: "var(--color-ink-900)",
+              }}
+            >
               {s.n}
             </div>
-            <div className="text-[13.5px] text-ink-500">{s.lbl}</div>
+            <div className="text-sm text-muted">{s.lbl}</div>
           </div>
         ))}
       </div>

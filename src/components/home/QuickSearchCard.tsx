@@ -75,7 +75,7 @@ export default function QuickSearchCard({
       }),
       keepalive: true,
     }).catch(() => {});
-    router.push(`/iscilar?${params.toString()}`);
+    router.push(`/cevrendekiler?${params.toString()}`);
   }
 
   function submit(e: React.FormEvent) {
@@ -97,7 +97,7 @@ export default function QuickSearchCard({
       }).catch(() => {});
     }
     const qs = params.toString();
-    router.push(`/iscilar${qs ? `?${qs}` : ""}`);
+    router.push(`/cevrendekiler${qs ? `?${qs}` : ""}`);
   }
 
   function onInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -123,7 +123,10 @@ export default function QuickSearchCard({
 
       <form onSubmit={submit} className="mt-5 flex flex-col gap-3" autoComplete="off">
         <div className="relative" ref={wrapperRef}>
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-400">
+          <span
+            className="absolute top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none"
+            style={{ left: 18, display: "flex", alignItems: "center" }}
+          >
             <SearchIcon />
           </span>
           <input
@@ -140,7 +143,8 @@ export default function QuickSearchCard({
             aria-expanded={suggestionsOpen && suggestions.length > 0}
             aria-autocomplete="list"
             aria-controls="qs-suggestions"
-            className="w-full h-12 pl-11 pr-4 rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
+            className="w-full rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
+            style={{ height: 48, paddingLeft: 48, paddingRight: 16 }}
           />
           {suggestionsOpen && suggestions.length > 0 && (
             <ul
@@ -171,13 +175,17 @@ export default function QuickSearchCard({
         </div>
 
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-400">
+          <span
+            className="absolute top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none"
+            style={{ left: 18, display: "flex", alignItems: "center" }}
+          >
             <PinIcon />
           </span>
           <select
             value={mahalle}
             onChange={(e) => setMahalle(e.target.value)}
-            className="w-full h-12 pl-11 pr-10 rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition appearance-none focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
+            className="w-full rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition appearance-none focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
+            style={{ height: 48, paddingLeft: 48, paddingRight: 40 }}
           >
             <option value="">Tüm mahalleler</option>
             {PENDIK_NEIGHBORHOODS.map((n) => (
@@ -220,7 +228,7 @@ export default function QuickSearchCard({
                     body: JSON.stringify({ professionSlug: p.slug }),
                     keepalive: true,
                   }).catch(() => {});
-                  router.push(`/iscilar?meslek=${encodeURIComponent(p.slug)}`);
+                  router.push(`/cevrendekiler?meslek=${encodeURIComponent(p.slug)}`);
                 }}
                 className="shrink-0 inline-flex items-center h-10 px-4 rounded-full border border-ink-200 bg-white text-[14px] text-ink-700 hover:border-ink-900 hover:text-ink-900 transition"
               >

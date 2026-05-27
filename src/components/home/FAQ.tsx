@@ -27,13 +27,13 @@ const faqs = [
 
 export default function FAQ() {
   return (
-    <section className="py-20 sm:py-24">
+    <section className="pt-6 sm:pt-8 pb-20 sm:pb-24">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
-        <div className="max-w-[600px] mb-14">
+        <div className="max-w-[600px] mb-10">
           <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
             Sorular & Cevaplar
           </p>
-          <h2 className="mt-3 text-[32px] sm:text-[40px] font-semibold tracking-[-0.025em] leading-[1.08] text-balance">
+          <h2 className="mt-2 text-[32px] sm:text-[40px] font-semibold tracking-[-0.025em] leading-[1.08] text-balance">
             Pendik'te işçi bulma hakkında sık sorulanlar
           </h2>
         </div>

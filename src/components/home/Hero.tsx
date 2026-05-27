@@ -1,16 +1,18 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getProfessionCounts } from "@/lib/workers";
+import { getCurrentUser } from "@/lib/auth";
 import QuickSearchCard from "@/components/home/QuickSearchCard";
 
 export default async function Hero() {
-  const [withCounts, allCategories] = await Promise.all([
+  const [withCounts, allCategories, user] = await Promise.all([
     getProfessionCounts(),
     prisma.jobCategory.findMany({
       where: { isActive: true },
       orderBy: { order: "asc" },
       select: { slug: true, name: true },
     }),
+    getCurrentUser(),
   ]);
   const popular =
     withCounts.length > 0
@@ -20,42 +22,37 @@ export default async function Hero() {
 
   return (
     <section className="pt-10 sm:pt-20 pb-12 sm:pb-16 overflow-hidden">
-      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 grid items-center gap-10 lg:gap-16 lg:grid-cols-[1.15fr_0.95fr]">
+      <div className="hero-split mx-auto max-w-[1200px] px-5 sm:px-6 grid items-center gap-10 lg:gap-16 lg:grid-cols-[1.15fr_0.95fr]">
         <div className="min-w-0">
           <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
             Pendik · Tuzla · Kartal
           </p>
 
-          <h1 className="mt-4 text-[26px] sm:text-[44px] lg:text-[60px] font-semibold tracking-[-0.025em] leading-[1.12] sm:leading-[1.05] lg:max-w-[560px]">
-            Pendik'te mahallenden usta bul,{" "}
-            <span className="text-accent-600">aracısız iletişim kur.</span>
+          <h1 className="mt-4 text-[26px] sm:text-[44px] lg:text-[60px] font-semibold tracking-[-0.025em] leading-[1.12] sm:leading-[1.05] lg:max-w-[560px] text-balance">
+            Mahallendeki usta,{" "}
+            <span className="text-accent-600">tek aramada.</span>
           </h1>
 
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg text-ink-700 lg:max-w-[480px] leading-relaxed">
-            Pendik ve çevresinde meslek sahibi kişilerle aracısız tanış.
-            Profilini aç, çevrendekilerin seni bulmasını sağla.
+            Pendik ve çevresindeki ustayı, kuryeyi, bakıcıyı doğrudan bulursun. Aracı yok.
           </p>
 
-          <div className="mt-7 sm:mt-8 flex flex-col sm:flex-row sm:flex-wrap gap-3">
-            <Link
-              href="/iscilar"
-              className="btn-ink h-12 px-6 rounded-full text-[15px] w-full sm:w-auto"
-            >
-              Çevrendekileri gör
-              <ArrowRight />
-            </Link>
-            <Link
-              href="/kayit"
-              className="inline-flex items-center justify-center h-12 px-6 rounded-full border border-ink-200 text-ink-900 text-[15px] font-medium hover:border-ink-900 transition w-full sm:w-auto"
-            >
-              Profilini aç
-            </Link>
-          </div>
+          {!user && (
+            <div className="mt-7 sm:mt-8 flex flex-col sm:flex-row sm:flex-wrap gap-3">
+              <Link
+                href="/kayit"
+                className="btn-ink h-12 px-6 rounded-full text-[15px] w-full sm:w-auto"
+              >
+                Ücretsiz profil oluştur
+                <ArrowRight />
+              </Link>
+            </div>
+          )}
 
           <div className="mt-7 sm:mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-ink-500">
             <Trait>Ücretsiz</Trait>
             <Trait>Komisyonsuz</Trait>
-            <Trait>Aracısız iletişim</Trait>
+            <Trait>Doğrudan iletişim</Trait>
           </div>
         </div>
 

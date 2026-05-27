@@ -55,11 +55,24 @@ export default function LoginForm() {
   if (needsVerification) {
     return (
       <div>
-        <h2 className="text-xl font-bold text-ink-900 mb-1">
+        <h4
+          style={{
+            fontSize: 16,
+            fontWeight: 600,
+            marginBottom: 4,
+            color: "var(--color-ink-900)",
+          }}
+        >
           Hesabını Doğrula
-        </h2>
-        <p className="text-sm text-ink-500 mb-6">
-          Hesabın henüz tamamen doğrulanmamış. Devam etmek için eksik doğrulamaları tamamla.
+        </h4>
+        <p
+          style={{
+            fontSize: 13.5,
+            color: "var(--color-ink-500)",
+            marginBottom: 20,
+          }}
+        >
+          Devam etmek için eksik doğrulamaları tamamla.
         </p>
         <OtpForm
           userId={userId}
@@ -74,12 +87,12 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form
+      onSubmit={onSubmit}
+      style={{ display: "flex", flexDirection: "column", gap: 14 }}
+    >
       <div>
-        <label
-          htmlFor="identifier"
-          className="block text-[14px] font-medium text-ink-900 mb-1.5"
-        >
+        <label htmlFor="identifier" style={labelStyle}>
           E-posta veya telefon
         </label>
         <input
@@ -90,21 +103,32 @@ export default function LoginForm() {
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
           placeholder="ornek@mail.com"
-          className="block w-full h-12 px-3.5 rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
+          style={inputStyle}
         />
       </div>
 
       <div>
-        <div className="flex items-baseline justify-between mb-1.5">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "baseline",
+            marginBottom: 8,
+          }}
+        >
           <label
             htmlFor="password"
-            className="block text-[14px] font-medium text-ink-900"
+            style={{ ...labelStyle, marginBottom: 0 }}
           >
             Şifre
           </label>
           <Link
             href="/sifre-sifirla"
-            className="text-[12.5px] text-ink-500 hover:text-ink-900 transition"
+            style={{
+              fontSize: 12.5,
+              color: "var(--color-ink-500)",
+              textDecoration: "none",
+            }}
           >
             Şifremi unuttum
           </Link>
@@ -116,12 +140,22 @@ export default function LoginForm() {
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="block w-full h-12 px-3.5 rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
+          style={inputStyle}
         />
       </div>
 
       {error && (
-        <p className="rounded-[10px] bg-red-50 border border-red-100 px-3 py-2.5 text-[13.5px] text-red-700">
+        <p
+          style={{
+            borderRadius: 10,
+            background: "#fef2f2",
+            border: "1px solid #fee2e2",
+            padding: "10px 12px",
+            fontSize: 13.5,
+            color: "#b91c1c",
+            margin: 0,
+          }}
+        >
           {error}
         </p>
       )}
@@ -129,17 +163,74 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full btn-ink h-12 rounded-full text-[15px]"
+        style={{
+          ...btnPrimaryFull,
+          marginTop: 8,
+          opacity: loading ? 0.7 : 1,
+          cursor: loading ? "not-allowed" : "pointer",
+        }}
       >
         {loading ? "Giriş yapılıyor..." : "Giriş yap"}
       </button>
 
-      <p className="text-center text-[13.5px] text-ink-500 pt-1">
+      <p
+        style={{
+          textAlign: "center",
+          fontSize: 14,
+          color: "var(--color-ink-500)",
+          margin: "8px 0 0",
+        }}
+      >
         Hesabın yok mu?{" "}
-        <Link href="/kayit" className="text-ink-900 font-medium hover:text-accent-600 transition">
+        <Link
+          href="/kayit"
+          style={{
+            color: "var(--color-ink-900)",
+            fontWeight: 500,
+            textDecoration: "underline",
+            textUnderlineOffset: 3,
+          }}
+        >
           Kayıt ol
         </Link>
       </p>
     </form>
   );
 }
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  fontSize: 13,
+  fontWeight: 500,
+  color: "var(--color-ink-700)",
+  marginBottom: 8,
+  letterSpacing: "-0.005em",
+};
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  height: 48,
+  padding: "0 14px",
+  borderRadius: 12,
+  border: "1px solid var(--color-ink-200)",
+  background: "#fff",
+  color: "var(--color-ink-900)",
+  fontSize: 15,
+  outline: "none",
+};
+
+const btnPrimaryFull: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "100%",
+  height: 48,
+  padding: "0 22px",
+  borderRadius: 999,
+  background: "var(--color-ink-900)",
+  color: "#fff",
+  border: "1px solid var(--color-ink-900)",
+  fontSize: 15,
+  fontWeight: 500,
+  cursor: "pointer",
+};

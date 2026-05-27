@@ -73,26 +73,68 @@ export default function ForgotPasswordForm() {
 
   if (step === "done") {
     return (
-      <div className="text-center space-y-3">
-        <p className="text-2xl">✅</p>
-        <p className="text-base font-semibold text-ink-900">
+      <div style={{ textAlign: "center", padding: "20px 0" }}>
+        <p style={{ fontSize: 28, margin: 0 }}>✓</p>
+        <p
+          style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: "var(--color-ink-900)",
+            marginTop: 10,
+            marginBottom: 4,
+          }}
+        >
           Şifren başarıyla değiştirildi.
         </p>
-        <p className="text-sm text-ink-500">Giriş sayfasına yönlendiriliyorsun…</p>
+        <p style={{ fontSize: 13.5, color: "var(--color-ink-500)" }}>
+          Giriş sayfasına yönlendiriliyorsun…
+        </p>
       </div>
     );
   }
 
   if (step === "reset") {
     return (
-      <form onSubmit={resetPassword} className="space-y-4">
-        <div className="rounded-xl border border-brand-100 bg-brand-50 px-4 py-3 text-sm text-brand-900">
-          <p className="font-semibold">{email}</p>
-          <p className="mt-0.5 text-xs">
+      <form
+        onSubmit={resetPassword}
+        style={{ display: "flex", flexDirection: "column", gap: 14 }}
+      >
+        <div
+          style={{
+            borderRadius: 12,
+            border: "1px solid var(--color-ink-100)",
+            background: "#F4F2EB",
+            padding: "12px 14px",
+          }}
+        >
+          <p
+            style={{
+              fontSize: 13.5,
+              fontWeight: 500,
+              color: "var(--color-ink-900)",
+              margin: 0,
+            }}
+          >
+            {email}
+          </p>
+          <p
+            style={{
+              marginTop: 4,
+              fontSize: 12.5,
+              color: "var(--color-ink-500)",
+            }}
+          >
             adresine 6 haneli kod gönderildi. 10 dakika geçerli.
           </p>
           {devCode && (
-            <p className="mt-1 text-xs font-mono text-brand-700">
+            <p
+              className="font-mono"
+              style={{
+                marginTop: 6,
+                fontSize: 12,
+                color: "var(--color-accent-600)",
+              }}
+            >
               DEV kod: {devCode}
             </p>
           )}
@@ -126,16 +168,17 @@ export default function ForgotPasswordForm() {
           autoComplete="new-password"
         />
 
-        {error && (
-          <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
-            {error}
-          </p>
-        )}
+        {error && <ErrorBlock>{error}</ErrorBlock>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full btn-ink h-12 rounded-full text-[15px]"
+          style={{
+            ...btnPrimaryFull,
+            marginTop: 8,
+            opacity: loading ? 0.7 : 1,
+            cursor: loading ? "not-allowed" : "pointer",
+          }}
         >
           {loading ? "Sıfırlanıyor..." : "Şifreyi Sıfırla"}
         </button>
@@ -149,7 +192,17 @@ export default function ForgotPasswordForm() {
             setPassword2("");
             setError(null);
           }}
-          className="block w-full text-center text-sm text-ink-500 hover:text-brand-700"
+          style={{
+            background: "none",
+            border: 0,
+            padding: 8,
+            font: "inherit",
+            cursor: "pointer",
+            color: "var(--color-ink-500)",
+            fontSize: 13.5,
+            textAlign: "center",
+            width: "100%",
+          }}
         >
           ← Farklı bir e-posta dene
         </button>
@@ -158,7 +211,10 @@ export default function ForgotPasswordForm() {
   }
 
   return (
-    <form onSubmit={requestReset} className="space-y-4">
+    <form
+      onSubmit={requestReset}
+      style={{ display: "flex", flexDirection: "column", gap: 14 }}
+    >
       <Field
         label="E-posta"
         name="email"
@@ -169,27 +225,69 @@ export default function ForgotPasswordForm() {
         placeholder="ornek@mail.com"
       />
 
-      {error && (
-        <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
-          {error}
-        </p>
-      )}
+      {error && <ErrorBlock>{error}</ErrorBlock>}
 
       <button
         type="submit"
         disabled={loading || !email}
-        className="w-full btn-ink h-12 rounded-full text-[15px]"
+        style={{
+          ...btnPrimaryFull,
+          marginTop: 8,
+          opacity: loading || !email ? 0.5 : 1,
+          cursor: loading || !email ? "not-allowed" : "pointer",
+        }}
       >
         {loading ? "Gönderiliyor..." : "Sıfırlama Kodu Gönder"}
       </button>
 
-      <p className="text-center text-sm text-ink-500 pt-1">
+      <div
+        style={{
+          height: 1,
+          background: "var(--color-ink-100)",
+          margin: "10px 0",
+        }}
+      />
+
+      <p
+        style={{
+          textAlign: "center",
+          fontSize: 14,
+          color: "var(--color-ink-500)",
+          margin: 0,
+        }}
+      >
         Hatırladın mı?{" "}
-        <Link href="/giris" className="text-brand-700 font-medium hover:underline">
+        <Link
+          href="/giris"
+          style={{
+            color: "var(--color-ink-900)",
+            fontWeight: 500,
+            textDecoration: "underline",
+            textUnderlineOffset: 3,
+          }}
+        >
           Giriş yap
         </Link>
       </p>
     </form>
+  );
+}
+
+function ErrorBlock({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      style={{
+        borderRadius: 10,
+        background: "#fef2f2",
+        border: "1px solid #fee2e2",
+        padding: "10px 12px",
+        fontSize: 13.5,
+        color: "#b91c1c",
+        margin: 0,
+      }}
+    >
+      {children}
+    </p>
   );
 }
 
@@ -214,10 +312,7 @@ function Field({
 }) {
   return (
     <div>
-      <label
-        htmlFor={name}
-        className="block text-[14px] font-medium text-ink-900 mb-1.5"
-      >
+      <label htmlFor={name} style={labelStyle}>
         {label}
       </label>
       <input
@@ -228,9 +323,56 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="block w-full h-12 px-3.5 rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
+        style={inputStyle}
       />
-      {hint && <p className="mt-1 text-xs text-ink-500">{hint}</p>}
+      {hint && (
+        <p
+          style={{
+            marginTop: 6,
+            fontSize: 12.5,
+            color: "var(--color-ink-500)",
+          }}
+        >
+          {hint}
+        </p>
+      )}
     </div>
   );
 }
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  fontSize: 13,
+  fontWeight: 500,
+  color: "var(--color-ink-700)",
+  marginBottom: 8,
+  letterSpacing: "-0.005em",
+};
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  height: 48,
+  padding: "0 14px",
+  borderRadius: 12,
+  border: "1px solid var(--color-ink-200)",
+  background: "#fff",
+  color: "var(--color-ink-900)",
+  fontSize: 15,
+  outline: "none",
+};
+
+const btnPrimaryFull: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "100%",
+  height: 48,
+  padding: "0 22px",
+  borderRadius: 999,
+  background: "var(--color-ink-900)",
+  color: "#fff",
+  border: "1px solid var(--color-ink-900)",
+  fontSize: 15,
+  fontWeight: 500,
+  cursor: "pointer",
+};

@@ -12,7 +12,7 @@ export default function Logo({ size = "md" }: Props) {
   return (
     <Link
       href="/"
-      aria-label="çevrende ana sayfa"
+      aria-label="Çevrende ana sayfa"
       className="inline-flex items-center gap-2.5"
     >
       <span
@@ -31,7 +31,7 @@ export default function Logo({ size = "md" }: Props) {
         />
       </span>
       <span className={`${text} font-semibold tracking-tight text-ink-900`}>
-        çevrende
+        Çevrende
       </span>
     </Link>
   );

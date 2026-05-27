@@ -118,43 +118,80 @@ export default function OtpForm({
   }
 
   return (
-    <div className="space-y-4">
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {(needsPhone || needsEmail) && (
-        <div className="flex items-center gap-2 text-xs text-ink-500">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            fontSize: 12,
+            color: "var(--color-ink-500)",
+          }}
+        >
           <StepBadge label="1. Telefon" active={step === "phone"} done={phoneDone} />
-          <span>→</span>
+          <span style={{ color: "var(--color-ink-400)" }}>→</span>
           <StepBadge label="2. E-posta" active={step === "email"} done={emailDone} />
         </div>
       )}
 
-      <div className="rounded-lg border border-ink-100 bg-ink-50 p-3 text-sm text-ink-700">
+      <div
+        style={{
+          borderRadius: 12,
+          border: "1px solid var(--color-ink-100)",
+          background: "#F4F2EB",
+          padding: "12px 14px",
+          fontSize: 13.5,
+          color: "var(--color-ink-700)",
+        }}
+      >
         {step === "phone" ? (
           <>
-            <strong>{currentTarget}</strong> numarasına gönderilen 6 haneli SMS kodunu girin.
+            <strong style={{ color: "var(--color-ink-900)" }}>
+              {currentTarget}
+            </strong>{" "}
+            numarasına gönderilen 6 haneli SMS kodunu girin.
           </>
         ) : (
           <>
-            <strong>{currentTarget}</strong> adresine gönderilen 6 haneli e-posta kodunu girin.
+            <strong style={{ color: "var(--color-ink-900)" }}>
+              {currentTarget}
+            </strong>{" "}
+            adresine gönderilen 6 haneli e-posta kodunu girin.
           </>
         )}
       </div>
 
       {currentDevOtp && (
-        <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
-          <span className="font-semibold">DEV OTP ({step}):</span>{" "}
-          <span className="font-mono text-base tracking-widest">{currentDevOtp}</span>
-          <p className="mt-1 text-xs text-amber-700">
-            Üretim ortamında bu kod gösterilmeyecek, gerçek SMS/e-posta ile gönderilecek.
+        <div
+          style={{
+            borderRadius: 12,
+            border: "1px solid #fbbf24",
+            background: "#fef3c7",
+            padding: "12px 14px",
+            fontSize: 13,
+            color: "#78350f",
+          }}
+        >
+          <span style={{ fontWeight: 600 }}>DEV OTP ({step}):</span>{" "}
+          <span
+            className="font-mono"
+            style={{ fontSize: 15, letterSpacing: "0.4em" }}
+          >
+            {currentDevOtp}
+          </span>
+          <p style={{ marginTop: 4, fontSize: 11.5, color: "#92400e" }}>
+            Üretimde bu kod gösterilmez; gerçek SMS/e-posta ile gönderilir.
           </p>
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form
+        onSubmit={onSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: 14 }}
+      >
         <div>
-          <label
-            htmlFor="otp"
-            className="block text-sm font-medium text-ink-700"
-          >
+          <label htmlFor="otp" style={labelStyle}>
             6 Haneli Doğrulama Kodu
           </label>
           <input
@@ -169,18 +206,51 @@ export default function OtpForm({
             onChange={(e) =>
               setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
             }
-            className="mt-1 block w-full h-14 rounded-[12px] border border-ink-200 bg-white px-3 text-center text-[24px] font-mono tracking-[0.5em] outline-none transition focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
+            className="font-mono"
+            style={{
+              width: "100%",
+              height: 56,
+              padding: "0 12px",
+              borderRadius: 12,
+              border: "1px solid var(--color-ink-200)",
+              background: "#fff",
+              color: "var(--color-ink-900)",
+              fontSize: 24,
+              letterSpacing: "0.5em",
+              textAlign: "center",
+              outline: "none",
+            }}
             placeholder="------"
           />
         </div>
 
         {error && (
-          <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+          <p
+            style={{
+              borderRadius: 10,
+              background: "#fef2f2",
+              border: "1px solid #fee2e2",
+              padding: "10px 12px",
+              fontSize: 13.5,
+              color: "#b91c1c",
+              margin: 0,
+            }}
+          >
             {error}
           </p>
         )}
         {info && (
-          <p className="rounded-lg bg-green-50 border border-green-200 px-3 py-2 text-sm text-green-700">
+          <p
+            style={{
+              borderRadius: 10,
+              background: "#ecfdf5",
+              border: "1px solid #d1fae5",
+              padding: "10px 12px",
+              fontSize: 13.5,
+              color: "#047857",
+              margin: 0,
+            }}
+          >
             {info}
           </p>
         )}
@@ -188,7 +258,11 @@ export default function OtpForm({
         <button
           type="submit"
           disabled={loading || code.length !== 6}
-          className="w-full btn-ink h-12 rounded-full text-[15px]"
+          style={{
+            ...btnPrimaryFull,
+            opacity: loading || code.length !== 6 ? 0.5 : 1,
+            cursor: loading || code.length !== 6 ? "not-allowed" : "pointer",
+          }}
         >
           {loading ? "Doğrulanıyor..." : "Doğrula"}
         </button>
@@ -197,7 +271,17 @@ export default function OtpForm({
           type="button"
           onClick={onResend}
           disabled={resending}
-          className="w-full text-sm text-brand-700 hover:underline disabled:opacity-50"
+          style={{
+            width: "100%",
+            background: "none",
+            border: 0,
+            padding: 8,
+            font: "inherit",
+            fontSize: 13.5,
+            color: "var(--color-ink-500)",
+            cursor: resending ? "not-allowed" : "pointer",
+            opacity: resending ? 0.5 : 1,
+          }}
         >
           {resending ? "Gönderiliyor..." : "Kodu tekrar gönder"}
         </button>
@@ -215,15 +299,63 @@ function StepBadge({
   active: boolean;
   done: boolean;
 }) {
-  const cls = done
-    ? "bg-green-100 text-green-800 border-green-300"
+  const bg = done
+    ? "rgba(31, 90, 69, 0.10)"
     : active
-      ? "bg-brand-100 text-brand-800 border-brand-300"
-      : "bg-ink-100 text-ink-500 border-ink-200";
+      ? "rgba(15, 17, 16, 0.06)"
+      : "transparent";
+  const color = done
+    ? "var(--color-accent-600)"
+    : active
+      ? "var(--color-ink-900)"
+      : "var(--color-ink-500)";
+  const border = done
+    ? "var(--color-accent-600)"
+    : active
+      ? "var(--color-ink-200)"
+      : "var(--color-ink-100)";
   return (
-    <span className={`rounded-full border px-2 py-0.5 font-medium ${cls}`}>
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        height: 24,
+        padding: "0 10px",
+        borderRadius: 999,
+        border: `1px solid ${border}`,
+        background: bg,
+        color,
+        fontSize: 12,
+        fontWeight: 500,
+      }}
+    >
       {done ? "✓ " : ""}
       {label}
     </span>
   );
 }
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  fontSize: 13,
+  fontWeight: 500,
+  color: "var(--color-ink-700)",
+  marginBottom: 8,
+  letterSpacing: "-0.005em",
+};
+
+const btnPrimaryFull: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "100%",
+  height: 48,
+  padding: "0 22px",
+  borderRadius: 999,
+  background: "var(--color-ink-900)",
+  color: "#fff",
+  border: "1px solid var(--color-ink-900)",
+  fontSize: 15,
+  fontWeight: 500,
+  cursor: "pointer",
+};

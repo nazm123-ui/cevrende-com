@@ -10,24 +10,56 @@ export default function AuthShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto max-w-[440px] px-5 sm:px-6 py-12 sm:py-20">
-      <div className="text-center mb-8">
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        padding: "48px 24px",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 420,
+          background: "#fff",
+          border: "1px solid var(--color-ink-100)",
+          borderRadius: 18,
+          padding: 36,
+          boxShadow:
+            "0 1px 0 rgba(15,17,16,.02), 0 8px 24px -12px rgba(15,17,16,.10)",
+        }}
+      >
         {eyebrow && (
-          <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium mb-3">
+          <div className="eyebrow" style={{ marginBottom: 8 }}>
             {eyebrow}
-          </p>
+          </div>
         )}
-        <h1 className="text-[28px] sm:text-[34px] font-semibold tracking-[-0.025em] leading-tight text-ink-900">
+        <h3
+          style={{
+            fontSize: 22,
+            fontWeight: 600,
+            letterSpacing: "-0.012em",
+            lineHeight: 1.2,
+            margin: 0,
+            color: "var(--color-ink-900)",
+          }}
+        >
           {title}
-        </h1>
+        </h3>
         {subtitle && (
-          <p className="mt-3 text-[14.5px] text-ink-500 max-w-[360px] mx-auto leading-relaxed">
+          <p
+            style={{
+              color: "var(--color-ink-500)",
+              fontSize: 14,
+              marginTop: 8,
+              marginBottom: 0,
+              lineHeight: 1.55,
+            }}
+          >
             {subtitle}
           </p>
         )}
-      </div>
-      <div className="bg-white border border-ink-100 rounded-[18px] p-7 sm:p-9 shadow-[0_8px_24px_-12px_rgba(15,17,16,0.05)]">
-        {children}
+        <div style={{ marginTop: 24 }}>{children}</div>
       </div>
     </div>
   );

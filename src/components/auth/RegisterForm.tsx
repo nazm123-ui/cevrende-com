@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { PENDIK_NEIGHBORHOODS } from "@/lib/constants/pendik-neighborhoods";
 import OtpForm from "./OtpForm";
 
 export default function RegisterForm() {
@@ -16,6 +17,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [neighborhood, setNeighborhood] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
 
@@ -39,6 +41,7 @@ export default function RegisterForm() {
           email,
           phone,
           password,
+          confirmPassword,
           neighborhood,
           acceptTerms,
         }),
@@ -67,10 +70,24 @@ export default function RegisterForm() {
     const emailMasked = maskEmail(email);
     return (
       <div>
-        <h2 className="text-xl font-bold text-ink-900 mb-1">
+        <h4
+          style={{
+            fontSize: 16,
+            fontWeight: 600,
+            marginBottom: 4,
+            color: "var(--color-ink-900)",
+          }}
+        >
           Hesabını Doğrula
-        </h2>
-        <p className="text-sm text-ink-500 mb-6">
+        </h4>
+        <p
+          style={{
+            fontSize: 13.5,
+            color: "var(--color-ink-500)",
+            marginBottom: 20,
+            lineHeight: 1.55,
+          }}
+        >
           Telefonuna SMS, e-postana doğrulama kodu gönderildi. İkisini de gir.
         </p>
         <OtpForm
@@ -88,7 +105,10 @@ export default function RegisterForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form
+      onSubmit={onSubmit}
+      style={{ display: "flex", flexDirection: "column", gap: 14 }}
+    >
       <Field
         label="Ad Soyad"
         name="fullName"
@@ -99,7 +119,7 @@ export default function RegisterForm() {
         errors={fieldErrors.fullName}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
         <Field
           label="E-posta"
           name="email"
@@ -116,60 +136,116 @@ export default function RegisterForm() {
           type="tel"
           value={phone}
           onChange={setPhone}
-          placeholder="05XXXXXXXXX"
+          placeholder="0555 555 55 55"
           autoComplete="tel"
           errors={fieldErrors.phone}
+          hint="+90, 0 veya 5 ile başlayabilir."
         />
       </div>
 
       <Field
-        label="Şifre"
-        name="password"
-        type="password"
-        value={password}
-        onChange={setPassword}
-        autoComplete="new-password"
-        errors={fieldErrors.password}
-        hint="En az 6 karakter."
-      />
-
-      <Field
         label="Mahalle"
         name="neighborhood"
+        type="select"
         value={neighborhood}
         onChange={setNeighborhood}
-        placeholder="Örn: Kaynarca, Yenişehir..."
+        options={PENDIK_NEIGHBORHOODS.map((n) => ({ value: n, label: n }))}
+        placeholder="Mahalle seç"
         errors={fieldErrors.neighborhood}
-        hint="İsteğe bağlı. Yakındaki kişilerle eşleşmen daha kolay olur."
+        hint="Yakındaki kişilerle eşleşmen kolaylaşır."
       />
 
-      <label className="flex items-start gap-2.5 rounded-xl border border-ink-100 bg-ink-50/60 px-3 py-3 text-sm text-ink-700 cursor-pointer">
+      <div>
+        <Field
+          label="Şifre"
+          name="password"
+          type="password"
+          value={password}
+          onChange={setPassword}
+          autoComplete="new-password"
+          errors={fieldErrors.password}
+        />
+        <PasswordChecklist value={password} />
+      </div>
+
+      <Field
+        label="Şifre tekrar"
+        name="confirmPassword"
+        type="password"
+        value={confirmPassword}
+        onChange={setConfirmPassword}
+        autoComplete="new-password"
+        errors={fieldErrors.confirmPassword}
+      />
+
+      <label
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 10,
+          borderRadius: 12,
+          border: "1px solid var(--color-ink-100)",
+          background: "#FAFAF7",
+          padding: "12px 14px",
+          fontSize: 13.5,
+          color: "var(--color-ink-700)",
+          cursor: "pointer",
+          lineHeight: 1.5,
+        }}
+      >
         <input
           type="checkbox"
           checked={acceptTerms}
           onChange={(e) => setAcceptTerms(e.target.checked)}
-          className="mt-0.5 h-4 w-4 rounded border-ink-300 text-brand-600 focus:ring-brand-500"
+          style={{
+            marginTop: 3,
+            height: 16,
+            width: 16,
+            flex: "0 0 16px",
+            accentColor: "var(--color-accent-600)",
+          }}
         />
         <span>
           <Link
             href="/kullanim-kosullari"
-            className="text-brand-700 underline"
+            style={{
+              color: "var(--color-ink-900)",
+              textDecoration: "underline",
+            }}
           >
             Kullanım Koşulları
           </Link>
-          ’nı ve{" "}
-          <Link href="/gizlilik" className="text-brand-700 underline">
+          'nı ve{" "}
+          <Link
+            href="/gizlilik"
+            style={{
+              color: "var(--color-ink-900)",
+              textDecoration: "underline",
+            }}
+          >
             Gizlilik Politikası
           </Link>
-          ’nı kabul ediyorum.
+          'nı kabul ediyorum.
         </span>
       </label>
       {fieldErrors.acceptTerms && (
-        <p className="text-xs text-red-600">{fieldErrors.acceptTerms[0]}</p>
+        <p style={{ fontSize: 12, color: "#b91c1c", margin: 0 }}>
+          {fieldErrors.acceptTerms[0]}
+        </p>
       )}
 
       {error && (
-        <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+        <p
+          style={{
+            borderRadius: 10,
+            background: "#fef2f2",
+            border: "1px solid #fee2e2",
+            padding: "10px 12px",
+            fontSize: 13.5,
+            color: "#b91c1c",
+            margin: 0,
+          }}
+        >
           {error}
         </p>
       )}
@@ -177,18 +253,94 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={loading || !acceptTerms}
-        className="w-full btn-ink h-12 rounded-full text-[15px]"
+        style={{
+          ...btnPrimaryFull,
+          marginTop: 4,
+          opacity: loading || !acceptTerms ? 0.5 : 1,
+          cursor: loading || !acceptTerms ? "not-allowed" : "pointer",
+        }}
       >
-        {loading ? "Hesap oluşturuluyor..." : "Hesabımı oluştur"}
+        {loading ? "Hesap oluşturuluyor..." : "Hesap oluştur"}
       </button>
 
-      <p className="text-center text-[13.5px] text-ink-500 pt-1">
-        Hesabın var mı?{" "}
-        <Link href="/giris" className="text-ink-900 font-medium hover:text-accent-600 transition">
+      <p
+        style={{
+          textAlign: "center",
+          fontSize: 14,
+          color: "var(--color-ink-500)",
+          margin: "8px 0 0",
+        }}
+      >
+        Zaten hesabın var mı?{" "}
+        <Link
+          href="/giris"
+          style={{
+            color: "var(--color-ink-900)",
+            fontWeight: 500,
+            textDecoration: "underline",
+            textUnderlineOffset: 3,
+          }}
+        >
           Giriş yap
         </Link>
       </p>
     </form>
+  );
+}
+
+function PasswordChecklist({ value }: { value: string }) {
+  const rules = [
+    { label: "En az 8 karakter", test: value.length >= 8 },
+    {
+      label: "1 büyük harf (Türkçe dahil)",
+      test: /[A-ZĞÜŞİÖÇ]/.test(value),
+    },
+    { label: "1 sayı", test: /\d/.test(value) },
+    {
+      label: "1 noktalama veya özel karakter",
+      test: /[^A-Za-z0-9ğüşıöçĞÜŞİÖÇ]/.test(value),
+    },
+  ];
+  return (
+    <ul
+      style={{
+        listStyle: "none",
+        padding: 0,
+        margin: "8px 0 0",
+        display: "flex",
+        flexDirection: "column",
+        gap: 3,
+      }}
+    >
+      {rules.map((r) => (
+        <li
+          key={r.label}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            fontSize: 12.5,
+            color: r.test
+              ? "var(--color-ink-900)"
+              : "var(--color-ink-400)",
+            transition: "color .12s ease",
+          }}
+        >
+          <span
+            aria-hidden
+            style={{
+              display: "inline-flex",
+              width: 12,
+              justifyContent: "center",
+              fontFamily: "monospace",
+            }}
+          >
+            {r.test ? "✓" : "·"}
+          </span>
+          {r.label}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -205,6 +357,19 @@ function maskEmail(email: string): string {
   return `${local[0]}${local[1]}***@${domain}`;
 }
 
+type FieldProps = {
+  label: string;
+  name: string;
+  type?: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  autoComplete?: string;
+  errors?: string[];
+  hint?: string;
+  options?: { value: string; label: string }[];
+};
+
 function Field({
   label,
   name,
@@ -215,45 +380,106 @@ function Field({
   autoComplete,
   errors,
   hint,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  autoComplete?: string;
-  errors?: string[];
-  hint?: string;
-}) {
+  options,
+}: FieldProps) {
   return (
     <div>
-      <label
-        htmlFor={name}
-        className="block text-[14px] font-medium text-ink-900 mb-1.5"
-      >
+      <label htmlFor={name} style={labelStyle}>
         {label}
       </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-        className={`block w-full rounded-xl border bg-white px-3.5 py-2.5 text-ink-900 outline-none transition placeholder:text-ink-300 focus:ring-2 focus:ring-brand-100 ${
-          errors
-            ? "border-red-300 focus:border-red-500"
-            : "border-ink-200 focus:border-brand-500"
-        }`}
-      />
+      {type === "select" ? (
+        <select
+          id={name}
+          name={name}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          style={{
+            ...inputStyle,
+            borderColor: errors ? "#fca5a5" : "var(--color-ink-200)",
+          }}
+        >
+          <option value="">{placeholder ?? "Seç"}</option>
+          {options?.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          id={name}
+          name={name}
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          style={{
+            ...inputStyle,
+            borderColor: errors ? "#fca5a5" : "var(--color-ink-200)",
+          }}
+        />
+      )}
       {hint && !errors && (
-        <p className="mt-1 text-xs text-ink-500">{hint}</p>
+        <p
+          style={{
+            marginTop: 6,
+            fontSize: 12.5,
+            color: "var(--color-ink-500)",
+            lineHeight: 1.5,
+          }}
+        >
+          {hint}
+        </p>
       )}
       {errors && (
-        <p className="mt-1 text-xs text-red-600">{errors[0]}</p>
+        <p
+          style={{
+            marginTop: 6,
+            fontSize: 12.5,
+            color: "#b91c1c",
+          }}
+        >
+          {errors[0]}
+        </p>
       )}
     </div>
   );
 }
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  fontSize: 13,
+  fontWeight: 500,
+  color: "var(--color-ink-700)",
+  marginBottom: 8,
+  letterSpacing: "-0.005em",
+};
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  height: 48,
+  padding: "0 14px",
+  borderRadius: 12,
+  border: "1px solid var(--color-ink-200)",
+  background: "#fff",
+  color: "var(--color-ink-900)",
+  fontSize: 15,
+  outline: "none",
+};
+
+const btnPrimaryFull: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "100%",
+  height: 48,
+  padding: "0 22px",
+  borderRadius: 999,
+  background: "var(--color-ink-900)",
+  color: "#fff",
+  border: "1px solid var(--color-ink-900)",
+  fontSize: 15,
+  fontWeight: 500,
+  cursor: "pointer",
+};

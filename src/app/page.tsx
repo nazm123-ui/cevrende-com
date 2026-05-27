@@ -2,6 +2,7 @@ import Hero from "@/components/home/Hero";
 import CountStrip from "@/components/home/CountStrip";
 import HowItWorks from "@/components/home/HowItWorks";
 import TrustMessage from "@/components/home/TrustMessage";
+import PreviewListings from "@/components/home/PreviewListings";
 import FAQ from "@/components/home/FAQ";
 import FinalCTA from "@/components/home/FinalCTA";
 
@@ -12,6 +13,8 @@ export const metadata = {
   keywords:
     "Pendik, mahalle, temizlikçi, çilingir, tadilat, kurye, boyacı, yerel hizmet",
 };
+
+export const revalidate = 60;
 
 export default function HomePage() {
   const faqs = [
@@ -64,6 +67,7 @@ export default function HomePage() {
       <CountStrip />
       <HowItWorks />
       <TrustMessage />
+      <PreviewListings />
       <FAQ />
       <FinalCTA />
     </>
