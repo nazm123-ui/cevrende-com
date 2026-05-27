@@ -37,6 +37,55 @@ export async function sendOtpEmail(to: string, code: string) {
   });
 }
 
+type FeedbackPayload = {
+  topic: string;
+  fromEmail: string;
+  message: string;
+  fromUserId: string | null;
+};
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+export async function sendFeedbackEmail(payload: FeedbackPayload) {
+  const adminEmail = process.env.GMAIL_USER;
+  if (!transporter || !adminEmail) {
+    console.info("[DEV FEEDBACK]", JSON.stringify(payload));
+    return;
+  }
+  const safeMessage = escapeHtml(payload.message).replace(/\n/g, "<br>");
+  const safeTopic = escapeHtml(payload.topic);
+  const safeFrom = escapeHtml(payload.fromEmail);
+  const safeUserId = payload.fromUserId ? escapeHtml(payload.fromUserId) : "—";
+
+  await transporter.sendMail({
+    from: `"Çevrende.com Geri Bildirim" <${adminEmail}>`,
+    to: adminEmail,
+    replyTo: payload.fromEmail,
+    subject: `[Geri Bildirim - ${payload.topic}] ${payload.fromEmail}`,
+    text: `Konu: ${payload.topic}\nGönderen: ${payload.fromEmail}\nUserId: ${payload.fromUserId ?? "—"}\n\n${payload.message}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px;">
+        <h2 style="color: #0f172a; margin: 0 0 16px;">Geri Bildirim — ${safeTopic}</h2>
+        <table style="font-size: 14px; color: #475569; margin-bottom: 16px;">
+          <tr><td style="padding: 2px 12px 2px 0;"><strong>Gönderen:</strong></td><td>${safeFrom}</td></tr>
+          <tr><td style="padding: 2px 12px 2px 0;"><strong>UserId:</strong></td><td>${safeUserId}</td></tr>
+        </table>
+        <div style="background: #f1f5f9; padding: 16px; border-radius: 8px; font-size: 15px; color: #0f172a; line-height: 1.5;">
+          ${safeMessage}
+        </div>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 32px;">Yanıtlamak için bu e-postaya cevap verin (reply-to ayarlı).</p>
+      </div>
+    `,
+  });
+}
+
 export async function sendPasswordResetEmail(to: string, code: string) {
   if (!transporter) {
     console.log(`[DEV PASSWORD RESET] to=${to} code=${code}`);

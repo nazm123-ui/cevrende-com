@@ -1,6 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
+import { sendFeedbackEmail } from "@/lib/email";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const feedbackSchema = z.object({
   topic: z.enum(["bug", "suggestion", "other"]),
@@ -12,7 +14,16 @@ const feedbackSchema = z.object({
     .max(2000, "En fazla 2000 karakter."),
 });
 
+const TOPIC_LABELS: Record<z.infer<typeof feedbackSchema>["topic"], string> = {
+  bug: "Hata bildirimi",
+  suggestion: "Öneri",
+  other: "Diğer",
+};
+
 export async function POST(req: Request) {
+  const limited = await checkRateLimit(req, "auth-strict");
+  if (limited) return limited;
+
   let body: unknown;
   try {
     body = await req.json();
@@ -31,24 +42,18 @@ export async function POST(req: Request) {
   const me = await getCurrentUser();
   const { topic, email, message } = parsed.data;
 
-  // Şimdilik sunucu loguna yaz. E-posta servisi (SES/Resend) eklenince oraya yönlendirilir.
-  const topicLabel =
-    topic === "bug"
-      ? "Hata bildirimi"
-      : topic === "suggestion"
-        ? "Öneri"
-        : "Diğer";
-
-  console.info(
-    "[feedback]",
-    JSON.stringify({
-      topic: topicLabel,
-      email,
-      message,
-      fromUserId: me?.id ?? null,
-      receivedAt: new Date().toISOString(),
-    }),
-  );
+  after(async () => {
+    try {
+      await sendFeedbackEmail({
+        topic: TOPIC_LABELS[topic],
+        fromEmail: email,
+        message,
+        fromUserId: me?.id ?? null,
+      });
+    } catch (err) {
+      console.error("[feedback] mail send failed:", err);
+    }
+  });
 
   return NextResponse.json({ ok: true });
 }

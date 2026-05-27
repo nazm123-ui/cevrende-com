@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/auth";
+import { requireVerifiedUserApi } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
 import { reportMessageSchema } from "@/lib/validators";
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await getCurrentUser();
-    if (!user?.isEmailVerified) {
-      return NextResponse.json(
-        { error: "Kimlik doğrulaması gereklidir." },
-        { status: 401 },
-      );
-    }
+    const auth = await requireVerifiedUserApi();
+    if (!auth.ok) return auth.response;
+    const { user } = auth;
 
     let body: unknown;
     try {
