@@ -12,3 +12,6 @@ next-env.d.ts
 # prisma/dev.db
 # prisma/dev.db-journal
 .vercel
+
+# Tasarım kaynak arşivi (mockup'lar, eski JSX, screenshot'lar) — production kodu değil
+tasarim-arsiv/
