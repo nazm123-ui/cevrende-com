@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getActiveWorkers, getProfessionCounts } from "@/lib/workers";
 import WorkerCard from "@/components/workers/WorkerCard";
 import TopFilterBar from "@/components/workers/TopFilterBar";
 import CategorySidebar from "@/components/workers/CategorySidebar";
+import SortDropdown from "@/components/workers/SortDropdown";
 
 export const metadata = {
   title: "Çevrendekiler — Pendik'te Usta ve Hizmet",
@@ -42,20 +44,21 @@ export default async function CevrendekilerPage({
 
   const categoryNameBySlug = new Map(categories.map((c) => [c.slug, c.name]));
   const canContact = !!user && user.isEmailVerified;
+  const hasActiveFilters = !!(sp.meslek || sp.mahalle || sp.ilce || sp.q);
 
   return (
     <div className="page">
       {/* Search + filter bar */}
-      <section style={{ padding: "32px 0 24px" }}>
-        <div className="container">
+      <section className="pt-8 pb-6">
+        <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
           <TopFilterBar />
         </div>
       </section>
 
       {/* Ana içerik — sidebar + listings */}
-      <section style={{ padding: "8px 0 96px" }}>
+      <section className="pt-2 pb-24">
         <div
-          className="container listings-grid"
+          className="mx-auto max-w-[1200px] px-5 sm:px-6 listings-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "260px 1fr",
@@ -69,64 +72,35 @@ export default async function CevrendekilerPage({
           />
 
           <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: 16,
-                color: "var(--color-ink-500)",
-                fontSize: 13.5,
-                alignItems: "center",
-              }}
-            >
+            <div className="flex justify-between items-center mb-4 text-[13.5px] text-ink-500">
               <span>
-                <span
-                  className="font-mono"
-                  style={{ color: "var(--color-ink-700)" }}
-                >
-                  {workers.length}
-                </span>{" "}
+                <span className="font-mono text-ink-700">{workers.length}</span>{" "}
                 sonuç
               </span>
-              <span>
-                {sp.siralama === "rating"
-                  ? "Puana göre"
-                  : sp.siralama === "near"
-                    ? "Yakına göre"
-                    : "Yeniden eskiye"}
-              </span>
+              <SortDropdown />
             </div>
 
             {workers.length === 0 ? (
-              <div
-                style={{
-                  padding: "80px 24px",
-                  textAlign: "center",
-                  border: "1px dashed var(--color-ink-200)",
-                  borderRadius: 14,
-                }}
-              >
-                <div className="eyebrow" style={{ marginBottom: 10 }}>
+              <div className="px-6 py-20 text-center border border-dashed border-ink-200 rounded-[14px] flex flex-col items-center gap-3">
+                <EmptyIcon />
+                <div className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium mt-2">
                   Sonuç yok
                 </div>
-                <h3 style={{ marginBottom: 10 }}>
-                  Bu filtrelerle kimseyi bulamadık.
-                </h3>
-                <p style={{ color: "var(--color-ink-500)" }}>
+                <h3>Bu filtrelerle kimseyi bulamadık.</h3>
+                <p className="text-ink-500 text-[14px] max-w-md">
                   Filtreleri sıfırla veya farklı bir mahalleyi dene.
                 </p>
+                {hasActiveFilters && (
+                  <Link
+                    href="/cevrendekiler"
+                    className="btn-outline h-10 px-5 rounded-full text-[14px] mt-2"
+                  >
+                    Filtreleri sıfırla
+                  </Link>
+                )}
               </div>
             ) : (
-              <ul
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 12,
-                  listStyle: "none",
-                  padding: 0,
-                  margin: 0,
-                }}
-              >
+              <ul className="flex flex-col gap-3 list-none p-0 m-0">
                 {workers.map((w) => (
                   <li key={w.id}>
                     <WorkerCard
@@ -143,5 +117,25 @@ export default async function CevrendekilerPage({
         </div>
       </section>
     </div>
+  );
+}
+
+function EmptyIcon() {
+  return (
+    <span className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-ink-50 border border-ink-100 text-ink-400">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+      </svg>
+    </span>
   );
 }
