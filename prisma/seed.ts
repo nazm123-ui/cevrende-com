@@ -110,6 +110,25 @@ const CATEGORIES = [
   // Pet + apartman
   { slug: "pet-egitmen-kuafor", name: "Köpek Eğitmeni / Pet Kuaför" },
   { slug: "apartman-gorevlisi", name: "Apartman Görevlisi / Kapıcı" },
+  // Hukuk / finans
+  { slug: "avukat-hukuk", name: "Avukat / Hukuk Danışmanı" },
+  { slug: "noter-danismani", name: "Noter İşleri Danışmanı" },
+  // Yapı uzmanlaşma (ek)
+  { slug: "demirci-kaynakci", name: "Demirci / Kaynakçı / Korkuluk" },
+  { slug: "celik-kapi-montaj", name: "Çelik Kapı / Garaj Kapısı Montajı" },
+  // Düğün / kişisel bakım (özel)
+  { slug: "gelin-makyaji", name: "Gelin Makyajı / Düğün Saçı" },
+  { slug: "kalici-makyaj", name: "Kalıcı Makyaj / Microblading" },
+  { slug: "lazer-epilasyon", name: "Lazer Epilasyon" },
+  // Bebek / çocuk (ek)
+  { slug: "lohusa-bebek-bakim", name: "Lohusa / Bebek Bakım Hemşiresi" },
+  { slug: "sinav-kocu", name: "Sınav Koçu (LGS / YKS / KPSS)" },
+  // Yemek (ek)
+  { slug: "ev-yemekleri", name: "Ev Yemekleri / Eve Yemek" },
+  // Yaşam koçluğu
+  { slug: "yasam-kocu", name: "Yaşam Koçu / Kişisel Gelişim" },
+  // Tente
+  { slug: "tente-cadir", name: "Tente / Çadır / Pergola Kurulumu" },
   // En sonda
   { slug: "diger", name: "Diğer" },
 ];
