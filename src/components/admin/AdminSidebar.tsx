@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import AdminIcon from "@/components/admin/AdminIcon";
@@ -52,6 +53,12 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
+function closeDrawer() {
+  if (typeof document !== "undefined") {
+    document.body.removeAttribute("data-admin-drawer");
+  }
+}
+
 export default function AdminSidebar({
   counts,
   adminName,
@@ -60,13 +67,25 @@ export default function AdminSidebar({
   const router = useRouter();
   const pathname = usePathname();
 
+  // Path değişimde drawer'ı kapat (mobile)
+  useEffect(() => {
+    closeDrawer();
+  }, [pathname]);
+
   async function logout() {
+    closeDrawer();
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/");
     router.refresh();
   }
 
   return (
+    <>
+      <div
+        className="sidebar-backdrop"
+        onClick={closeDrawer}
+        aria-hidden
+      />
     <aside className="sidebar">
       <div className="brand">
         <span className="logomark" />
@@ -158,5 +177,6 @@ export default function AdminSidebar({
         </div>
       </div>
     </aside>
+    </>
   );
 }

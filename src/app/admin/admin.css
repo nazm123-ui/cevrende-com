@@ -146,6 +146,43 @@
   gap: 18px;
   justify-content: space-between;
 }
+.admin-app .topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.admin-app .sidebar-toggle {
+  display: none;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--ink-2);
+  padding: 0;
+}
+.admin-app .sidebar-toggle:hover {
+  background: rgba(15, 17, 16, 0.04);
+  color: var(--ink);
+}
+.admin-app .sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 17, 16, 0.42);
+  z-index: 99;
+  cursor: pointer;
+}
+body[data-admin-drawer="open"] .admin-app .sidebar-backdrop {
+  display: block;
+}
+body[data-admin-drawer="open"] {
+  overflow: hidden;
+}
 .admin-app .content {
   padding: 32px 36px 64px;
   max-width: 1340px;
@@ -1074,7 +1111,22 @@
     grid-template-columns: 1fr;
   }
   .admin-app .sidebar {
-    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 282px;
+    max-width: 86vw;
+    height: 100vh;
+    transform: translateX(-110%);
+    transition: transform 0.25s ease;
+    z-index: 100;
+    box-shadow: 0 10px 36px rgba(15, 17, 16, 0.22);
+  }
+  body[data-admin-drawer="open"] .admin-app .sidebar {
+    transform: translateX(0);
+  }
+  .admin-app .sidebar-toggle {
+    display: inline-flex;
   }
   .admin-app .topbar {
     padding: 12px 18px;
@@ -1082,14 +1134,57 @@
   .admin-app .content {
     padding: 22px 18px 48px;
   }
-  .admin-app .search {
-    width: auto;
-    flex: 1;
+  .admin-app .topbar-search {
+    display: none;
   }
   .admin-app h1 {
     font-size: 26px;
   }
   .admin-app .grid-4 {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  /* Tek sütun: tüm ranking/action kartları */
+  .admin-app .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .admin-app .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* .list-row dikey stack: header gizle, hücreler tek sütun key-value */
+  .admin-app .list-row.head {
+    display: none;
+  }
+  .admin-app .list-row {
+    grid-template-columns: 1fr !important;
+    gap: 8px;
+    padding: 14px 16px;
+  }
+  .admin-app .list-row > .col {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: left;
+  }
+  .admin-app .list-row > .col.col-name {
+    justify-content: flex-start;
+    display: flex;
+  }
+  .admin-app .list-row > .col:last-child {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-app .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .admin-app .metric-value {
+    font-size: 28px;
   }
 }
