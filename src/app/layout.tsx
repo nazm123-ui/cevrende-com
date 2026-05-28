@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import "./globals.css";
 
 const geist = Geist({
@@ -75,10 +73,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-ink-50 text-ink-900 overflow-x-hidden">
-        <Header />
-        <main className="flex-1 min-w-0 w-full">{children}</main>
-        <Footer />
+      <body className="min-h-screen bg-ink-50 text-ink-900 overflow-x-hidden">
+        {children}
       </body>
     </html>
   );

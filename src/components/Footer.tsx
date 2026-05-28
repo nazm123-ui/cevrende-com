@@ -1,12 +1,7 @@
-import { headers } from "next/headers";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 
-export default async function Footer() {
-  const h = await headers();
-  const pathname = h.get("x-pathname") ?? "";
-  if (pathname.startsWith("/admin")) return null;
-
+export default function Footer() {
   return (
     <footer
       className="border-t border-ink-100 pt-14 pb-10 bg-ink-50 mt-12"
