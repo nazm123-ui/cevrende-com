@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireVerifiedUserApi } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
 import { reportMessageSchema } from "@/lib/validators";
+import { logActivity } from "@/lib/activity-log";
 
 export async function POST(req: NextRequest) {
   try {
@@ -44,12 +45,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await prisma.messageReport.create({
+    const report = await prisma.messageReport.create({
       data: {
         messageId,
         reportedById: user.id,
         reason,
       },
+      select: { id: true },
+    });
+
+    await logActivity({
+      type: "report",
+      actorId: user.id,
+      targetId: report.id,
+      title: `${user.fullName} bir mesaj raporladı`,
+      sub: reason.slice(0, 80),
     });
 
     return NextResponse.json({

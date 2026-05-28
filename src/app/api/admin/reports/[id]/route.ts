@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { isAdminEmail } from "@/lib/constants/admin-emails";
+import { logActivity } from "@/lib/activity-log";
 
 async function assertAdmin() {
   const user = await getCurrentUser();
@@ -13,7 +14,8 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (!(await assertAdmin())) {
+  const admin = await assertAdmin();
+  if (!admin) {
     return NextResponse.json({ error: "Yetki yok." }, { status: 403 });
   }
 
@@ -41,6 +43,16 @@ export async function PATCH(
       resolvedNote: status === "resolved" ? note : null,
     },
   });
+
+  if (status === "resolved") {
+    await logActivity({
+      type: "resolve",
+      actorId: admin.id,
+      targetId: id,
+      title: `${admin.fullName} bir raporu çözdü`,
+      sub: note ? note.slice(0, 80) : "not yok",
+    });
+  }
 
   return NextResponse.json({ success: true });
 }

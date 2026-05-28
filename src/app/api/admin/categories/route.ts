@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { logActivity } from "@/lib/activity-log";
 
 const categoryInputSchema = z.object({
   name: z.string().min(2, "Kategori adı en az 2 karakter olmalı").max(50),
@@ -24,7 +25,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  await requireAdmin();
+  const admin = await requireAdmin();
 
   let body: unknown;
   try {
@@ -63,6 +64,14 @@ export async function POST(req: Request) {
       slug: parsed.data.slug,
       order: parsed.data.order ?? (maxOrder?.order ?? 0) + 1,
     },
+  });
+
+  await logActivity({
+    type: "category",
+    actorId: admin.id,
+    targetId: category.id,
+    title: `${admin.fullName} "${category.name}" kategorisini ekledi`,
+    sub: category.slug,
   });
 
   return NextResponse.json({ ok: true, category });

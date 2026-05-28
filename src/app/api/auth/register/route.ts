@@ -5,6 +5,7 @@ import { createOtp, isDevMode } from "@/lib/otp";
 import { sendOtpEmail } from "@/lib/email";
 import { registerSchema } from "@/lib/validators";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { logActivity } from "@/lib/activity-log";
 
 export async function POST(req: Request) {
   const limited = await checkRateLimit(req, "auth-strict");
@@ -69,6 +70,14 @@ export async function POST(req: Request) {
       isPhoneVerified: true,
     },
     select: { id: true, email: true },
+  });
+
+  await logActivity({
+    type: "signup",
+    actorId: user.id,
+    targetId: user.id,
+    title: `${fullName} kayıt oldu`,
+    sub: neighborhood ? `${neighborhood} · doğrulama bekliyor` : "doğrulama bekliyor",
   });
 
   const emailOtp = await createOtp(user.id, "email_registration");

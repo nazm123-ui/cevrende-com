@@ -102,6 +102,20 @@ model SavedProfile {
   @@index([userId, createdAt])
 }
 
+model ActivityLog {
+  id        String   @id @default(cuid())
+  type      String   // signup | report | resolve | warn | deactivate | activate | category
+  actorId   String?  // İşlemi yapan (yoksa system/anonim)
+  targetId  String?  // Hedef obje (user, report, category id)
+  title     String
+  sub       String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([type, createdAt])
+}
+
 model MessageReport {
   id            String    @id @default(cuid())
   messageId     String

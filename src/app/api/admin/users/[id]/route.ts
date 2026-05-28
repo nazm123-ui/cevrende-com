@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { isAdminEmail } from "@/lib/constants/admin-emails";
+import { logActivity } from "@/lib/activity-log";
 
 async function assertAdmin() {
   const user = await getCurrentUser();
@@ -40,7 +41,25 @@ export async function PATCH(
     );
   }
 
+  const target = await prisma.user.findUnique({
+    where: { id },
+    select: { fullName: true },
+  });
+
   await prisma.user.update({ where: { id }, data });
+
+  if (target && typeof data.isActive === "boolean") {
+    await logActivity({
+      type: data.isActive ? "activate" : "deactivate",
+      actorId: admin.id,
+      targetId: id,
+      title: data.isActive
+        ? `${admin.fullName} ${target.fullName} hesabını aktif etti`
+        : `${admin.fullName} ${target.fullName} hesabını pasifleştirdi`,
+      sub: data.isActive ? "tekrar aktif" : "giriş engelli",
+    });
+  }
+
   return NextResponse.json({ success: true });
 }
 

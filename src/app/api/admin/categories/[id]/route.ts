@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { logActivity } from "@/lib/activity-log";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -15,7 +16,7 @@ const categoryActionSchema = z.object({
 });
 
 export async function PATCH(req: Request, ctx: Ctx) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const { id } = await ctx.params;
 
   let body: unknown;
@@ -46,11 +47,21 @@ export async function PATCH(req: Request, ctx: Ctx) {
     },
   });
 
+  if (parsed.data.name && parsed.data.name !== category.name) {
+    await logActivity({
+      type: "category",
+      actorId: admin.id,
+      targetId: updated.id,
+      title: `${admin.fullName} "${category.name}" kategorisini "${updated.name}" olarak güncelledi`,
+      sub: updated.slug,
+    });
+  }
+
   return NextResponse.json({ ok: true, category: updated });
 }
 
 export async function POST(req: Request, ctx: Ctx) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const { id } = await ctx.params;
 
   let body: unknown;
@@ -73,6 +84,16 @@ export async function POST(req: Request, ctx: Ctx) {
   const updated = await prisma.jobCategory.update({
     where: { id },
     data: { isActive: !category.isActive },
+  });
+
+  await logActivity({
+    type: "category",
+    actorId: admin.id,
+    targetId: updated.id,
+    title: updated.isActive
+      ? `${admin.fullName} "${updated.name}" kategorisini aktif etti`
+      : `${admin.fullName} "${updated.name}" kategorisini pasifleştirdi`,
+    sub: updated.slug,
   });
 
   return NextResponse.json({ ok: true, category: updated });

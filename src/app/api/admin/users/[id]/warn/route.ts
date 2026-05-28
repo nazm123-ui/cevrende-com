@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { isAdminEmail } from "@/lib/constants/admin-emails";
 import { sendUserWarningEmail } from "@/lib/email";
+import { logActivity } from "@/lib/activity-log";
 
 const schema = z.object({
   note: z
@@ -66,6 +67,14 @@ export async function POST(
     } catch (err) {
       console.error("[admin warn] mail send failed:", err);
     }
+  });
+
+  await logActivity({
+    type: "warn",
+    actorId: admin.id,
+    targetId: id,
+    title: `${admin.fullName} ${target.fullName} kullanıcısını uyardı`,
+    sub: parsed.data.note.slice(0, 100),
   });
 
   return NextResponse.json({ success: true });
