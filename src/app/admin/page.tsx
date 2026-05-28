@@ -1,58 +1,98 @@
 import Link from "next/link";
-import { requireAdmin } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
-import { formatRelative } from "@/lib/format";
+import {
+  buildDailySeries,
+  computeDelta,
+  startOf14DayWindow,
+} from "@/lib/admin-stats";
+import { getInitials } from "@/lib/initials";
+import AdminIcon from "@/components/admin/AdminIcon";
+import Metric from "@/components/admin/Metric";
+import RankCard from "@/components/admin/RankCard";
 
 export const metadata = { title: "Admin Paneli — Cevrende.com" };
 
-export default async function AdminPage() {
-  await requireAdmin();
+function formatLastSeen(d: Date): string {
+  const diff = (Date.now() - d.getTime()) / 1000;
+  if (diff < 60) return "şimdi";
+  if (diff < 3600) return `${Math.floor(diff / 60)}d`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}sa`;
+  if (diff < 604800) return `${Math.floor(diff / 86400)}g`;
+  return new Intl.DateTimeFormat("tr-TR", {
+    day: "2-digit",
+    month: "short",
+  }).format(d);
+}
 
-  const now = new Date();
-  const last7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+export default async function AdminPage() {
+  const since = startOf14DayWindow();
 
   const [
-    usersCount,
-    workersCount,
-    categoriesCount,
-    messagesCount,
-    searchCount,
-    searchCount7d,
-    openReportsCount,
-    topMessageSenders,
-    topProfessions,
-    topNeighborhoods,
-    recentSignups,
+    usersTotal,
+    workersTotal,
+    searchesTotal,
+    messagesTotal,
+    openReports,
+    categoriesActive,
+    categoriesInactive,
+    usersInWindow,
+    workersInWindow,
+    searchesInWindow,
+    messagesInWindow,
+    topMessageRecipients,
+    topProfessionsRaw,
+    topNeighborhoodsRaw,
     recentUsers,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { professions: { isEmpty: false } } }),
-    prisma.jobCategory.count({ where: { isActive: true } }),
-    prisma.message.count(),
     prisma.searchEvent.count(),
-    prisma.searchEvent.count({ where: { createdAt: { gte: last7d } } }),
+    prisma.message.count(),
     prisma.messageReport.count({ where: { status: "open" } }),
+    prisma.jobCategory.count({ where: { isActive: true } }),
+    prisma.jobCategory.count({ where: { isActive: false } }),
+    prisma.user.findMany({
+      where: { createdAt: { gte: since } },
+      select: { createdAt: true, professions: true },
+    }),
+    // İşçi profili: 14 gün penceresinde professions array'i dolu olarak set edilmiş
+    // (proxy: o pencerede oluşturulup professions dolu olanlar). Eski user'lar bio
+    // güncellemesi yapsa bile sayılmaz — biraz pessimistic, kabul edilebilir.
+    prisma.user.findMany({
+      where: {
+        createdAt: { gte: since },
+        professions: { isEmpty: false },
+      },
+      select: { createdAt: true },
+    }),
+    prisma.searchEvent.findMany({
+      where: { createdAt: { gte: since } },
+      select: { createdAt: true },
+    }),
+    prisma.message.findMany({
+      where: { createdAt: { gte: since } },
+      select: { createdAt: true },
+    }),
     prisma.message.groupBy({
       by: ["recipientId"],
       _count: { recipientId: true },
       orderBy: { _count: { recipientId: "desc" } },
-      take: 10,
+      take: 5,
     }),
     prisma.searchEvent.groupBy({
       by: ["professionSlug"],
-      where: { professionSlug: { not: null } },
+      where: { professionSlug: { not: null }, createdAt: { gte: since } },
       _count: { professionSlug: true },
       orderBy: { _count: { professionSlug: "desc" } },
-      take: 10,
+      take: 5,
     }),
     prisma.searchEvent.groupBy({
       by: ["neighborhood"],
-      where: { neighborhood: { not: null } },
+      where: { neighborhood: { not: null }, createdAt: { gte: since } },
       _count: { neighborhood: true },
       orderBy: { _count: { neighborhood: "desc" } },
-      take: 8,
+      take: 5,
     }),
-    prisma.user.count({ where: { createdAt: { gte: last7d } } }),
     prisma.user.findMany({
       orderBy: { createdAt: "desc" },
       take: 6,
@@ -66,317 +106,337 @@ export default async function AdminPage() {
     }),
   ]);
 
-  const topWorkerIds = topMessageSenders.map((w) => w.recipientId);
-  const topWorkerUsers = topWorkerIds.length
+  const usersSeries = buildDailySeries(usersInWindow.map((u) => u.createdAt));
+  const workersSeries = buildDailySeries(workersInWindow.map((u) => u.createdAt));
+  const searchSeries = buildDailySeries(
+    searchesInWindow.map((s) => s.createdAt),
+  );
+  const msgSeries = buildDailySeries(messagesInWindow.map((m) => m.createdAt));
+
+  const usersDelta = computeDelta(usersSeries);
+  const workersDelta = computeDelta(workersSeries);
+  const searchDelta = computeDelta(searchSeries);
+  const msgDelta = computeDelta(msgSeries);
+
+  // En çok mesaj alan işçilerin isimlerini çek
+  const topRecipientIds = topMessageRecipients.map((r) => r.recipientId);
+  const topRecipients = topRecipientIds.length
     ? await prisma.user.findMany({
-        where: { id: { in: topWorkerIds } },
-        select: {
-          id: true,
-          fullName: true,
-          professions: true,
-          neighborhood: true,
-        },
+        where: { id: { in: topRecipientIds } },
+        select: { id: true, fullName: true, professions: true, neighborhood: true },
       })
     : [];
-  const topWorkerMap = new Map(topWorkerUsers.map((u) => [u.id, u]));
+  const recipientById = new Map(topRecipients.map((u) => [u.id, u]));
 
-  const topProfessionSlugs = topProfessions
+  // Meslek slug → isim
+  const slugs = topProfessionsRaw
     .map((p) => p.professionSlug)
     .filter((s): s is string => !!s);
-  const categoriesByName = topProfessionSlugs.length
+  const categories = slugs.length
     ? await prisma.jobCategory.findMany({
-        where: { slug: { in: topProfessionSlugs } },
+        where: { slug: { in: slugs } },
         select: { slug: true, name: true },
       })
     : [];
-  const profNameBySlug = new Map(categoriesByName.map((c) => [c.slug, c.name]));
+  const profNameBySlug = new Map(categories.map((c) => [c.slug, c.name]));
+
+  const topMessaged = topMessageRecipients
+    .map((row) => {
+      const u = recipientById.get(row.recipientId);
+      if (!u) return null;
+      return {
+        id: u.id,
+        name: u.fullName,
+        sub:
+          u.professions.slice(0, 2).join(", ") +
+          (u.neighborhood ? ` · ${u.neighborhood}` : ""),
+        count: row._count.recipientId,
+      };
+    })
+    .filter((r): r is NonNullable<typeof r> => r !== null);
+
+  const topProfessions = topProfessionsRaw
+    .map((row) => {
+      const slug = row.professionSlug;
+      if (!slug) return null;
+      return {
+        id: slug,
+        name: profNameBySlug.get(slug) ?? slug,
+        count: row._count.professionSlug,
+      };
+    })
+    .filter((r): r is NonNullable<typeof r> => r !== null);
+
+  const topNeighborhoods = topNeighborhoodsRaw
+    .map((row) => {
+      const n = row.neighborhood;
+      if (!n) return null;
+      return { id: n, name: n, count: row._count.neighborhood };
+    })
+    .filter((r): r is NonNullable<typeof r> => r !== null);
 
   return (
-    <div className="mx-auto max-w-[1200px] px-5 sm:px-6 py-8 sm:py-10">
-      <div className="mb-8">
-        <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
-          Yönetim
-        </p>
-        <h1 className="mt-2 text-[26px] sm:text-[32px] font-semibold tracking-[-0.02em] leading-tight text-ink-900">
-          Admin Paneli
-        </h1>
-        <p className="mt-1 text-sm text-ink-500">
-          Genel istatistikler ve yönetim araçları
-        </p>
+    <div className="page-fade">
+      {/* Page header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          gap: 24,
+          marginBottom: 24,
+        }}
+      >
+        <div>
+          <div className="eyebrow" style={{ marginBottom: 10 }}>
+            Yönetim · Genel
+          </div>
+          <h1 style={{ marginBottom: 6 }}>Admin Paneli</h1>
+          <p style={{ color: "var(--muted)", fontSize: 14 }}>
+            Genel istatistikler, son aktiviteler ve yönetim araçları.
+          </p>
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-8">
-        <NavPill href="/admin/kullanicilar">Kullanıcılar</NavPill>
-        <NavPill href="/admin/raporlar" badge={openReportsCount}>
-          Raporlar
-        </NavPill>
-        <NavPill href="/admin/kategoriler">Kategoriler</NavPill>
+      {/* Metric grid */}
+      <div className="eyebrow" style={{ margin: "6px 0 12px" }}>
+        Genel · Son 14 gün
+      </div>
+      <div className="grid grid-4" style={{ marginBottom: 14 }}>
+        <Metric
+          label="Kullanıcı"
+          value={usersTotal}
+          delta={usersDelta.delta}
+          deltaLabel={usersDelta.deltaLabel}
+          series={usersSeries}
+          accent="var(--accent)"
+        />
+        <Metric
+          label="İşçi Profili"
+          value={workersTotal}
+          delta={workersDelta.delta}
+          deltaLabel={workersDelta.deltaLabel}
+          series={workersSeries}
+          accent="var(--ink)"
+        />
+        <Metric
+          label="Arama"
+          value={searchesTotal}
+          delta={searchDelta.delta}
+          deltaLabel={searchDelta.deltaLabel}
+          series={searchSeries}
+          accent="var(--info)"
+        />
+        <Metric
+          label="Mesaj"
+          value={messagesTotal}
+          delta={msgDelta.delta}
+          deltaLabel={msgDelta.deltaLabel}
+          series={msgSeries}
+          accent="var(--ink)"
+        />
       </div>
 
-      <section className="mb-10">
-        <h2 className="text-[13px] font-mono uppercase tracking-[0.08em] text-ink-500 font-medium mb-3">
-          Genel
-        </h2>
-        <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
-          <Stat label="Kullanıcı" value={usersCount} trend={recentSignups} trendLabel="7g" />
-          <Stat label="İşçi profili" value={workersCount} />
-          <Stat label="Kategori" value={categoriesCount} />
-          <Stat
-            label="Açık rapor"
-            value={openReportsCount}
-            highlight={openReportsCount > 0}
-          />
-        </div>
-      </section>
+      {/* Action strip */}
+      <div className="grid grid-2" style={{ marginBottom: 32 }}>
+        <Link
+          href="/admin/raporlar"
+          className="card"
+          style={{
+            padding: "16px 20px",
+            textAlign: "left",
+            cursor: "pointer",
+            background: "#fff",
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            fontFamily: "inherit",
+          }}
+        >
+          <div
+            style={{
+              width: 42,
+              height: 42,
+              borderRadius: 12,
+              background: "var(--warn-soft)",
+              color: "var(--warn)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flex: "0 0 42px",
+            }}
+          >
+            <AdminIcon name="flag" size={18} />
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{ fontSize: 13.5, fontWeight: 500, color: "var(--ink)" }}
+            >
+              Açık raporlar{" "}
+              <span className="num" style={{ color: "var(--warn)" }}>
+                · {openReports}
+              </span>
+            </div>
+            <div
+              style={{ fontSize: 12, color: "var(--muted)", marginTop: 2 }}
+            >
+              Bekleyen moderasyon kararı
+            </div>
+          </div>
+          <AdminIcon name="chevron-right" size={16} color="var(--muted)" />
+        </Link>
 
-      <section className="mb-10">
-        <h2 className="text-[13px] font-mono uppercase tracking-[0.08em] text-ink-500 font-medium mb-3">
-          Etkileşim
-        </h2>
-        <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
-          <Stat label="Toplam arama" value={searchCount} trend={searchCount7d} trendLabel="7g" />
-          <Stat label="Toplam mesaj" value={messagesCount} />
-        </div>
-      </section>
+        <Link
+          href="/admin/kategoriler"
+          className="card"
+          style={{
+            padding: "16px 20px",
+            textAlign: "left",
+            cursor: "pointer",
+            background: "#fff",
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            fontFamily: "inherit",
+          }}
+        >
+          <div
+            style={{
+              width: 42,
+              height: 42,
+              borderRadius: 12,
+              background: "var(--accent-soft)",
+              color: "var(--accent)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flex: "0 0 42px",
+            }}
+          >
+            <AdminIcon name="tag" size={18} />
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{ fontSize: 13.5, fontWeight: 500, color: "var(--ink)" }}
+            >
+              Kategoriler ·{" "}
+              <span className="num">{categoriesActive + categoriesInactive}</span>
+            </div>
+            <div
+              style={{ fontSize: 12, color: "var(--muted)", marginTop: 2 }}
+            >
+              {categoriesActive} aktif · {categoriesInactive} pasif
+            </div>
+          </div>
+          <AdminIcon name="chevron-right" size={16} color="var(--muted)" />
+        </Link>
+      </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Panel
+      {/* Rank cards — top messaged + top professions */}
+      <div className="grid grid-2" style={{ marginBottom: 14 }}>
+        <RankCard
           title="En çok mesaj alan işçiler"
-          subtitle="Aldığı mesaj sayısına göre"
-          empty={topMessageSenders.length === 0}
+          sub="Aldıkları toplam mesaj sayısına göre"
+          rows={topMessaged}
           emptyText="Henüz mesaj yok."
-        >
-          <ul className="divide-y divide-ink-100">
-            {topMessageSenders.map((row, i) => {
-              const user = topWorkerMap.get(row.recipientId);
-              if (!user) return null;
-              return (
-                <li
-                  key={row.recipientId}
-                  className="py-3 flex items-center gap-3"
-                >
-                  <span className="font-mono text-[12px] text-ink-400 w-6 text-right shrink-0">
-                    {i + 1}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-medium text-ink-900 truncate">
-                      {user.fullName}
-                    </p>
-                    <p className="text-[12.5px] text-ink-500 truncate">
-                      {user.neighborhood ?? "—"} ·{" "}
-                      {user.professions.slice(0, 2).join(", ") || "Profilsiz"}
-                    </p>
-                  </div>
-                  <span className="font-mono text-[13px] text-ink-900 shrink-0">
-                    {row._count.recipientId}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </Panel>
-
-        <Panel
+        />
+        <RankCard
           title="En çok aranan meslekler"
-          subtitle="Arama event sayısı"
-          empty={topProfessions.length === 0}
-          emptyText="Henüz arama event'i yok."
-        >
-          <ul className="divide-y divide-ink-100">
-            {topProfessions.map((row, i) => (
-              <li
-                key={row.professionSlug ?? `unknown-${i}`}
-                className="py-3 flex items-center gap-3"
-              >
-                <span className="font-mono text-[12px] text-ink-400 w-6 text-right shrink-0">
-                  {i + 1}
-                </span>
-                <p className="flex-1 text-[14px] text-ink-900 truncate">
-                  {row.professionSlug
-                    ? profNameBySlug.get(row.professionSlug) ?? row.professionSlug
-                    : "—"}
-                </p>
-                <span className="font-mono text-[13px] text-ink-900 shrink-0">
-                  {row._count.professionSlug}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Panel>
+          sub="Arama event sayısı · son 14 gün"
+          rows={topProfessions}
+          emptyText="Henüz arama yok."
+        />
+      </div>
 
-        <Panel
+      {/* Rank cards — neighborhoods + recent signups */}
+      <div className="grid grid-2">
+        <RankCard
           title="En çok aranan mahalleler"
-          subtitle="Mahalle filtresi event'leri"
-          empty={topNeighborhoods.length === 0}
+          sub="Mahalle filtresi event'leri · son 14 gün"
+          rows={topNeighborhoods}
           emptyText="Henüz mahalle araması yok."
-        >
-          <ul className="divide-y divide-ink-100">
-            {topNeighborhoods.map((row, i) => (
-              <li
-                key={row.neighborhood ?? `unk-${i}`}
-                className="py-3 flex items-center gap-3"
+        />
+
+        <div className="card">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "space-between",
+              gap: 12,
+              padding: "18px 22px 0",
+            }}
+          >
+            <div>
+              <h3 style={{ fontSize: 15.5 }}>Son kayıt olanlar</h3>
+              <div
+                style={{
+                  fontSize: 12.5,
+                  color: "var(--muted)",
+                  marginTop: 3,
+                }}
               >
-                <span className="font-mono text-[12px] text-ink-400 w-6 text-right shrink-0">
-                  {i + 1}
-                </span>
-                <p className="flex-1 text-[14px] text-ink-900 truncate">
-                  {row.neighborhood ?? "—"}
-                </p>
-                <span className="font-mono text-[13px] text-ink-900 shrink-0">
-                  {row._count.neighborhood}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Panel>
-
-        <Panel
-          title="Son kayıt olanlar"
-          subtitle="Son 6 kullanıcı"
-          empty={recentUsers.length === 0}
-          emptyText="Henüz kullanıcı yok."
-        >
-          <ul className="divide-y divide-ink-100">
-            {recentUsers.map((u) => (
-              <li key={u.id} className="py-3 flex items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <Link
-                    href={`/cevrendekiler/${u.id}`}
-                    className="text-[14px] font-medium text-ink-900 truncate hover:text-accent-600 transition block"
+                Son 6 kullanıcı
+              </div>
+            </div>
+            <Link
+              href="/admin/kullanicilar"
+              className="btn btn-ghost btn-xs"
+            >
+              Tümü <AdminIcon name="chevron-right" size={12} />
+            </Link>
+          </div>
+          <div style={{ padding: "6px 22px 12px" }}>
+            {recentUsers.length === 0 ? (
+              <div className="empty" style={{ padding: "28px 12px" }}>
+                Henüz kullanıcı yok.
+              </div>
+            ) : (
+              recentUsers.map((u) => (
+                <Link
+                  key={u.id}
+                  href={`/cevrendekiler/${u.id}`}
+                  className="rank-row"
+                  style={{
+                    gridTemplateColumns: "30px 1fr auto",
+                    cursor: "pointer",
+                    textDecoration: "none",
+                  }}
+                >
+                  <div
+                    className="avatar avatar-sm"
+                    style={{
+                      background: "var(--surface-2)",
+                      color: "var(--ink-2)",
+                    }}
                   >
-                    {u.fullName}
-                  </Link>
-                  <p className="text-[12.5px] text-ink-500 truncate">
-                    {u.neighborhood ?? "—"} ·{" "}
-                    {u.professions.length > 0
-                      ? u.professions.slice(0, 2).join(", ")
-                      : "Profilsiz"}
-                  </p>
-                </div>
-                <span className="font-mono text-[12px] text-ink-400 shrink-0">
-                  {formatRelative(u.createdAt)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Panel>
+                    {getInitials(u.fullName)}
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div className="rank-name">{u.fullName}</div>
+                    <div className="rank-sub">
+                      {u.neighborhood ?? "—"} ·{" "}
+                      {u.professions.length > 0
+                        ? u.professions.slice(0, 2).join(", ")
+                        : "Profilsiz"}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-geist-mono), monospace",
+                      fontSize: 11.5,
+                      color: "var(--muted)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {formatLastSeen(u.createdAt)}
+                  </div>
+                </Link>
+              ))
+            )}
+          </div>
+        </div>
       </div>
-    </div>
-  );
-}
-
-function NavPill({
-  href,
-  children,
-  badge,
-}: {
-  href: string;
-  children: React.ReactNode;
-  badge?: number;
-}) {
-  return (
-    <Link
-      href={href}
-      className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-ink-200 bg-white text-[14px] font-medium text-ink-900 hover:border-ink-900 transition"
-    >
-      {children}
-      {badge && badge > 0 ? (
-        <span
-          className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-accent-600 text-[11px] font-semibold"
-          style={{ color: "#ffffff" }}
-        >
-          {badge}
-        </span>
-      ) : null}
-    </Link>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  trend,
-  trendLabel,
-  highlight,
-}: {
-  label: string;
-  value: number;
-  trend?: number;
-  trendLabel?: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-[14px] border p-4 bg-white ${
-        highlight ? "border-accent-600" : "border-ink-100"
-      }`}
-    >
-      <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-ink-500">
-        {label}
-      </p>
-      <p className="mt-1.5 text-[26px] font-semibold tracking-[-0.02em] text-ink-900">
-        {value}
-      </p>
-      {trend !== undefined && trend > 0 && (
-        <p className="mt-1 inline-flex items-center gap-1 text-[12px] font-mono text-accent-600">
-          <ArrowUp /> +{trend} {trendLabel}
-        </p>
-      )}
-      {trend !== undefined && trend === 0 && trendLabel && (
-        <p className="mt-1 text-[12px] font-mono text-ink-400">
-          ±0 {trendLabel}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function ArrowUp() {
-  return (
-    <svg
-      width="10"
-      height="10"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M12 19V5M5 12l7-7 7 7" />
-    </svg>
-  );
-}
-
-function Panel({
-  title,
-  subtitle,
-  children,
-  empty,
-  emptyText,
-}: {
-  title: string;
-  subtitle?: string;
-  children: React.ReactNode;
-  empty?: boolean;
-  emptyText?: string;
-}) {
-  return (
-    <div className="rounded-[14px] border border-ink-100 bg-white p-5">
-      <div className="mb-3">
-        <h3 className="text-[15px] font-semibold text-ink-900">{title}</h3>
-        {subtitle && (
-          <p className="text-[12.5px] text-ink-500 mt-0.5">{subtitle}</p>
-        )}
-      </div>
-      {empty ? (
-        <p className="py-6 text-center text-[13.5px] text-ink-400">
-          {emptyText ?? "—"}
-        </p>
-      ) : (
-        children
-      )}
     </div>
   );
 }
