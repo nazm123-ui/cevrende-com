@@ -49,6 +49,7 @@ type Props = {
   savedProfiles: SavedProfileItem[];
   categories: { slug: string; name: string }[];
   initialFormState: ProfileFormInitial;
+  initialIsAvailable: boolean;
 };
 
 export default function ProfileClient({
@@ -58,8 +59,30 @@ export default function ProfileClient({
   savedProfiles,
   categories,
   initialFormState,
+  initialIsAvailable,
 }: Props) {
   const [tab, setTab] = useState<Tab>("overview");
+  const [isAvailable, setIsAvailable] = useState(initialIsAvailable);
+  const [availBusy, setAvailBusy] = useState(false);
+
+  async function toggleAvailable() {
+    if (availBusy) return;
+    const next = !isAvailable;
+    setIsAvailable(next);
+    setAvailBusy(true);
+    try {
+      const res = await fetch("/api/profile/availability", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isAvailable: next }),
+      });
+      if (!res.ok) setIsAvailable(!next);
+    } catch {
+      setIsAvailable(!next);
+    } finally {
+      setAvailBusy(false);
+    }
+  }
 
   const memberSince = formatMemberSince(user.createdAt);
   const location = user.neighborhood
@@ -124,6 +147,47 @@ export default function ProfileClient({
                 Profili düzenle
               </button>
             </div>
+          </div>
+
+          {/* Availability toggle */}
+          <div className="mt-9 flex items-center justify-between gap-4 px-5 py-4 rounded-[14px] border border-ink-100 bg-white">
+            <div className="flex items-center gap-3 min-w-0">
+              <span
+                className={`inline-block w-2.5 h-2.5 rounded-full ${
+                  isAvailable ? "bg-emerald-500" : "bg-ink-300"
+                }`}
+                aria-hidden
+              />
+              <div className="min-w-0">
+                <div className="text-[15px] font-medium text-ink-900">
+                  {isAvailable
+                    ? "Şu an iş alıyorum"
+                    : "Şu an dolu — yeni iş almıyorum"}
+                </div>
+                <div className="text-[13px] text-ink-500 mt-0.5">
+                  {isAvailable
+                    ? "Profilin listede önde görünür, herkes mesaj atabilir."
+                    : "Profilin listenin sonunda görünür. Yine de mesaj alabilirsin."}
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={toggleAvailable}
+              disabled={availBusy}
+              role="switch"
+              aria-checked={isAvailable}
+              aria-label="Müsaitlik durumu"
+              className={`shrink-0 relative inline-flex h-7 w-12 items-center rounded-full transition border-0 cursor-pointer ${
+                isAvailable ? "bg-emerald-500" : "bg-ink-200"
+              } ${availBusy ? "opacity-60 cursor-wait" : ""}`}
+            >
+              <span
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${
+                  isAvailable ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
           </div>
 
           {/* Stats row */}

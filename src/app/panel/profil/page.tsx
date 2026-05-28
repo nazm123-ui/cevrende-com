@@ -25,6 +25,7 @@ export default async function ProfilPage() {
         bio: true,
         workerSettings: true,
         experiences: true,
+        isAvailable: true,
         createdAt: true,
       },
     }),
@@ -120,6 +121,7 @@ export default async function ProfilPage() {
         phoneVisibility: getPhoneVisibility(user.workerSettings as never),
         experiences,
       }}
+      initialIsAvailable={user.isAvailable}
     />
   );
 }

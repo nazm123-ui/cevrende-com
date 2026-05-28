@@ -12,6 +12,7 @@ interface Props {
   showFullPhone: boolean;
   canContact: boolean;
   isSelf: boolean;
+  isAvailable: boolean;
   initialSaved?: boolean;
 }
 
@@ -31,6 +32,7 @@ export default function WorkerContactCard({
   showFullPhone,
   canContact,
   isSelf,
+  isAvailable,
   initialSaved = false,
 }: Props) {
   const router = useRouter();
@@ -72,6 +74,13 @@ export default function WorkerContactCard({
   return (
     <div className={cardCls}>
       <div className="eyebrow mb-3">İletişim</div>
+
+      {!isAvailable && (
+        <div className="mb-4 px-3 py-2.5 rounded-[10px] bg-ink-50 border border-ink-100 text-[12.5px] text-ink-700 leading-[1.5]">
+          <strong className="font-medium">Şu an yeni iş almıyor.</strong> Yine de
+          mesaj atabilirsin — uygun olduğunda dönüş yapar.
+        </div>
+      )}
 
       {showFullPhone ? (
         <>

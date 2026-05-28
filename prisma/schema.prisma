@@ -19,6 +19,7 @@ model User {
   isPhoneVerified Boolean   @default(false)
   isEmailVerified Boolean   @default(false)
   isActive        Boolean   @default(true)
+  isAvailable     Boolean   @default(true)
   passwordChangedAt DateTime?
 
   professions     String[]  @default([])

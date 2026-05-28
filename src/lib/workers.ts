@@ -13,6 +13,7 @@ export type WorkerListItem = {
   professions: string[];
   bio: string | null;
   workerSettings: WorkerSettings;
+  isAvailable: boolean;
   createdAt: Date;
 };
 
@@ -20,8 +21,9 @@ export async function getActiveWorkers(filters: {
   profession?: string;
   neighborhood?: string;
   q?: string;
+  onlyAvailable?: boolean;
 }): Promise<WorkerListItem[]> {
-  const { profession, neighborhood, q } = filters;
+  const { profession, neighborhood, q, onlyAvailable } = filters;
 
   const where: Prisma.UserWhereInput = {
     isActive: true,
@@ -31,6 +33,10 @@ export async function getActiveWorkers(filters: {
 
   if (neighborhood) {
     where.neighborhood = neighborhood;
+  }
+
+  if (onlyAvailable) {
+    where.isAvailable = true;
   }
 
   if (q && q.trim()) {
@@ -67,9 +73,11 @@ export async function getActiveWorkers(filters: {
       professions: true,
       bio: true,
       workerSettings: true,
+      isAvailable: true,
       createdAt: true,
     },
-    orderBy: { createdAt: "desc" },
+    // Müsait olanlar her zaman üstte, sonra yeniden eskiye.
+    orderBy: [{ isAvailable: "desc" }, { createdAt: "desc" }],
     take: 100,
   });
 

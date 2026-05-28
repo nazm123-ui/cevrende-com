@@ -33,7 +33,11 @@ export default function WorkerCard({
   const initials = getInitials(worker.fullName);
 
   return (
-    <article className="px-6 py-5 bg-white border border-ink-100 rounded-[14px] transition hover:border-ink-700">
+    <article
+      className={`px-6 py-5 bg-white border border-ink-100 rounded-[14px] transition hover:border-ink-700 ${
+        !worker.isAvailable ? "opacity-75" : ""
+      }`}
+    >
       <div className="flex items-center justify-between gap-2 mb-3.5 flex-wrap">
         <div className="flex items-center gap-2 text-ink-500 text-[13px] flex-wrap">
           <span className="font-mono">{formatRelative(worker.createdAt)}</span>
@@ -42,9 +46,17 @@ export default function WorkerCard({
             <PinIcon /> {location}
           </span>
         </div>
-        {!showFullPhone && (
-          <span className="text-[12px] text-ink-500">Sadece mesaj</span>
-        )}
+        <div className="flex items-center gap-2">
+          {!worker.isAvailable && (
+            <span className="inline-flex items-center gap-1.5 h-[22px] px-2 rounded-full bg-ink-100 text-ink-700 text-[11.5px] font-medium">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-ink-400" />
+              Şu an dolu
+            </span>
+          )}
+          {!showFullPhone && (
+            <span className="text-[12px] text-ink-500">Sadece mesaj</span>
+          )}
+        </div>
       </div>
 
       <Link

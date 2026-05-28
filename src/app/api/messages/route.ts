@@ -4,6 +4,7 @@ import { requireVerifiedUser } from "@/lib/require-auth";
 import { sendMessageSchema } from "@/lib/validators";
 import { checkContent, describeCategories } from "@/lib/content-filter";
 import { getThread, markThreadAsRead } from "@/lib/messages";
+import { checkMessageSpam } from "@/lib/spam-control";
 
 export async function POST(req: Request) {
   const user = await requireVerifiedUser();
@@ -50,6 +51,17 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: "Alıcı bulunamadı." },
       { status: 404 },
+    );
+  }
+
+  const spam = await checkMessageSpam(user.id, content);
+  if (!spam.ok) {
+    return NextResponse.json(
+      { error: spam.reason },
+      {
+        status: 429,
+        headers: { "Retry-After": String(spam.retryAfterSeconds) },
+      },
     );
   }
 

@@ -44,6 +44,7 @@ export default async function WorkerProfilePage({
         neighborhood: true,
         createdAt: true,
         isActive: true,
+        isAvailable: true,
         workerSettings: true,
         experiences: true,
       },
@@ -132,9 +133,17 @@ export default async function WorkerProfilePage({
                     <Icon name="pin" size={13} /> {location}
                   </span>
                 </div>
-                <h1 className="text-[32px] sm:text-[36px] font-semibold tracking-[-0.025em] leading-[1.1] m-0">
-                  {worker.fullName}
-                </h1>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h1 className="text-[32px] sm:text-[36px] font-semibold tracking-[-0.025em] leading-[1.1] m-0">
+                    {worker.fullName}
+                  </h1>
+                  {!worker.isAvailable && (
+                    <span className="inline-flex items-center gap-1.5 h-[26px] px-2.5 rounded-full bg-ink-100 text-ink-700 text-[12px] font-medium">
+                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-ink-400" />
+                      Şu an dolu
+                    </span>
+                  )}
+                </div>
                 <p className="text-[17px] text-ink-700 leading-snug m-0">
                   {headline}
                 </p>
@@ -221,6 +230,7 @@ export default async function WorkerProfilePage({
               showFullPhone={showFullPhone}
               canContact={!!me && me.isEmailVerified}
               isSelf={isSelf}
+              isAvailable={worker.isAvailable}
               initialSaved={initialSaved}
             />
 

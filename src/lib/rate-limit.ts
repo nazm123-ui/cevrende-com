@@ -14,7 +14,7 @@ let redisClient: Redis | null = null;
 let redisChecked = false;
 const limiters: Partial<Record<Tier, Ratelimit>> = {};
 
-function getRedis(): Redis | null {
+export function getRedis(): Redis | null {
   if (redisChecked) return redisClient;
   redisChecked = true;
   const url = process.env.UPSTASH_REDIS_REST_URL;
