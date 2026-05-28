@@ -15,6 +15,16 @@ interface Props {
   initialSaved?: boolean;
 }
 
+const cardCls =
+  "p-6 bg-white border border-ink-100 rounded-[14px] shadow-[0_1px_0_rgba(15,17,16,0.02),0_8px_24px_-12px_rgba(15,17,16,0.10)]";
+
+const btnBase =
+  "inline-flex items-center justify-center gap-2 w-full h-12 px-[22px] rounded-full text-[15px] font-medium tracking-[-0.005em] whitespace-nowrap cursor-pointer no-underline border border-transparent transition";
+
+const btnPrimary = `${btnBase} bg-ink-900 text-white border-ink-900 hover:bg-ink-800`;
+const btnAccent = `${btnBase} bg-accent-600 text-white border-accent-600 hover:bg-accent-700`;
+const btnSecondary = `${btnBase} bg-transparent text-ink-900 border-ink-200 hover:border-ink-900`;
+
 export default function WorkerContactCard({
   workerId,
   workerPhone,
@@ -50,11 +60,9 @@ export default function WorkerContactCard({
 
   if (isSelf) {
     return (
-      <div style={cardStyle}>
-        <div className="eyebrow" style={{ marginBottom: 12 }}>
-          Bu profil sana ait
-        </div>
-        <Link href="/panel/profil" style={btnPrimaryFull}>
+      <div className={cardCls}>
+        <div className="eyebrow mb-3">Bu profil sana ait</div>
+        <Link href="/panel/profil" className={btnPrimary}>
           Profilini düzenle
         </Link>
       </div>
@@ -62,45 +70,33 @@ export default function WorkerContactCard({
   }
 
   return (
-    <div style={cardStyle}>
-      <div className="eyebrow" style={{ marginBottom: 12 }}>
-        İletişim
-      </div>
+    <div className={cardCls}>
+      <div className="eyebrow mb-3">İletişim</div>
 
       {showFullPhone ? (
         <>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              color: "var(--color-ink-900)",
-            }}
-          >
+          <div className="flex items-center gap-2 text-ink-900">
             <Icon name="phone" size={16} />
-            <span
-              className="font-mono"
-              style={{ fontSize: 16, letterSpacing: "0.02em" }}
-            >
+            <span className="font-mono text-[16px] tracking-[0.02em]">
               {formatPhone(workerPhone)}
             </span>
           </div>
           <a
             href={`tel:${workerPhone.replace(/\s/g, "")}`}
-            style={{ ...btnAccentFull, marginTop: 18 }}
+            className={`${btnAccent} mt-[18px]`}
           >
             Şimdi ara
           </a>
           {canContact && (
             <button
               onClick={() => router.push(`/panel/mesajlar/${workerId}`)}
-              style={{ ...btnSecondaryFull, marginTop: 8 }}
+              className={`${btnSecondary} mt-2`}
             >
               Mesaj gönder
             </button>
           )}
           {!canContact && (
-            <Link href="/kayit" style={{ ...btnSecondaryFull, marginTop: 8 }}>
+            <Link href="/kayit" className={`${btnSecondary} mt-2`}>
               Mesaj göndermek için kayıt ol
             </Link>
           )}
@@ -110,50 +106,31 @@ export default function WorkerContactCard({
           {canContact ? (
             <button
               onClick={() => router.push(`/panel/mesajlar/${workerId}`)}
-              style={btnPrimaryFull}
+              className={btnPrimary}
             >
               Mesaj gönder
             </button>
           ) : (
-            <Link href="/kayit" style={btnPrimaryFull}>
+            <Link href="/kayit" className={btnPrimary}>
               Ücretsiz kayıt — mesajlaş
             </Link>
           )}
-          <p
-            style={{
-              marginTop: 12,
-              fontSize: 12.5,
-              color: "var(--color-ink-500)",
-              lineHeight: 1.5,
-            }}
-          >
-            Bu profil sadece platform içi mesajlaşma kabul ediyor. Telefon, profil sahibinin tercihiyle paylaşılmıyor.
+          <p className="mt-3 text-[12.5px] leading-[1.5] text-ink-500">
+            Bu profil sadece platform içi mesajlaşma kabul ediyor. Telefon,
+            profil sahibinin tercihiyle paylaşılmıyor.
           </p>
         </>
       )}
 
       {canContact && (
         <>
-          <div className="divider" style={{ margin: "20px 0" }} />
+          <div className="divider my-5" />
           <button
             onClick={toggleSaved}
             disabled={savingBusy}
-            style={{
-              width: "100%",
-              background: "none",
-              border: 0,
-              padding: 8,
-              font: "inherit",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              color: saved
-                ? "var(--color-accent-600)"
-                : "var(--color-ink-500)",
-              cursor: savingBusy ? "wait" : "pointer",
-              fontSize: 14,
-            }}
+            className={`w-full bg-transparent border-0 p-2 font-[inherit] inline-flex items-center justify-center gap-2 text-[14px] transition ${
+              saved ? "text-accent-600" : "text-ink-500 hover:text-ink-900"
+            } ${savingBusy ? "cursor-wait" : "cursor-pointer"}`}
           >
             <Icon name={saved ? "bookmark-filled" : "bookmark"} size={15} />
             {saved ? "Kaydedildi" : "Profili kaydet"}
@@ -163,51 +140,3 @@ export default function WorkerContactCard({
     </div>
   );
 }
-
-const cardStyle: React.CSSProperties = {
-  padding: 24,
-  background: "#fff",
-  border: "1px solid var(--color-ink-100)",
-  borderRadius: 14,
-  boxShadow:
-    "0 1px 0 rgba(15,17,16,.02), 0 8px 24px -12px rgba(15,17,16,.10)",
-};
-
-const btnBase: React.CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: 8,
-  width: "100%",
-  height: 48,
-  padding: "0 22px",
-  borderRadius: 999,
-  fontSize: 15,
-  fontWeight: 500,
-  letterSpacing: "-0.005em",
-  whiteSpace: "nowrap",
-  cursor: "pointer",
-  textDecoration: "none",
-  border: "1px solid transparent",
-};
-
-const btnPrimaryFull: React.CSSProperties = {
-  ...btnBase,
-  background: "var(--color-ink-900)",
-  color: "#fff",
-  borderColor: "var(--color-ink-900)",
-};
-
-const btnAccentFull: React.CSSProperties = {
-  ...btnBase,
-  background: "var(--color-accent-600)",
-  color: "#fff",
-  borderColor: "var(--color-accent-600)",
-};
-
-const btnSecondaryFull: React.CSSProperties = {
-  ...btnBase,
-  background: "transparent",
-  color: "var(--color-ink-900)",
-  borderColor: "var(--color-ink-200)",
-};

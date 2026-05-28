@@ -1,19 +1,10 @@
 import { requireVerifiedUser } from "@/lib/require-auth";
 import { getConversations } from "@/lib/messages";
+import { getInitials } from "@/lib/initials";
 import MessagesClient from "@/components/messages/MessagesClient";
 
 export const metadata = { title: "Mesajlar — Cevrende.com" };
 export const dynamic = "force-dynamic";
-
-function initialsOf(name: string): string {
-  return name
-    .replace(/\*+/g, "")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase() ?? "")
-    .join("");
-}
 
 export default async function MesajlarPage() {
   const user = await requireVerifiedUser();
@@ -25,7 +16,7 @@ export default async function MesajlarPage() {
       conversations={conversations.map((c) => ({
         otherUserId: c.otherUserId,
         otherUserName: c.otherUserName,
-        initials: initialsOf(c.otherUserName),
+        initials: getInitials(c.otherUserName),
         lastMessage: c.lastMessage,
         lastMessageAt: c.lastMessageAt.toISOString(),
         lastMessageFromMe: c.lastMessageFromMe,

@@ -6,20 +6,11 @@ import {
   getThread,
   markThreadAsRead,
 } from "@/lib/messages";
+import { getInitials } from "@/lib/initials";
 import MessagesClient from "@/components/messages/MessagesClient";
 
 export const metadata = { title: "Sohbet — Cevrende.com" };
 export const dynamic = "force-dynamic";
-
-function initialsOf(name: string): string {
-  return name
-    .replace(/\*+/g, "")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase() ?? "")
-    .join("");
-}
 
 export default async function ThreadPage({
   params,
@@ -68,7 +59,7 @@ export default async function ThreadPage({
       conversations={conversationList.map((c) => ({
         otherUserId: c.otherUserId,
         otherUserName: c.otherUserName,
-        initials: initialsOf(c.otherUserName),
+        initials: getInitials(c.otherUserName),
         lastMessage: c.lastMessage,
         lastMessageAt: c.lastMessageAt.toISOString(),
         lastMessageFromMe: c.lastMessageFromMe,
