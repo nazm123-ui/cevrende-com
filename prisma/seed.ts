@@ -61,6 +61,55 @@ const CATEGORIES = [
   // Diğer hizmetler
   { slug: "terzi", name: "Terzi / Dikiş Tadilat" },
   { slug: "fotografci", name: "Fotoğrafçı" },
+  // Yaratıcı / dijital işler
+  { slug: "grafik-tasarim", name: "Grafik Tasarımcı" },
+  { slug: "web-yazilim", name: "Web Tasarım / Yazılım Geliştirici" },
+  { slug: "sosyal-medya", name: "Sosyal Medya / Dijital Pazarlama" },
+  { slug: "video-icerik", name: "Video Editörü / İçerik Üretimi" },
+  { slug: "muzisyen-dj", name: "Müzisyen / DJ" },
+  // Profesyonel hizmetler
+  { slug: "tercuman", name: "Tercüman / Çevirmen" },
+  { slug: "muhasebe", name: "Muhasebe / Mali Müşavir Asistanı" },
+  { slug: "emlak-danismani", name: "Emlak Danışmanı" },
+  { slug: "sigorta-danismani", name: "Sigorta Acentesi / Danışmanlığı" },
+  { slug: "etkinlik-organizasyon", name: "Düğün / Etkinlik Organizasyon" },
+  // Eğitim genişletme
+  { slug: "dil-egitmeni", name: "Yabancı Dil Eğitmeni" },
+  { slug: "muzik-ogretmeni", name: "Müzik Öğretmeni" },
+  { slug: "spor-egitmeni", name: "Spor / Yüzme Eğitmeni" },
+  { slug: "kisisel-antrenor", name: "Kişisel Antrenör (PT)" },
+  { slug: "yoga-pilates", name: "Yoga / Pilates Eğitmeni" },
+  // Sağlık genişletme
+  { slug: "fizyoterapist", name: "Fizyoterapist (Evde)" },
+  { slug: "diyetisyen", name: "Diyetisyen" },
+  { slug: "cocuk-gelisimi", name: "Çocuk Gelişimi Uzmanı" },
+  // Etkinlik hizmetleri
+  { slug: "pasta-hamur", name: "Pasta / Hamur İşi Ustası" },
+  { slug: "animator", name: "Animatör / Çocuk Eğlencesi" },
+  { slug: "balon-susleme", name: "Balon / Süsleme" },
+  // Diğer (gündelik)
+  { slug: "sofor-ozel", name: "Şoför (Özel)" },
+  { slug: "pet-bakim", name: "Veteriner Asistanı / Pet Bakım" },
+  { slug: "saat-mucevher-tamiri", name: "Saat / Mücevher Tamiri" },
+  // Oto / araç hizmetleri
+  { slug: "oto-tamir", name: "Oto Tamir / Bakım" },
+  { slug: "oto-yikama", name: "Oto Yıkama / Detaylı Temizlik" },
+  { slug: "oto-kaporta", name: "Oto Kaporta / Boya" },
+  { slug: "oto-elektrik", name: "Oto Elektrik / Akü" },
+  { slug: "motosiklet-tamiri", name: "Motosiklet Tamiri" },
+  { slug: "lastik-balans", name: "Lastik / Balans / Rot Ayarı" },
+  // Elektronik kurulum
+  { slug: "uydu-tv-kurulum", name: "Uydu / TV / Anten Kurulumu" },
+  { slug: "guvenlik-kamera-kurulum", name: "Güvenlik Kamera / Alarm Kurulumu" },
+  { slug: "akilli-ev-network", name: "Akıllı Ev / Network / Kablo Döşeme" },
+  // Yapı uzmanlaşma
+  { slug: "asansor-tamir", name: "Asansör Tamiri / Bakımı" },
+  { slug: "dolap-mobilya-yapim", name: "Mutfak / Banyo Dolap Komple" },
+  { slug: "perde-mobilya-montaj", name: "Perde / Stor / Mobilya Montajı" },
+  { slug: "kalorifer-radyator", name: "Kalorifer / Radyatör / Tesisat" },
+  // Pet + apartman
+  { slug: "pet-egitmen-kuafor", name: "Köpek Eğitmeni / Pet Kuaför" },
+  { slug: "apartman-gorevlisi", name: "Apartman Görevlisi / Kapıcı" },
   // En sonda
   { slug: "diger", name: "Diğer" },
 ];
