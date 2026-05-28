@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { getUnreadCount } from "@/lib/messages";
@@ -7,6 +8,10 @@ import LogoutButton from "@/components/auth/LogoutButton";
 import MobileMenu from "@/components/MobileMenu";
 
 export default async function Header() {
+  const h = await headers();
+  const pathname = h.get("x-pathname") ?? "";
+  if (pathname.startsWith("/admin")) return null;
+
   const user = await getCurrentUser();
   const firstName = user?.fullName.split(" ")[0];
   const isAdmin = isAdminEmail(user?.email);
