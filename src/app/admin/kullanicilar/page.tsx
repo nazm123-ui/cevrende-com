@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { requireAdmin } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
 import { isAdminEmail } from "@/lib/constants/admin-emails";
+import AdminIcon from "@/components/admin/AdminIcon";
 import UsersTable from "@/components/admin/UsersTable";
 
 export const metadata = { title: "Kullanıcılar — Admin" };
@@ -16,7 +16,6 @@ export default async function AdminUsersPage({
 }: {
   searchParams: SearchParams;
 }) {
-  await requireAdmin();
   const sp = await searchParams;
   const q = sp.q?.trim() ?? "";
   const filter = sp.filter ?? "all";
@@ -37,82 +36,169 @@ export default async function AdminUsersPage({
     filters.push({ isActive: false });
   }
 
-  const users = await prisma.user.findMany({
-    where: filters.length ? { AND: filters } : undefined,
-    select: {
-      id: true,
-      fullName: true,
-      email: true,
-      phone: true,
-      district: true,
-      neighborhood: true,
-      professions: true,
-      isActive: true,
-      isEmailVerified: true,
-      isPhoneVerified: true,
-      createdAt: true,
-      _count: {
-        select: {
-          sentMessages: true,
-          receivedMessages: true,
+  const [users, totalCount, workerCount, inactiveCount] = await Promise.all([
+    prisma.user.findMany({
+      where: filters.length ? { AND: filters } : undefined,
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        district: true,
+        neighborhood: true,
+        professions: true,
+        isActive: true,
+        isEmailVerified: true,
+        isPhoneVerified: true,
+        createdAt: true,
+        _count: {
+          select: { sentMessages: true, receivedMessages: true },
         },
       },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 200,
-  });
+      orderBy: { createdAt: "desc" },
+      take: 200,
+    }),
+    prisma.user.count(),
+    prisma.user.count({ where: { professions: { isEmpty: false } } }),
+    prisma.user.count({ where: { isActive: false } }),
+  ]);
 
-  // Mark admins so the UI can hide destructive actions
   const enriched = users.map((u) => ({
     ...u,
     createdAt: u.createdAt.toISOString(),
     isAdmin: isAdminEmail(u.email),
   }));
 
-  const total = await prisma.user.count();
-
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-10">
-      <div className="mb-6">
-        <Link
-          href="/admin"
-          className="text-[13px] text-ink-500 hover:text-ink-900 transition"
-        >
-          ← Admin paneli
-        </Link>
-        <h1 className="mt-2 text-2xl sm:text-3xl font-bold text-ink-900 tracking-tight">
-          Kullanıcılar
-        </h1>
-        <p className="mt-1 text-sm text-ink-500">
-          {users.length} / {total} gösteriliyor (en yeni 200)
-        </p>
+    <div className="page-fade">
+      {/* Page header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          gap: 24,
+          marginBottom: 24,
+          flexWrap: "wrap",
+        }}
+      >
+        <div>
+          <div className="eyebrow" style={{ marginBottom: 10 }}>
+            Yönetim · Kullanıcılar
+          </div>
+          <h1 style={{ marginBottom: 6 }}>Kullanıcılar</h1>
+          <p style={{ color: "var(--muted)", fontSize: 14 }}>
+            {users.length} sonuç {users.length === 200 ? "(en yeni 200)" : ""} ·
+            Toplam {totalCount}
+          </p>
+        </div>
       </div>
 
-      <form className="mb-5 flex flex-col sm:flex-row gap-2" action="/admin/kullanicilar">
-        <input
-          name="q"
-          defaultValue={q}
-          placeholder="İsim, e-posta veya telefon ile ara…"
-          className="flex-1 h-11 px-4 rounded-[12px] border border-ink-200 bg-white text-[14.5px] text-ink-900 outline-none focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
-        />
-        <select
-          name="filter"
-          defaultValue={filter}
-          className="h-11 px-3.5 rounded-[12px] border border-ink-200 bg-white text-[14.5px] text-ink-900 outline-none focus:border-ink-900"
+      {/* Quick stats */}
+      <div className="grid grid-3" style={{ marginBottom: 18 }}>
+        <div className="card card-pad">
+          <div className="metric-label">Toplam Kullanıcı</div>
+          <div className="metric-row">
+            <div className="metric-value num">{totalCount}</div>
+            <div className="metric-delta flat">kayıtlı hesap</div>
+          </div>
+        </div>
+        <div className="card card-pad">
+          <div className="metric-label">İşçi Profili</div>
+          <div className="metric-row">
+            <div className="metric-value num">{workerCount}</div>
+            <div className="metric-delta flat">profession dolu</div>
+          </div>
+        </div>
+        <div className="card card-pad">
+          <div className="metric-label">Pasif Hesap</div>
+          <div className="metric-row">
+            <div
+              className="metric-value num"
+              style={{
+                color: inactiveCount > 0 ? "var(--danger)" : "var(--ink)",
+              }}
+            >
+              {inactiveCount}
+            </div>
+            <div className="metric-delta flat">erişim engelli</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Search + filter */}
+      <form
+        action="/admin/kullanicilar"
+        style={{
+          display: "flex",
+          gap: 10,
+          marginBottom: 18,
+          flexWrap: "wrap",
+        }}
+      >
+        <div
+          className="search"
+          style={{ flex: "1 1 280px", maxWidth: "none", width: "auto" }}
         >
+          <AdminIcon name="search" size={15} color="var(--muted)" />
+          <input
+            name="q"
+            defaultValue={q}
+            placeholder="İsim, e-posta veya telefon ile ara…"
+          />
+        </div>
+        <select name="filter" defaultValue={filter} className="select" style={{ width: 240 }}>
           <option value="all">Hepsi</option>
           <option value="workers">Sadece işçi profili olanlar</option>
           <option value="inactive">Sadece pasif hesaplar</option>
         </select>
-        <button
-          type="submit"
-          className="btn-ink h-11 px-5 rounded-[12px] text-[14.5px]"
-        >
+        <button type="submit" className="btn btn-primary">
           Filtrele
         </button>
       </form>
 
+      {/* Filter chips */}
+      <div
+        className="row"
+        style={{ gap: 8, marginBottom: 18, flexWrap: "wrap" }}
+      >
+        <FilterChip
+          href="/admin/kullanicilar"
+          active={filter === "all" && !q}
+        >
+          Hepsi <span className="chip-count">{totalCount}</span>
+        </FilterChip>
+        <FilterChip
+          href="/admin/kullanicilar?filter=workers"
+          active={filter === "workers"}
+        >
+          İşçiler <span className="chip-count">{workerCount}</span>
+        </FilterChip>
+        <FilterChip
+          href="/admin/kullanicilar?filter=inactive"
+          active={filter === "inactive"}
+        >
+          Pasif <span className="chip-count">{inactiveCount}</span>
+        </FilterChip>
+      </div>
+
       <UsersTable users={enriched} />
     </div>
+  );
+}
+
+function FilterChip({
+  href,
+  active,
+  children,
+}: {
+  href: string;
+  active: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link href={href} className={"chip" + (active ? " is-active" : "")}>
+      {children}
+    </Link>
   );
 }

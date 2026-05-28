@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AdminIcon from "@/components/admin/AdminIcon";
+import { getInitials } from "@/lib/initials";
 
 export type AdminUserRow = {
   id: string;
@@ -22,10 +24,24 @@ export type AdminUserRow = {
   };
 };
 
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("tr-TR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export default function UsersTable({ users }: { users: AdminUserRow[] }) {
   const router = useRouter();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  function showToast(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2800);
+  }
 
   async function toggleActive(u: AdminUserRow) {
     if (u.isAdmin) return;
@@ -42,6 +58,9 @@ export default function UsersTable({ users }: { users: AdminUserRow[] }) {
         setError(data.error || "İşlem başarısız.");
         return;
       }
+      showToast(
+        !u.isActive ? "Hesap aktif edildi." : "Hesap pasifleştirildi.",
+      );
       router.refresh();
     } catch {
       setError("Bağlantı hatası.");
@@ -56,9 +75,8 @@ export default function UsersTable({ users }: { users: AdminUserRow[] }) {
       !confirm(
         `${u.fullName} (${u.email}) hesabını kalıcı olarak silmek istiyor musun?\n\nBu işlem mesajları, talepleri ve raporları da siler. Geri alınamaz.`,
       )
-    ) {
+    )
       return;
-    }
     setError(null);
     setBusyId(u.id);
     try {
@@ -68,6 +86,7 @@ export default function UsersTable({ users }: { users: AdminUserRow[] }) {
         setError(data.error || "Silme başarısız.");
         return;
       }
+      showToast("Kullanıcı silindi.");
       router.refresh();
     } catch {
       setError("Bağlantı hatası.");
@@ -77,101 +96,213 @@ export default function UsersTable({ users }: { users: AdminUserRow[] }) {
   }
 
   if (users.length === 0) {
-    return (
-      <div className="rounded-[14px] border border-dashed border-ink-200 bg-white p-10 text-center text-[14px] text-ink-500">
-        Sonuç yok.
-      </div>
-    );
+    return <div className="empty">Sonuç yok.</div>;
   }
 
   return (
-    <div className="space-y-3">
+    <>
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+        <div
+          className="card card-pad"
+          style={{
+            borderColor: "var(--danger)",
+            color: "var(--danger)",
+            fontSize: 13,
+            marginBottom: 14,
+          }}
+        >
           {error}
         </div>
       )}
 
-      <ul className="space-y-2">
-        {users.map((u) => (
-          <li
-            key={u.id}
-            className={`rounded-[12px] border bg-white p-4 ${
-              u.isActive ? "border-ink-100" : "border-ink-200 bg-ink-50/50"
-            }`}
-          >
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <p className="text-[15px] font-semibold text-ink-900 truncate">
-                    {u.fullName}
-                  </p>
-                  {u.isAdmin && <Pill tone="brand">Admin</Pill>}
-                  {!u.isActive && <Pill tone="warn">Pasif</Pill>}
-                  {u.professions.length > 0 && <Pill tone="ok">İşçi</Pill>}
-                  {!u.isEmailVerified && <Pill tone="muted">E-posta ✗</Pill>}
-                  {!u.isPhoneVerified && <Pill tone="muted">Telefon ✗</Pill>}
-                </div>
-                <p className="mt-1 text-[13px] text-ink-500 break-all">
-                  {u.email} · {u.phone}
-                </p>
-                <p className="mt-0.5 text-[13px] text-ink-500">
-                  {u.neighborhood ? `${u.neighborhood}, ${u.district}` : u.district}
-                  {u.professions.length > 0 && (
-                    <> · {u.professions.slice(0, 3).join(", ")}{u.professions.length > 3 ? "…" : ""}</>
-                  )}
-                </p>
-                <p className="mt-1.5 font-mono text-[11.5px] text-ink-400">
-                  Kayıt: {new Date(u.createdAt).toLocaleDateString("tr-TR")} ·
-                  Mesaj: {u._count.sentMessages + u._count.receivedMessages}
-                </p>
-              </div>
+      <div className="card" style={{ overflow: "hidden" }}>
+        {/* Header */}
+        <div
+          className="list-row head"
+          style={{
+            gridTemplateColumns: "1.6fr 1.2fr 1fr 0.7fr auto",
+          }}
+        >
+          <div className="col">Kullanıcı</div>
+          <div className="col">İletişim</div>
+          <div className="col">Konum / Meslek</div>
+          <div className="col">Etkinlik</div>
+          <div className="col" style={{ textAlign: "right" }}>
+            İşlem
+          </div>
+        </div>
 
-              <div className="flex flex-wrap gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => toggleActive(u)}
-                  disabled={busyId === u.id || u.isAdmin}
-                  className="inline-flex items-center h-9 px-3.5 rounded-full border border-ink-200 text-[13px] font-medium text-ink-900 hover:border-ink-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        {/* Rows */}
+        {users.map((u) => (
+          <div
+            key={u.id}
+            className="list-row"
+            style={{
+              gridTemplateColumns: "1.6fr 1.2fr 1fr 0.7fr auto",
+              opacity: u.isActive ? 1 : 0.65,
+            }}
+          >
+            {/* Kullanıcı */}
+            <div className="col col-name">
+              <div
+                className="avatar avatar-sm"
+                style={{
+                  background: u.isAdmin
+                    ? "var(--ink)"
+                    : u.professions.length > 0
+                      ? "var(--accent)"
+                      : "var(--surface-2)",
+                  color:
+                    u.isAdmin || u.professions.length > 0
+                      ? "#fff"
+                      : "var(--ink-2)",
+                }}
+              >
+                {getInitials(u.fullName)}
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div
+                  className="nm"
+                  style={{ display: "flex", alignItems: "center", gap: 6 }}
                 >
-                  {u.isActive ? "Pasif yap" : "Aktif yap"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => deleteUser(u)}
-                  disabled={busyId === u.id || u.isAdmin}
-                  className="inline-flex items-center h-9 px-3.5 rounded-full border border-red-200 text-[13px] font-medium text-red-700 hover:bg-red-50 hover:border-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Sil
-                </button>
+                  {u.fullName}
+                  {u.isAdmin && (
+                    <span className="tag tag-info" style={{ marginLeft: 4 }}>
+                      Admin
+                    </span>
+                  )}
+                  {!u.isActive && (
+                    <span className="tag tag-danger">
+                      <span className="tag-dot" />
+                      Pasif
+                    </span>
+                  )}
+                </div>
+                <div className="sub">
+                  {formatDate(u.createdAt)}{" "}
+                  {u.professions.length > 0 && "· işçi"}
+                </div>
               </div>
             </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
 
-function Pill({
-  children,
-  tone,
-}: {
-  children: React.ReactNode;
-  tone: "brand" | "warn" | "ok" | "muted";
-}) {
-  const cls = {
-    brand: "bg-ink-900 text-white",
-    warn: "bg-warn-500/10 text-warn-500 border border-warn-500/30",
-    ok: "bg-accent-50 text-accent-700 border border-accent-100",
-    muted: "bg-ink-100 text-ink-500",
-  }[tone];
-  return (
-    <span
-      className={`inline-flex items-center h-5 px-2 rounded-full text-[10.5px] font-medium tracking-tight ${cls}`}
-      style={tone === "brand" ? { color: "#ffffff" } : undefined}
-    >
-      {children}
-    </span>
+            {/* İletişim */}
+            <div className="col" style={{ minWidth: 0 }}>
+              <div
+                style={{
+                  fontSize: 13,
+                  color: "var(--ink)",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {u.email}
+              </div>
+              <div
+                className="mono"
+                style={{
+                  fontSize: 11.5,
+                  color: "var(--muted)",
+                  marginTop: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                }}
+              >
+                {u.phone}
+                {!u.isEmailVerified && (
+                  <span
+                    className="tag tag-muted"
+                    style={{ fontSize: 10, marginLeft: 4 }}
+                    title="E-posta doğrulanmamış"
+                  >
+                    e-posta ✗
+                  </span>
+                )}
+                {!u.isPhoneVerified && (
+                  <span
+                    className="tag tag-muted"
+                    style={{ fontSize: 10 }}
+                    title="Telefon doğrulanmamış"
+                  >
+                    telefon ✗
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Konum / Meslek */}
+            <div className="col" style={{ minWidth: 0 }}>
+              <div
+                style={{
+                  fontSize: 13,
+                  color: "var(--ink-2)",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {u.neighborhood
+                  ? `${u.neighborhood}, ${u.district}`
+                  : u.district}
+              </div>
+              {u.professions.length > 0 && (
+                <div
+                  className="sub"
+                  style={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    marginTop: 2,
+                  }}
+                >
+                  {u.professions.slice(0, 2).join(", ")}
+                  {u.professions.length > 2 && " …"}
+                </div>
+              )}
+            </div>
+
+            {/* Etkinlik */}
+            <div
+              className="col mono"
+              style={{ fontSize: 12, color: "var(--muted)" }}
+            >
+              {u._count.sentMessages + u._count.receivedMessages} mesaj
+            </div>
+
+            {/* İşlem */}
+            <div
+              className="col"
+              style={{
+                display: "flex",
+                gap: 6,
+                justifyContent: "flex-end",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => toggleActive(u)}
+                disabled={busyId === u.id || u.isAdmin}
+                className="btn btn-secondary btn-xs"
+                title={u.isActive ? "Pasifleştir" : "Aktif et"}
+              >
+                {u.isActive ? "Pasifleştir" : "Aktif et"}
+              </button>
+              <button
+                type="button"
+                onClick={() => deleteUser(u)}
+                disabled={busyId === u.id || u.isAdmin}
+                className="btn btn-danger btn-xs"
+                title="Hesabı sil"
+              >
+                <AdminIcon name="trash" size={12} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {toast && <div className="admin-toast">{toast}</div>}
+    </>
   );
 }

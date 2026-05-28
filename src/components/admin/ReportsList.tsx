@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AdminIcon from "@/components/admin/AdminIcon";
+import { getInitials } from "@/lib/initials";
 
 type UserMini = { id: string; fullName: string; email: string };
 
@@ -27,18 +29,35 @@ export type AdminReport = {
   } | null;
 };
 
+function formatWhen(iso: string): string {
+  return new Date(iso).toLocaleString("tr-TR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function shortId(id: string): string {
+  return id.slice(0, 8).toUpperCase();
+}
+
 export default function ReportsList({ reports }: { reports: AdminReport[] }) {
   const router = useRouter();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
   const [warnTarget, setWarnTarget] = useState<{
     userId: string;
     name: string;
   } | null>(null);
 
-  async function resolve(report: AdminReport) {
-    const note = prompt("Çözüm notu (isteğe bağlı):");
-    if (note === null) return;
+  function showToast(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2800);
+  }
+
+  async function resolve(report: AdminReport, note: string) {
     setError(null);
     setBusyId(report.id);
     try {
@@ -52,6 +71,7 @@ export default function ReportsList({ reports }: { reports: AdminReport[] }) {
         setError(data.error || "İşlem başarısız.");
         return;
       }
+      showToast("Rapor çözüldü olarak işaretlendi.");
       router.refresh();
     } catch {
       setError("Bağlantı hatası.");
@@ -74,6 +94,7 @@ export default function ReportsList({ reports }: { reports: AdminReport[] }) {
         setError(data.error || "İşlem başarısız.");
         return;
       }
+      showToast("Rapor tekrar açıldı.");
       router.refresh();
     } catch {
       setError("Bağlantı hatası.");
@@ -95,6 +116,7 @@ export default function ReportsList({ reports }: { reports: AdminReport[] }) {
         setError(data.error || "Silinemedi.");
         return;
       }
+      showToast("Rapor silindi.");
       router.refresh();
     } catch {
       setError("Bağlantı hatası.");
@@ -123,6 +145,9 @@ export default function ReportsList({ reports }: { reports: AdminReport[] }) {
         setError(data.error || "İşlem başarısız.");
         return;
       }
+      showToast(
+        makeActive ? "Hesap tekrar aktif edildi." : "Hesap pasifleştirildi.",
+      );
       router.refresh();
     } catch {
       setError("Bağlantı hatası.");
@@ -133,171 +158,45 @@ export default function ReportsList({ reports }: { reports: AdminReport[] }) {
 
   if (reports.length === 0) {
     return (
-      <div className="rounded-[14px] border border-dashed border-ink-200 bg-white p-10 text-center text-[14px] text-ink-500">
-        Bu kategoride rapor yok.
-      </div>
+      <>
+        {error && (
+          <div
+            className="card card-pad"
+            style={{ marginBottom: 14, borderColor: "var(--danger)" }}
+          >
+            <span style={{ color: "var(--danger)", fontSize: 13 }}>
+              {error}
+            </span>
+          </div>
+        )}
+        <div className="empty">Bu kategoride rapor yok.</div>
+      </>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="stack-md">
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
-          {error}
+        <div
+          className="card card-pad"
+          style={{ borderColor: "var(--danger)" }}
+        >
+          <span style={{ color: "var(--danger)", fontSize: 13 }}>{error}</span>
         </div>
       )}
 
-      <ul className="space-y-3">
-        {reports.map((r) => (
-          <li
-            key={r.id}
-            className="rounded-[14px] border border-ink-100 bg-white p-5"
-          >
-            <div className="flex items-start justify-between gap-3 flex-wrap">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span
-                    className={`inline-flex items-center h-5 px-2 rounded-full text-[10.5px] font-medium ${
-                      r.status === "open"
-                        ? "bg-warn-500/10 text-warn-500 border border-warn-500/30"
-                        : "bg-accent-50 text-accent-700 border border-accent-100"
-                    }`}
-                  >
-                    {r.status === "open" ? "Açık" : "Çözüldü"}
-                  </span>
-                  <span className="font-mono text-[11.5px] text-ink-500">
-                    {new Date(r.createdAt).toLocaleString("tr-TR")}
-                  </span>
-                </div>
-                <p className="mt-2 text-[14px] text-ink-900">
-                  <span className="text-ink-500">Sebep:</span>{" "}
-                  <span className="font-medium">{r.reason}</span>
-                </p>
-                <p className="mt-1 text-[13px] text-ink-500">
-                  Raporlayan:{" "}
-                  <span className="text-ink-900">
-                    {r.reportedBy.fullName}
-                  </span>{" "}
-                  ({r.reportedBy.email})
-                </p>
-              </div>
-
-              <div className="flex gap-2 shrink-0 flex-wrap justify-end">
-                {r.status === "open" ? (
-                  <button
-                    type="button"
-                    onClick={() => resolve(r)}
-                    disabled={busyId === r.id}
-                    className="btn-ink h-9 px-3.5 rounded-full text-[13px] disabled:opacity-50"
-                  >
-                    Çözüldü işaretle
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => reopen(r)}
-                    disabled={busyId === r.id}
-                    className="inline-flex items-center h-9 px-3.5 rounded-full border border-ink-200 text-[13px] font-medium text-ink-900 hover:border-ink-900 transition disabled:opacity-50"
-                  >
-                    Tekrar aç
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => remove(r)}
-                  disabled={busyId === r.id}
-                  className="inline-flex items-center h-9 px-3.5 rounded-full border border-red-200 text-[13px] font-medium text-red-700 hover:bg-red-50 transition disabled:opacity-50"
-                >
-                  Sil
-                </button>
-              </div>
-            </div>
-
-            {r.message ? (
-              <div className="mt-4 rounded-[12px] border border-ink-100 bg-ink-50/60 p-4">
-                <div className="flex items-center justify-between gap-3 flex-wrap mb-2">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-ink-500">
-                    Raporlanan mesaj
-                  </p>
-                  {!r.message.sender.isActive && (
-                    <span className="inline-flex items-center gap-1.5 h-[22px] px-2 rounded-full bg-red-100 text-red-700 text-[11px] font-medium">
-                      Gönderici pasif
-                    </span>
-                  )}
-                  {r.message.sender.openReportCount > 1 && (
-                    <span className="inline-flex items-center gap-1.5 h-[22px] px-2 rounded-full bg-warn-500/10 text-warn-500 border border-warn-500/30 text-[11px] font-medium">
-                      Bu kişiye karşı {r.message.sender.openReportCount} açık
-                      rapor
-                    </span>
-                  )}
-                </div>
-                <p className="text-[13.5px] text-ink-500">
-                  <span className="text-ink-900 font-medium">
-                    {r.message.sender.fullName}
-                  </span>{" "}
-                  ({r.message.sender.email}) →{" "}
-                  <span className="text-ink-900 font-medium">
-                    {r.message.recipient.fullName}
-                  </span>{" "}
-                  ·{" "}
-                  <span className="font-mono">
-                    {new Date(r.message.createdAt).toLocaleString("tr-TR")}
-                  </span>
-                </p>
-                <p className="mt-2 text-[14px] text-ink-900 whitespace-pre-wrap break-words">
-                  {r.message.content}
-                </p>
-
-                <div className="mt-4 flex gap-2 flex-wrap">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setWarnTarget({
-                        userId: r.message!.sender.id,
-                        name: r.message!.sender.fullName,
-                      })
-                    }
-                    disabled={busyId === r.id}
-                    className="inline-flex items-center h-8 px-3 rounded-full border border-warn-500/40 text-[12.5px] font-medium text-warn-500 hover:bg-warn-500/10 transition disabled:opacity-50"
-                  >
-                    Göndericiyi uyar (mail)
-                  </button>
-                  {r.message.sender.isActive ? (
-                    <button
-                      type="button"
-                      onClick={() => toggleActive(r, false)}
-                      disabled={busyId === r.id}
-                      className="inline-flex items-center h-8 px-3 rounded-full border border-red-200 text-[12.5px] font-medium text-red-700 hover:bg-red-50 transition disabled:opacity-50"
-                    >
-                      Hesabı pasifleştir
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => toggleActive(r, true)}
-                      disabled={busyId === r.id}
-                      className="inline-flex items-center h-8 px-3 rounded-full border border-ink-200 text-[12.5px] font-medium text-ink-700 hover:border-ink-900 transition disabled:opacity-50"
-                    >
-                      Hesabı tekrar aktif et
-                    </button>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <p className="mt-3 text-[13px] text-ink-400 italic">
-                Mesaj silinmiş.
-              </p>
-            )}
-
-            {r.status === "resolved" && r.resolvedNote && (
-              <p className="mt-3 text-[13px] text-ink-500">
-                <span className="font-medium text-ink-700">Çözüm notu:</span>{" "}
-                {r.resolvedNote}
-              </p>
-            )}
-          </li>
-        ))}
-      </ul>
+      {reports.map((r) => (
+        <ReportCard
+          key={r.id}
+          r={r}
+          busy={busyId === r.id}
+          onResolve={(note) => resolve(r, note)}
+          onReopen={() => reopen(r)}
+          onDelete={() => remove(r)}
+          onToggleActive={(makeActive) => toggleActive(r, makeActive)}
+          onWarn={(target) => setWarnTarget(target)}
+        />
+      ))}
 
       {warnTarget && (
         <WarnModal
@@ -306,10 +205,314 @@ export default function ReportsList({ reports }: { reports: AdminReport[] }) {
           onError={(msg) => setError(msg)}
           onDone={() => {
             setWarnTarget(null);
+            showToast("Uyarı maili gönderildi.");
             router.refresh();
           }}
         />
       )}
+
+      {toast && <div className="admin-toast">{toast}</div>}
+    </div>
+  );
+}
+
+function ReportCard({
+  r,
+  busy,
+  onResolve,
+  onReopen,
+  onDelete,
+  onToggleActive,
+  onWarn,
+}: {
+  r: AdminReport;
+  busy: boolean;
+  onResolve: (note: string) => void;
+  onReopen: () => void;
+  onDelete: () => void;
+  onToggleActive: (makeActive: boolean) => void;
+  onWarn: (target: { userId: string; name: string }) => void;
+}) {
+  const isOpen = r.status === "open";
+
+  return (
+    <div className="report">
+      {/* Head */}
+      <div className="report-head">
+        <div className="row" style={{ gap: 10, flexWrap: "wrap" }}>
+          <span
+            className="mono"
+            style={{ fontSize: 11.5, color: "var(--muted)" }}
+          >
+            #{shortId(r.id)}
+          </span>
+          <span className="tag tag-muted">{r.reason.slice(0, 40)}</span>
+          {isOpen ? (
+            <span className="tag tag-warn">
+              <span className="tag-dot" />
+              Açık
+            </span>
+          ) : (
+            <span className="tag tag-ok">
+              <span className="tag-dot" />
+              Çözüldü
+            </span>
+          )}
+          {r.message && !r.message.sender.isActive && (
+            <span className="tag tag-danger">
+              <span className="tag-dot" />
+              Gönderici pasif
+            </span>
+          )}
+        </div>
+        <div
+          className="mono"
+          style={{ fontSize: 11.5, color: "var(--muted)" }}
+        >
+          {formatWhen(r.createdAt)}
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="report-body">
+        {/* Sol: Raporu açan */}
+        <div>
+          <div className="eyebrow" style={{ marginBottom: 10 }}>
+            Raporu açan
+          </div>
+          <div className="row" style={{ gap: 10, marginBottom: 14 }}>
+            <div
+              className="avatar avatar-sm"
+              style={{
+                background: "var(--surface-2)",
+                color: "var(--ink-2)",
+              }}
+            >
+              {getInitials(r.reportedBy.fullName)}
+            </div>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 500 }}>
+                {r.reportedBy.fullName}
+              </div>
+              <div
+                className="mono"
+                style={{ fontSize: 11.5, color: "var(--muted)" }}
+              >
+                {r.reportedBy.email}
+              </div>
+            </div>
+          </div>
+
+          <div className="eyebrow" style={{ marginBottom: 10 }}>
+            Sebep
+          </div>
+          <div
+            className="row"
+            style={{
+              padding: "10px 12px",
+              border: "1px solid var(--line)",
+              borderRadius: 10,
+              background: "#fff",
+              fontSize: 13,
+              gap: 8,
+              alignItems: "flex-start",
+            }}
+          >
+            <AdminIcon name="alert" size={13} color="var(--muted)" />
+            <span style={{ color: "var(--ink-2)", lineHeight: 1.5 }}>
+              {r.reason}
+            </span>
+          </div>
+
+          {r.status === "resolved" && r.resolvedNote && (
+            <>
+              <div
+                className="eyebrow"
+                style={{ marginTop: 14, marginBottom: 10 }}
+              >
+                Çözüm notu
+              </div>
+              <div
+                style={{
+                  padding: "10px 12px",
+                  border: "1px solid var(--line)",
+                  borderRadius: 10,
+                  background: "var(--accent-soft)",
+                  fontSize: 13,
+                  color: "var(--accent)",
+                  lineHeight: 1.5,
+                }}
+              >
+                {r.resolvedNote}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Sağ: Rapor edilen + mesaj */}
+        <div>
+          <div className="eyebrow" style={{ marginBottom: 10 }}>
+            Rapor edilen
+          </div>
+          {r.message ? (
+            <>
+              <div className="row" style={{ gap: 10, marginBottom: 14 }}>
+                <div
+                  className="avatar avatar-sm"
+                  style={{
+                    background: "var(--warn-soft)",
+                    color: "var(--warn)",
+                  }}
+                >
+                  {getInitials(r.message.sender.fullName)}
+                </div>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div
+                    style={{
+                      fontSize: 13.5,
+                      fontWeight: 500,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {r.message.sender.fullName}
+                    {r.message.sender.openReportCount > 1 && (
+                      <span
+                        className="mono"
+                        style={{
+                          fontSize: 11,
+                          color: "var(--warn)",
+                          background: "var(--warn-soft)",
+                          padding: "1px 7px",
+                          borderRadius: 999,
+                        }}
+                      >
+                        {r.message.sender.openReportCount} açık rapor
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className="mono"
+                    style={{ fontSize: 11.5, color: "var(--muted)" }}
+                  >
+                    {r.message.sender.email}
+                  </div>
+                </div>
+              </div>
+
+              <div className="eyebrow" style={{ marginBottom: 10 }}>
+                Mesaj içeriği
+              </div>
+              <div className="report-msg">
+                <div className="who">
+                  <AdminIcon name="msg" size={11} />
+                  <span>
+                    {r.message.sender.fullName} →{" "}
+                    {r.message.recipient.fullName} ·{" "}
+                    {formatWhen(r.message.createdAt)}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  &ldquo;{r.message.content}&rdquo;
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="empty" style={{ padding: 24 }}>
+              Mesaj silinmiş.
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="report-actions">
+        {isOpen ? (
+          <>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={onDelete}
+              disabled={busy}
+            >
+              <AdminIcon name="trash" size={13} /> Sil
+            </button>
+            {r.message && (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() =>
+                    onWarn({
+                      userId: r.message!.sender.id,
+                      name: r.message!.sender.fullName,
+                    })
+                  }
+                  disabled={busy}
+                >
+                  <AdminIcon name="alert" size={13} /> Uyarı gönder
+                </button>
+                {r.message.sender.isActive ? (
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm"
+                    onClick={() => onToggleActive(false)}
+                    disabled={busy}
+                  >
+                    <AdminIcon name="ban" size={13} /> Hesabı pasifleştir
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => onToggleActive(true)}
+                    disabled={busy}
+                  >
+                    <AdminIcon name="check" size={13} /> Aktif et
+                  </button>
+                )}
+              </>
+            )}
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={() => {
+                const note = prompt("Çözüm notu (isteğe bağlı):") ?? "";
+                onResolve(note);
+              }}
+              disabled={busy}
+            >
+              <AdminIcon name="check" size={13} /> Çözüldü
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={onDelete}
+              disabled={busy}
+            >
+              <AdminIcon name="trash" size={13} /> Sil
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={onReopen}
+              disabled={busy}
+            >
+              Tekrar aç
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }
@@ -355,12 +558,30 @@ function WarnModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/40 p-4">
-      <div className="w-full max-w-md rounded-[14px] bg-white p-5 shadow-lg">
-        <h3 className="text-[16px] font-semibold text-ink-900">
-          {target.name} için uyarı
-        </h3>
-        <p className="mt-1 text-[13px] text-ink-500">
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 200,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "rgba(15, 17, 16, 0.4)",
+        padding: 16,
+      }}
+    >
+      <div
+        className="card"
+        style={{ width: "100%", maxWidth: 460, padding: 20 }}
+      >
+        <h3 style={{ fontSize: 16 }}>{target.name} için uyarı</h3>
+        <p
+          style={{
+            marginTop: 4,
+            fontSize: 13,
+            color: "var(--muted)",
+          }}
+        >
           Kullanıcının kayıtlı e-posta adresine gönderilir.
         </p>
         <textarea
@@ -368,14 +589,18 @@ function WarnModal({
           onChange={(e) => setNote(e.target.value)}
           placeholder="Uyarı metni — kullanıcı bunu okuyacak."
           rows={5}
-          className="mt-3 w-full p-3 border border-ink-200 rounded-[10px] text-[14px] resize-none focus:border-ink-900 outline-none"
+          className="textarea"
+          style={{ marginTop: 12 }}
         />
-        <div className="mt-4 flex justify-end gap-2">
+        <div
+          className="row"
+          style={{ justifyContent: "flex-end", gap: 8, marginTop: 16 }}
+        >
           <button
             type="button"
             onClick={onClose}
             disabled={sending}
-            className="inline-flex items-center h-9 px-4 rounded-full border border-ink-200 text-[13px] font-medium text-ink-700 hover:border-ink-900 transition disabled:opacity-50"
+            className="btn btn-ghost btn-sm"
           >
             İptal
           </button>
@@ -383,7 +608,7 @@ function WarnModal({
             type="button"
             onClick={send}
             disabled={sending || note.trim().length < 10}
-            className="btn-ink h-9 px-4 rounded-full text-[13px] disabled:opacity-50"
+            className="btn btn-primary btn-sm"
           >
             {sending ? "Gönderiliyor..." : "Gönder"}
           </button>

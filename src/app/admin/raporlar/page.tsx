@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { requireAdmin } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
+import AdminIcon from "@/components/admin/AdminIcon";
 import ReportsList from "@/components/admin/ReportsList";
 
 export const metadata = { title: "Raporlar — Admin" };
@@ -12,27 +12,33 @@ export default async function AdminReportsPage({
 }: {
   searchParams: SearchParams;
 }) {
-  await requireAdmin();
   const sp = await searchParams;
   const status = sp.status ?? "open";
 
-  const where =
-    status === "all"
-      ? {}
-      : { status };
+  const where = status === "all" ? {} : { status };
 
-  const reports = await prisma.messageReport.findMany({
-    where,
-    include: {
-      reportedBy: {
-        select: { id: true, fullName: true, email: true },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  });
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-  // Fetch the related messages separately (no relation on schema)
+  const [reports, openCount, resolvedCount, resolvedThisWeek] =
+    await Promise.all([
+      prisma.messageReport.findMany({
+        where,
+        include: {
+          reportedBy: {
+            select: { id: true, fullName: true, email: true },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 100,
+      }),
+      prisma.messageReport.count({ where: { status: "open" } }),
+      prisma.messageReport.count({ where: { status: "resolved" } }),
+      prisma.messageReport.count({
+        where: { status: "resolved", resolvedAt: { gte: sevenDaysAgo } },
+      }),
+    ]);
+
+  // İlgili mesajları ve göndericilere karşı açık rapor sayılarını derle
   const messageIds = reports.map((r) => r.messageId);
   const messages = messageIds.length
     ? await prisma.message.findMany({
@@ -41,8 +47,6 @@ export default async function AdminReportsPage({
           id: true,
           content: true,
           createdAt: true,
-          senderId: true,
-          recipientId: true,
           sender: {
             select: {
               id: true,
@@ -57,25 +61,22 @@ export default async function AdminReportsPage({
     : [];
   const messageMap = new Map(messages.map((m) => [m.id, m]));
 
-  // Her sender'a karşı kaç açık rapor var?
-  const senderIds = Array.from(
-    new Set(messages.map((m) => m.sender.id)),
-  );
-  const senderOpenReports = senderIds.length
-    ? await prisma.message.findMany({
-        where: { senderId: { in: senderIds } },
-        select: { id: true, senderId: true },
-      })
-    : [];
-  const messageIdToSender = new Map(
-    senderOpenReports.map((m) => [m.id, m.senderId]),
-  );
+  const senderIds = Array.from(new Set(messages.map((m) => m.sender.id)));
   const openReportsBySender = new Map<string, number>();
   if (senderIds.length) {
+    // Bu göndericilerin yazdığı tüm mesajlar
+    const allMessagesFromSenders = await prisma.message.findMany({
+      where: { senderId: { in: senderIds } },
+      select: { id: true, senderId: true },
+    });
+    const messageIdToSender = new Map(
+      allMessagesFromSenders.map((m) => [m.id, m.senderId]),
+    );
+    // Bu mesajların açık raporları
     const allOpenReports = await prisma.messageReport.findMany({
       where: {
         status: "open",
-        messageId: { in: senderOpenReports.map((m) => m.id) },
+        messageId: { in: allMessagesFromSenders.map((m) => m.id) },
       },
       select: { messageId: true },
     });
@@ -118,49 +119,91 @@ export default async function AdminReportsPage({
     };
   });
 
-  const [openCount, resolvedCount] = await Promise.all([
-    prisma.messageReport.count({ where: { status: "open" } }),
-    prisma.messageReport.count({ where: { status: "resolved" } }),
-  ]);
-
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-10">
-      <div className="mb-6">
-        <Link
-          href="/admin"
-          className="text-[13px] text-ink-500 hover:text-ink-900 transition"
-        >
-          ← Admin paneli
-        </Link>
-        <h1 className="mt-2 text-2xl sm:text-3xl font-bold text-ink-900 tracking-tight">
-          Mesaj Raporları
-        </h1>
-        <p className="mt-1 text-sm text-ink-500">
-          Kullanıcılar tarafından raporlanan mesajlar.
-        </p>
+    <div className="page-fade">
+      {/* Page header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          gap: 24,
+          marginBottom: 24,
+          flexWrap: "wrap",
+        }}
+      >
+        <div>
+          <div className="eyebrow" style={{ marginBottom: 10 }}>
+            Yönetim · Raporlar
+          </div>
+          <h1 style={{ marginBottom: 6 }}>Mesaj Raporları</h1>
+          <p style={{ color: "var(--muted)", fontSize: 14 }}>
+            Kullanıcılar tarafından raporlanan mesajlar ve profiller.
+          </p>
+        </div>
       </div>
 
-      <div className="mb-5 flex gap-2 flex-wrap">
-        <FilterPill href="/admin/raporlar?status=open" active={status === "open"}>
-          Açık ({openCount})
-        </FilterPill>
-        <FilterPill
+      {/* Quick stats */}
+      <div className="grid grid-3" style={{ marginBottom: 18 }}>
+        <div className="card card-pad">
+          <div className="metric-label">Açık</div>
+          <div className="metric-row">
+            <div
+              className="metric-value num"
+              style={{ color: openCount > 0 ? "var(--warn)" : "var(--ink)" }}
+            >
+              {openCount}
+            </div>
+            <div className="metric-delta flat">moderasyon bekliyor</div>
+          </div>
+        </div>
+        <div className="card card-pad">
+          <div className="metric-label">Toplam çözüldü</div>
+          <div className="metric-row">
+            <div className="metric-value num">{resolvedCount}</div>
+            <div className="metric-delta flat">tüm zamanlar</div>
+          </div>
+        </div>
+        <div className="card card-pad">
+          <div className="metric-label">Son 7 gün çözüldü</div>
+          <div className="metric-row">
+            <div className="metric-value num">{resolvedThisWeek}</div>
+            <div className="metric-delta flat">son hafta aktivitesi</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filter chips */}
+      <div
+        className="row"
+        style={{ gap: 8, marginBottom: 18, flexWrap: "wrap" }}
+      >
+        <FilterChip href="/admin/raporlar?status=open" active={status === "open"}>
+          Açık <span className="chip-count">{openCount}</span>
+        </FilterChip>
+        <FilterChip
           href="/admin/raporlar?status=resolved"
           active={status === "resolved"}
         >
-          Çözüldü ({resolvedCount})
-        </FilterPill>
-        <FilterPill href="/admin/raporlar?status=all" active={status === "all"}>
-          Hepsi
-        </FilterPill>
+          Çözüldü <span className="chip-count">{resolvedCount}</span>
+        </FilterChip>
+        <FilterChip href="/admin/raporlar?status=all" active={status === "all"}>
+          Hepsi <span className="chip-count">{openCount + resolvedCount}</span>
+        </FilterChip>
+        <div style={{ flex: 1 }} />
+        <span className="eyebrow">Sırala</span>
+        <span className="chip" style={{ cursor: "default" }}>
+          En yeni <AdminIcon name="chevron-down" size={12} />
+        </span>
       </div>
 
+      {/* Reports list */}
       <ReportsList reports={enriched} />
     </div>
   );
 }
 
-function FilterPill({
+function FilterChip({
   href,
   active,
   children,
@@ -170,15 +213,7 @@ function FilterPill({
   children: React.ReactNode;
 }) {
   return (
-    <Link
-      href={href}
-      className={`inline-flex items-center h-9 px-4 rounded-full text-[13.5px] font-medium transition ${
-        active
-          ? "bg-ink-900 text-white"
-          : "bg-white border border-ink-200 text-ink-700 hover:border-ink-900"
-      }`}
-      style={active ? { color: "#ffffff" } : undefined}
-    >
+    <Link href={href} className={"chip" + (active ? " is-active" : "")}>
       {children}
     </Link>
   );
