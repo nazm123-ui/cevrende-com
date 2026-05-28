@@ -86,6 +86,41 @@ export async function sendFeedbackEmail(payload: FeedbackPayload) {
   });
 }
 
+type WarningPayload = {
+  to: string;
+  name: string;
+  note: string;
+};
+
+export async function sendUserWarningEmail(payload: WarningPayload) {
+  const adminEmail = process.env.GMAIL_USER;
+  if (!transporter || !adminEmail) {
+    console.info("[DEV USER WARNING]", JSON.stringify(payload));
+    return;
+  }
+  const safeName = escapeHtml(payload.name);
+  const safeNote = escapeHtml(payload.note).replace(/\n/g, "<br>");
+
+  await transporter.sendMail({
+    from: `"Çevrende.com" <${adminEmail}>`,
+    to: payload.to,
+    subject: "Çevrende.com — Hesap uyarısı",
+    text: `Merhaba ${payload.name},\n\nHesabınızla ilgili bir uyarı aldınız:\n\n${payload.note}\n\nKurallarımızı tekrar gözden geçirmenizi rica ederiz. Aynı durumun tekrarlanması halinde hesabınız pasifleştirilebilir.\n\nÇevrende.com`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px;">
+        <h2 style="color: #0f172a; margin: 0 0 16px;">Hesap Uyarısı</h2>
+        <p>Merhaba ${safeName},</p>
+        <p>Çevrende.com ekibi, hesabınızla ilgili bir konuda sizi uyarmak istiyor:</p>
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 14px 16px; border-radius: 6px; font-size: 14px; color: #78350f; line-height: 1.6; margin: 16px 0;">
+          ${safeNote}
+        </div>
+        <p style="font-size: 14px; color: #475569;">Kurallarımızı tekrar gözden geçirmenizi rica ederiz. Aynı durumun tekrarlanması halinde hesabınız pasifleştirilebilir.</p>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 32px;">Çevrende.com Yöneticileri</p>
+      </div>
+    `,
+  });
+}
+
 export async function sendPasswordResetEmail(to: string, code: string) {
   if (!transporter) {
     console.log(`[DEV PASSWORD RESET] to=${to} code=${code}`);

@@ -43,12 +43,52 @@ export default async function AdminReportsPage({
           createdAt: true,
           senderId: true,
           recipientId: true,
-          sender: { select: { id: true, fullName: true, email: true } },
+          sender: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true,
+              isActive: true,
+            },
+          },
           recipient: { select: { id: true, fullName: true, email: true } },
         },
       })
     : [];
   const messageMap = new Map(messages.map((m) => [m.id, m]));
+
+  // Her sender'a karşı kaç açık rapor var?
+  const senderIds = Array.from(
+    new Set(messages.map((m) => m.sender.id)),
+  );
+  const senderOpenReports = senderIds.length
+    ? await prisma.message.findMany({
+        where: { senderId: { in: senderIds } },
+        select: { id: true, senderId: true },
+      })
+    : [];
+  const messageIdToSender = new Map(
+    senderOpenReports.map((m) => [m.id, m.senderId]),
+  );
+  const openReportsBySender = new Map<string, number>();
+  if (senderIds.length) {
+    const allOpenReports = await prisma.messageReport.findMany({
+      where: {
+        status: "open",
+        messageId: { in: senderOpenReports.map((m) => m.id) },
+      },
+      select: { messageId: true },
+    });
+    for (const r of allOpenReports) {
+      const senderId = messageIdToSender.get(r.messageId);
+      if (senderId) {
+        openReportsBySender.set(
+          senderId,
+          (openReportsBySender.get(senderId) ?? 0) + 1,
+        );
+      }
+    }
+  }
 
   const enriched = reports.map((r) => {
     const msg = messageMap.get(r.messageId);
@@ -65,7 +105,13 @@ export default async function AdminReportsPage({
             id: msg.id,
             content: msg.content,
             createdAt: msg.createdAt.toISOString(),
-            sender: msg.sender,
+            sender: {
+              id: msg.sender.id,
+              fullName: msg.sender.fullName,
+              email: msg.sender.email,
+              isActive: msg.sender.isActive,
+              openReportCount: openReportsBySender.get(msg.sender.id) ?? 0,
+            },
             recipient: msg.recipient,
           }
         : null,
