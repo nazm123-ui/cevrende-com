@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeartbeatProvider from "@/components/HeartbeatProvider";
 import BadgeSync from "@/components/BadgeSync";
+import PwaPushOnboarding from "@/components/PwaPushOnboarding";
 
 export default async function SiteLayout({
   children,
@@ -20,6 +21,7 @@ export default async function SiteLayout({
       <Footer />
       <HeartbeatProvider enabled={!!user} />
       <BadgeSync unreadCount={unreadCount} />
+      <PwaPushOnboarding enabled={!!user} />
     </div>
   );
 }
