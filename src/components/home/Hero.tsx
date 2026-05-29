@@ -25,7 +25,7 @@ export default async function Hero() {
       <div className="hero-split mx-auto max-w-[1200px] px-5 sm:px-6 grid items-center gap-10 lg:gap-16 lg:grid-cols-[1.15fr_0.95fr]">
         <div className="min-w-0">
           <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
-            Pendik · Tuzla · Kartal
+            Pendik
           </p>
 
           <h1 className="mt-4 text-[26px] sm:text-[44px] lg:text-[60px] font-semibold tracking-[-0.025em] leading-[1.12] sm:leading-[1.05] lg:max-w-[560px] text-balance">
