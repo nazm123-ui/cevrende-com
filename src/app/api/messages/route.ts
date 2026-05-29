@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { requireVerifiedUser } from "@/lib/require-auth";
 import { sendMessageSchema } from "@/lib/validators";
 import { checkContent, describeCategories } from "@/lib/content-filter";
-import { getThread, markThreadAsRead } from "@/lib/messages";
+import { getThread, getUnreadCount, markThreadAsRead } from "@/lib/messages";
 import { checkMessageSpam } from "@/lib/spam-control";
 import { sendPushToUser } from "@/lib/push";
 
@@ -87,11 +87,13 @@ export async function POST(req: Request) {
     try {
       const preview =
         content.length > 80 ? content.slice(0, 77) + "..." : content;
+      const badge = await getUnreadCount(recipientId);
       await sendPushToUser(recipientId, {
         title: `${user.fullName}`,
         body: preview,
         url: `/panel/mesajlar/${user.id}`,
         tag: `msg-${user.id}`,
+        badge,
       });
     } catch (err) {
       console.error("[messages] push failed:", err);

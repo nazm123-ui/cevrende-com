@@ -21,6 +21,7 @@ export type PushPayload = {
   body: string;
   url?: string;
   tag?: string;
+  badge?: number; // App icon badge sayısı (okunmamış mesaj toplamı)
 };
 
 // Bir kullanıcının tüm cihazlarına push gönderir. Geçersiz/eskimiş subscription'lar

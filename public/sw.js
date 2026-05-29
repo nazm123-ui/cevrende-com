@@ -118,7 +118,16 @@ self.addEventListener("push", (event) => {
     silent: false,
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  // App icon badge — okunmamış mesaj sayısı (iOS 16.4+ / Android Chrome)
+  const tasks = [self.registration.showNotification(title, options)];
+  if (typeof data.badge === "number" && "setAppBadge" in self.navigator) {
+    if (data.badge > 0) {
+      tasks.push(self.navigator.setAppBadge(data.badge).catch(() => {}));
+    } else {
+      tasks.push(self.navigator.clearAppBadge().catch(() => {}));
+    }
+  }
+  event.waitUntil(Promise.all(tasks));
 });
 
 self.addEventListener("notificationclick", (event) => {
