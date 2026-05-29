@@ -33,11 +33,7 @@ export default function WorkerCard({
   const initials = getInitials(worker.fullName);
 
   return (
-    <article
-      className={`px-6 py-5 bg-white border border-ink-100 rounded-[14px] transition hover:border-ink-700 ${
-        !worker.isAvailable ? "opacity-75" : ""
-      }`}
-    >
+    <article className="px-6 py-5 bg-white border border-ink-100 rounded-[14px] transition hover:border-ink-700">
       <div className="flex items-center justify-between gap-2 mb-3.5 flex-wrap">
         <div className="flex items-center gap-2 text-ink-500 text-[13px] flex-wrap">
           <span className="font-mono">{formatRelative(worker.createdAt)}</span>
@@ -47,10 +43,10 @@ export default function WorkerCard({
           </span>
         </div>
         <div className="flex items-center gap-2">
-          {!worker.isAvailable && (
-            <span className="inline-flex items-center gap-1.5 h-[22px] px-2 rounded-full bg-ink-100 text-ink-700 text-[11.5px] font-medium">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-ink-400" />
-              Şu an dolu
+          {worker.isOnline && (
+            <span className="inline-flex items-center gap-1.5 h-[22px] px-2 rounded-full bg-emerald-50 text-emerald-700 text-[11.5px] font-medium">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Çevrimiçi
             </span>
           )}
           {!showFullPhone && (
@@ -63,8 +59,16 @@ export default function WorkerCard({
         href={`/cevrendekiler/${worker.id}`}
         className="flex gap-4 items-start rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ink-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
       >
-        <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-brand-50 border border-ink-200 text-ink-900 text-[18px] font-medium tracking-[-0.01em] shrink-0">
-          {initials}
+        <div className="relative shrink-0">
+          <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-brand-50 border border-ink-200 text-ink-900 text-[18px] font-medium tracking-[-0.01em]">
+            {initials}
+          </div>
+          {worker.isOnline && (
+            <span
+              className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white"
+              aria-label="Çevrimiçi"
+            />
+          )}
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-[18px] font-medium tracking-[-0.015em] text-ink-900 m-0">

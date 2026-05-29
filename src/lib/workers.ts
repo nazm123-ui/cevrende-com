@@ -14,29 +14,35 @@ export type WorkerListItem = {
   bio: string | null;
   workerSettings: WorkerSettings;
   isAvailable: boolean;
+  isOnline: boolean;
   createdAt: Date;
 };
+
+// Son 5 dakika içinde heartbeat atanlar "online" kabul edilir.
+export const ONLINE_THRESHOLD_MS = 5 * 60 * 1000;
+
+export function isUserOnline(lastSeenAt: Date | null): boolean {
+  if (!lastSeenAt) return false;
+  return Date.now() - lastSeenAt.getTime() < ONLINE_THRESHOLD_MS;
+}
 
 export async function getActiveWorkers(filters: {
   profession?: string;
   neighborhood?: string;
   q?: string;
-  onlyAvailable?: boolean;
 }): Promise<WorkerListItem[]> {
-  const { profession, neighborhood, q, onlyAvailable } = filters;
+  const { profession, neighborhood, q } = filters;
 
+  // Müsait olmayan işçiler listede görünmez (yalnızca profil URL'i ile açılır).
   const where: Prisma.UserWhereInput = {
     isActive: true,
     isEmailVerified: true,
+    isAvailable: true,
     professions: profession ? { has: profession } : { isEmpty: false },
   };
 
   if (neighborhood) {
     where.neighborhood = neighborhood;
-  }
-
-  if (onlyAvailable) {
-    where.isAvailable = true;
   }
 
   if (q && q.trim()) {
@@ -74,17 +80,34 @@ export async function getActiveWorkers(filters: {
       bio: true,
       workerSettings: true,
       isAvailable: true,
+      lastSeenAt: true,
       createdAt: true,
     },
-    // Müsait olanlar her zaman üstte, sonra yeniden eskiye.
-    orderBy: [{ isAvailable: "desc" }, { createdAt: "desc" }],
+    orderBy: { createdAt: "desc" },
     take: 100,
   });
 
-  return workers.map((w) => ({
-    ...w,
+  const enriched = workers.map((w) => ({
+    id: w.id,
+    fullName: w.fullName,
+    phone: w.phone,
+    district: w.district,
+    neighborhood: w.neighborhood,
+    professions: w.professions,
+    bio: w.bio,
     workerSettings: (w.workerSettings ?? {}) as WorkerSettings,
+    isAvailable: w.isAvailable,
+    isOnline: isUserOnline(w.lastSeenAt),
+    createdAt: w.createdAt,
   }));
+
+  // Online + müsait kullanıcılar en üstte, sonra son aktiviteye göre.
+  enriched.sort((a, b) => {
+    if (a.isOnline !== b.isOnline) return a.isOnline ? -1 : 1;
+    return b.createdAt.getTime() - a.createdAt.getTime();
+  });
+
+  return enriched;
 }
 
 export async function getProfessionCounts(): Promise<

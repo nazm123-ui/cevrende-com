@@ -3,12 +3,14 @@ import { prisma } from "@/lib/db";
 import { formatRelative } from "@/lib/format";
 import { getPhoneVisibility, type WorkerSettings } from "@/lib/phone-visibility";
 import { getInitials } from "@/lib/initials";
+import { isUserOnline } from "@/lib/workers";
 
 export default async function PreviewListings() {
   const workers = await prisma.user.findMany({
     where: {
       professions: { isEmpty: false },
       isActive: true,
+      isAvailable: true,
     },
     select: {
       id: true,
@@ -19,6 +21,7 @@ export default async function PreviewListings() {
       professions: true,
       createdAt: true,
       workerSettings: true,
+      lastSeenAt: true,
     },
     orderBy: { createdAt: "desc" },
     take: 3,
@@ -98,8 +101,16 @@ export default async function PreviewListings() {
                 </div>
 
                 <div className="flex gap-4 items-start">
-                  <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-brand-50 border border-ink-200 text-ink-900 text-[18px] font-medium tracking-[-0.01em] shrink-0">
-                    {initials}
+                  <div className="relative shrink-0">
+                    <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-brand-50 border border-ink-200 text-ink-900 text-[18px] font-medium tracking-[-0.01em]">
+                      {initials}
+                    </div>
+                    {isUserOnline(w.lastSeenAt) && (
+                      <span
+                        className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white"
+                        aria-label="Çevrimiçi"
+                      />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-[18px] font-medium tracking-[-0.015em] m-0">

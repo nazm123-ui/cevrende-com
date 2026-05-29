@@ -8,6 +8,7 @@ import { parseExperiences, formatYearRange } from "@/lib/experience";
 import { getInitials } from "@/lib/initials";
 import WorkerContactCard from "@/components/workers/WorkerContactCard";
 import Icon from "@/components/ui/Icon";
+import { isUserOnline } from "@/lib/workers";
 
 export async function generateMetadata({
   params,
@@ -45,6 +46,7 @@ export default async function WorkerProfilePage({
         createdAt: true,
         isActive: true,
         isAvailable: true,
+        lastSeenAt: true,
         workerSettings: true,
         experiences: true,
       },
@@ -118,8 +120,16 @@ export default async function WorkerProfilePage({
           <div>
             <div className="flex gap-5 items-start flex-wrap">
               {/* Avatar */}
-              <div className="flex h-[84px] w-[84px] items-center justify-center rounded-full bg-brand-50 border border-ink-200 text-ink-900 text-[30px] font-medium tracking-[-0.01em] shrink-0">
-                {initials}
+              <div className="relative shrink-0">
+                <div className="flex h-[84px] w-[84px] items-center justify-center rounded-full bg-brand-50 border border-ink-200 text-ink-900 text-[30px] font-medium tracking-[-0.01em]">
+                  {initials}
+                </div>
+                {isUserOnline(worker.lastSeenAt) && (
+                  <span
+                    className="absolute bottom-1 right-1 w-[18px] h-[18px] rounded-full bg-emerald-500 border-[3px] border-white"
+                    aria-label="Çevrimiçi"
+                  />
+                )}
               </div>
 
               {/* Ad + meta + headline */}
@@ -137,6 +147,12 @@ export default async function WorkerProfilePage({
                   <h1 className="text-[32px] sm:text-[36px] font-semibold tracking-[-0.025em] leading-[1.1] m-0">
                     {worker.fullName}
                   </h1>
+                  {isUserOnline(worker.lastSeenAt) && (
+                    <span className="inline-flex items-center gap-1.5 h-[26px] px-2.5 rounded-full bg-emerald-50 text-emerald-700 text-[12px] font-medium">
+                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      Çevrimiçi
+                    </span>
+                  )}
                   {!worker.isAvailable && (
                     <span className="inline-flex items-center gap-1.5 h-[26px] px-2.5 rounded-full bg-ink-100 text-ink-700 text-[12px] font-medium">
                       <span className="inline-block w-1.5 h-1.5 rounded-full bg-ink-400" />

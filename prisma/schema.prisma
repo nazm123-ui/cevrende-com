@@ -20,6 +20,7 @@ model User {
   isEmailVerified Boolean   @default(false)
   isActive        Boolean   @default(true)
   isAvailable     Boolean   @default(true)
+  lastSeenAt      DateTime?
   passwordChangedAt DateTime?
 
   professions     String[]  @default([])

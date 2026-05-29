@@ -6,7 +6,6 @@ import WorkerCard from "@/components/workers/WorkerCard";
 import TopFilterBar from "@/components/workers/TopFilterBar";
 import CategorySidebar from "@/components/workers/CategorySidebar";
 import SortDropdown from "@/components/workers/SortDropdown";
-import AvailableOnlyToggle from "@/components/workers/AvailableOnlyToggle";
 
 export const metadata = {
   title: "Çevrendekiler — Pendik'te Usta ve Hizmet",
@@ -20,7 +19,6 @@ type SearchParams = Promise<{
   ilce?: string;
   q?: string;
   siralama?: string;
-  musait?: string;
 }>;
 
 export default async function CevrendekilerPage({
@@ -29,14 +27,12 @@ export default async function CevrendekilerPage({
   searchParams: SearchParams;
 }) {
   const sp = await searchParams;
-  const onlyAvailable = sp.musait === "1";
   const [user, workers, professions, categories] = await Promise.all([
     getCurrentUser(),
     getActiveWorkers({
       profession: sp.meslek,
       neighborhood: sp.mahalle,
       q: sp.q,
-      onlyAvailable,
     }),
     getProfessionCounts(),
     prisma.jobCategory.findMany({
@@ -48,7 +44,7 @@ export default async function CevrendekilerPage({
 
   const categoryNameBySlug = new Map(categories.map((c) => [c.slug, c.name]));
   const canContact = !!user && user.isEmailVerified;
-  const hasActiveFilters = !!(sp.meslek || sp.mahalle || sp.ilce || sp.q || onlyAvailable);
+  const hasActiveFilters = !!(sp.meslek || sp.mahalle || sp.ilce || sp.q);
 
   return (
     <div className="page">
@@ -81,10 +77,7 @@ export default async function CevrendekilerPage({
                 <span className="font-mono text-ink-700">{workers.length}</span>{" "}
                 sonuç
               </span>
-              <div className="flex items-center gap-4">
-                <AvailableOnlyToggle />
-                <SortDropdown />
-              </div>
+              <SortDropdown />
             </div>
 
             {workers.length === 0 ? (
