@@ -10,7 +10,42 @@ type BeforeInstallPromptEvent = Event & {
 
 const DISMISS_KEY = "cev_install_dismissed_at";
 const IOS_DISMISS_KEY = "cev_ios_install_dismissed_at";
+const VIEW_COUNT_KEY = "cev_install_view_count";
+const IOS_VIEW_COUNT_KEY = "cev_ios_install_view_count";
+const LAST_SHOWN_KEY = "cev_install_last_shown_at";
+const IOS_LAST_SHOWN_KEY = "cev_ios_install_last_shown_at";
+
 const DISMISS_DURATION_MS = 14 * 24 * 60 * 60 * 1000; // 14 gün gizle
+const COOLDOWN_BETWEEN_SHOWS_MS = 4 * 60 * 60 * 1000; // 4 saat aralık
+const MAX_VIEWS_BEFORE_AUTO_DISMISS = 3; // 3 kez gösterilince 14 gün sustur
+
+// Kullanıcı action almadan banner'ı kapatırsa banner ne sıklıkla gösterilsin?
+// - Son gösterim 4 saatten yeniyse: bu session'da tekrar gösterme
+// - Toplam 3 kez gösterildiyse: 14 gün sustur
+// - Kullanıcı "Sonra" derse: 14 gün sustur, sayaç sıfırla
+function checkAndMarkShow(
+  dismissKey: string,
+  viewCountKey: string,
+  lastShownKey: string,
+): boolean {
+  const dismissedAt = Number(localStorage.getItem(dismissKey) || 0);
+  if (Date.now() - dismissedAt < DISMISS_DURATION_MS) return false;
+
+  const lastShownAt = Number(localStorage.getItem(lastShownKey) || 0);
+  if (Date.now() - lastShownAt < COOLDOWN_BETWEEN_SHOWS_MS) return false;
+
+  const viewCount = Number(localStorage.getItem(viewCountKey) || 0);
+  if (viewCount >= MAX_VIEWS_BEFORE_AUTO_DISMISS) {
+    // Yeterince gördü, susturalım
+    localStorage.setItem(dismissKey, String(Date.now()));
+    localStorage.removeItem(viewCountKey);
+    return false;
+  }
+
+  localStorage.setItem(lastShownKey, String(Date.now()));
+  localStorage.setItem(viewCountKey, String(viewCount + 1));
+  return true;
+}
 
 type Mode = "hidden" | "android" | "ios";
 
@@ -42,23 +77,25 @@ export default function PwaInstallBanner() {
     if (isStandalone()) return;
 
     // iOS (Safari/Chrome/Firefox hepsi): beforeinstallprompt yok, manuel rehber.
-    // Tüm iOS tarayıcıları iOS Share Sheet'i kullanır → "Ana Ekrana Ekle" var.
     if (detectIOS()) {
-      const dismissedAt = Number(
-        localStorage.getItem(IOS_DISMISS_KEY) || 0,
-      );
-      if (Date.now() - dismissedAt >= DISMISS_DURATION_MS) {
+      if (
+        checkAndMarkShow(
+          IOS_DISMISS_KEY,
+          IOS_VIEW_COUNT_KEY,
+          IOS_LAST_SHOWN_KEY,
+        )
+      ) {
         setMode("ios");
       }
       return;
     }
 
     // Android / Desktop Chrome / Edge
-    const dismissedAt = Number(localStorage.getItem(DISMISS_KEY) || 0);
-    if (Date.now() - dismissedAt < DISMISS_DURATION_MS) return;
-
     function onBeforeInstallPrompt(e: Event) {
       e.preventDefault();
+      if (!checkAndMarkShow(DISMISS_KEY, VIEW_COUNT_KEY, LAST_SHOWN_KEY)) {
+        return;
+      }
       setDeferred(e as BeforeInstallPromptEvent);
       setMode("android");
     }
@@ -77,17 +114,20 @@ export default function PwaInstallBanner() {
     const { outcome } = await deferred.userChoice;
     if (outcome === "dismissed") {
       localStorage.setItem(DISMISS_KEY, String(Date.now()));
+      localStorage.removeItem(VIEW_COUNT_KEY);
     }
     setMode("hidden");
   }
 
   function onDismissAndroid() {
     localStorage.setItem(DISMISS_KEY, String(Date.now()));
+    localStorage.removeItem(VIEW_COUNT_KEY);
     setMode("hidden");
   }
 
   function onDismissIos() {
     localStorage.setItem(IOS_DISMISS_KEY, String(Date.now()));
+    localStorage.removeItem(IOS_VIEW_COUNT_KEY);
     setMode("hidden");
   }
 
