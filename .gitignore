@@ -15,3 +15,11 @@ next-env.d.ts
 
 # Tasarım kaynak arşivi (mockup'lar, eski JSX, screenshot'lar) — production kodu değil
 tasarim-arsiv/
+
+# Mockup / test arşivi
+admin-panel/
+
+# Playwright MCP cache + test ekran görüntüleri (kök seviyedeki PNG'ler)
+.playwright-mcp/
+.mcp.json
+/*.png
