@@ -1,10 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireVerifiedUser } from "@/lib/require-auth";
 import { sendMessageSchema } from "@/lib/validators";
 import { checkContent, describeCategories } from "@/lib/content-filter";
 import { getThread, markThreadAsRead } from "@/lib/messages";
 import { checkMessageSpam } from "@/lib/spam-control";
+import { sendPushToUser } from "@/lib/push";
 
 export async function POST(req: Request) {
   const user = await requireVerifiedUser();
@@ -78,6 +79,23 @@ export async function POST(req: Request) {
       createdAt: true,
       read: true,
     },
+  });
+
+  // Push bildirimi alıcıya — response sonrası asenkron, hiçbir hata
+  // mesaj kaydını etkilemesin.
+  after(async () => {
+    try {
+      const preview =
+        content.length > 80 ? content.slice(0, 77) + "..." : content;
+      await sendPushToUser(recipientId, {
+        title: `${user.fullName}`,
+        body: preview,
+        url: `/panel/mesajlar/${user.id}`,
+        tag: `msg-${user.id}`,
+      });
+    } catch (err) {
+      console.error("[messages] push failed:", err);
+    }
   });
 
   return NextResponse.json({ ok: true, message });

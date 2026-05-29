@@ -1,5 +1,6 @@
 import LogoutButton from "@/components/auth/LogoutButton";
 import AccountForm from "./AccountForm";
+import PushNotificationToggle from "@/components/PushNotificationToggle";
 import type { ProfileUser } from "./ProfileClient";
 
 type Props = {
@@ -27,7 +28,14 @@ export default function AccountTab({ user }: Props) {
         }}
       />
 
-      <div className="divider" style={{ margin: "40px 0 32px" }} />
+      <div className="divider" style={{ margin: "40px 0 24px" }} />
+
+      <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>
+        Bildirimler
+      </h4>
+      <PushNotificationToggle />
+
+      <div className="divider" style={{ margin: "32px 0 24px" }} />
 
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
         <LogoutButton className="btn btn-secondary" />

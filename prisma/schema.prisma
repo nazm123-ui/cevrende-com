@@ -38,6 +38,7 @@ model User {
   reportsFiled       MessageReport[]  @relation("ReportedBy")
   savedProfiles      SavedProfile[]   @relation("SavedBy")
   savedByOthers      SavedProfile[]   @relation("SavedAs")
+  pushSubscriptions  PushSubscription[]
 }
 
 model Message {
@@ -101,6 +102,20 @@ model SavedProfile {
 
   @@unique([userId, savedUserId])
   @@index([userId, createdAt])
+}
+
+model PushSubscription {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint    String   @unique
+  p256dh      String
+  auth        String
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  lastUsedAt  DateTime @default(now())
+
+  @@index([userId])
 }
 
 model ActivityLog {
