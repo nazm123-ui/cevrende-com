@@ -10,9 +10,10 @@ type BeforeInstallPromptEvent = Event & {
 
 const DISMISS_KEY = "cev_install_dismissed_at";
 const IOS_DISMISS_KEY = "cev_ios_install_dismissed_at";
+const IOS_NON_SAFARI_DISMISS_KEY = "cev_ios_chrome_dismissed_at";
 const DISMISS_DURATION_MS = 14 * 24 * 60 * 60 * 1000; // 14 gün gizle
 
-type Mode = "hidden" | "android" | "ios";
+type Mode = "hidden" | "android" | "ios-safari" | "ios-non-safari";
 
 function detectIOS(): boolean {
   if (typeof navigator === "undefined") return false;
@@ -22,6 +23,14 @@ function detectIOS(): boolean {
   const isIpadDesktopMode =
     /Macintosh/.test(ua) && "ontouchend" in document;
   return isIosUA || isIpadDesktopMode;
+}
+
+// iOS'ta Chrome (CriOS), Firefox (FxiOS), Edge (EdgiOS) gibi tarayıcılar
+// Safari motorunu kullanır ama "Ana Ekrana Ekle" yapamaz (Apple izin vermiyor).
+// Kullanıcı önce Safari'ye geçmeli.
+function isNonSafariIosBrowser(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return /CriOS|FxiOS|EdgiOS|OPiOS|YaBrowser/.test(navigator.userAgent);
 }
 
 function isStandalone(): boolean {
@@ -41,13 +50,24 @@ export default function PwaInstallBanner() {
   useEffect(() => {
     if (isStandalone()) return;
 
-    // iOS Safari beforeinstallprompt fırlatmaz — manuel rehber göster
     if (detectIOS()) {
+      // iOS'ta non-Safari (Chrome/Firefox/Edge): Önce Safari'ye gitmesi gerek
+      if (isNonSafariIosBrowser()) {
+        const dismissedAt = Number(
+          localStorage.getItem(IOS_NON_SAFARI_DISMISS_KEY) || 0,
+        );
+        if (Date.now() - dismissedAt >= DISMISS_DURATION_MS) {
+          setMode("ios-non-safari");
+        }
+        return;
+      }
+
+      // iOS Safari: beforeinstallprompt yok, manuel rehber
       const dismissedAt = Number(
         localStorage.getItem(IOS_DISMISS_KEY) || 0,
       );
       if (Date.now() - dismissedAt >= DISMISS_DURATION_MS) {
-        setMode("ios");
+        setMode("ios-safari");
       }
       return;
     }
@@ -90,10 +110,59 @@ export default function PwaInstallBanner() {
     setMode("hidden");
   }
 
+  function onDismissIosNonSafari() {
+    localStorage.setItem(IOS_NON_SAFARI_DISMISS_KEY, String(Date.now()));
+    setMode("hidden");
+  }
+
   if (mode === "hidden") return null;
 
-  // iOS: manuel ekleme rehberi
-  if (mode === "ios") {
+  // iOS non-Safari (Chrome/Firefox/Edge): Önce Safari'ye gitmesi gerek
+  if (mode === "ios-non-safari") {
+    return (
+      <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-40 rounded-[14px] bg-white border border-ink-200 shadow-[0_12px_32px_-12px_rgba(15,17,16,0.25)] p-4">
+        <div className="flex items-start gap-3">
+          <div className="relative shrink-0 mt-0.5">
+            <div className="w-10 h-10 rounded-full bg-ink-900 flex items-center justify-center">
+              <div className="w-3 h-3 rounded-full bg-ink-50" />
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[14px] font-medium text-ink-900">
+              Uygulama için Safari gerekiyor
+            </div>
+            <div className="text-[12.5px] text-ink-500 mt-1 leading-snug">
+              iPhone&apos;da ana ekrana ekleme sadece{" "}
+              <strong className="text-ink-900">Safari</strong>&apos;den
+              yapılabiliyor. Aynı linki Safari&apos;de aç → Paylaş → Ana
+              Ekrana Ekle.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onDismissIosNonSafari}
+            className="shrink-0 text-ink-400 hover:text-ink-900 transition bg-transparent border-0 cursor-pointer p-1 -mt-1 -mr-1"
+            aria-label="Kapat"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            >
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // iOS Safari: manuel ekleme rehberi
+  if (mode === "ios-safari") {
     return (
       <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-40 rounded-[14px] bg-white border border-ink-200 shadow-[0_12px_32px_-12px_rgba(15,17,16,0.25)] p-4">
         <div className="flex items-start gap-3">
