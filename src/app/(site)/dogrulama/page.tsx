@@ -43,9 +43,7 @@ export default async function DogrulamaPage({
     where: { id: userId },
     select: {
       id: true,
-      phone: true,
       email: true,
-      isPhoneVerified: true,
       isEmailVerified: true,
       isActive: true,
     },
@@ -61,7 +59,7 @@ export default async function DogrulamaPage({
     );
   }
 
-  if (candidate.isPhoneVerified && candidate.isEmailVerified) {
+  if (candidate.isEmailVerified) {
     return (
       <AuthShell title="Hesap Doğrulama">
         <p className="text-sm text-ink-700">
@@ -75,31 +73,21 @@ export default async function DogrulamaPage({
     );
   }
 
-  const phoneMasked = maskPhone(candidate.phone);
   const emailMasked = maskEmail(candidate.email);
 
   return (
     <AuthShell
       eyebrow="Son adım"
       title="Hesabını Doğrula"
-      subtitle="Telefonuna SMS ve e-postana doğrulama kodu gönderildi. İkisini de gir."
+      subtitle="E-postana 6 haneli doğrulama kodu gönderildi."
     >
       <OtpForm
         userId={candidate.id}
-        needsPhone={!candidate.isPhoneVerified}
-        needsEmail={!candidate.isEmailVerified}
-        phoneMasked={phoneMasked}
         emailMasked={emailMasked}
         redirectTo="/"
       />
     </AuthShell>
   );
-}
-
-function maskPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, "");
-  if (digits.length < 4) return phone;
-  return digits.slice(0, 3) + "****" + digits.slice(-2);
 }
 
 function maskEmail(email: string): string {

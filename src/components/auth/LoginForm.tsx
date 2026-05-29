@@ -15,9 +15,6 @@ export default function LoginForm() {
 
   const [needsVerification, setNeedsVerification] = useState(false);
   const [userId, setUserId] = useState("");
-  const [needsPhone, setNeedsPhone] = useState(false);
-  const [needsEmail, setNeedsEmail] = useState(false);
-  const [devPhoneOtp, setDevPhoneOtp] = useState<string | undefined>();
   const [devEmailOtp, setDevEmailOtp] = useState<string | undefined>();
 
   async function onSubmit(e: React.FormEvent) {
@@ -34,9 +31,6 @@ export default function LoginForm() {
       if (!res.ok) {
         if (data.needsVerification && data.userId) {
           setUserId(data.userId);
-          setNeedsPhone(data.needsPhoneVerification ?? false);
-          setNeedsEmail(data.needsEmailVerification ?? false);
-          setDevPhoneOtp(data.devPhoneOtp);
           setDevEmailOtp(data.devEmailOtp);
           setNeedsVerification(true);
           return;
@@ -60,13 +54,10 @@ export default function LoginForm() {
           Hesabını Doğrula
         </h4>
         <p className="text-[13.5px] text-ink-500 mb-5">
-          Devam etmek için eksik doğrulamaları tamamla.
+          Devam etmek için e-postandaki kodu gir.
         </p>
         <OtpForm
           userId={userId}
-          needsPhone={needsPhone}
-          needsEmail={needsEmail}
-          initialDevPhoneOtp={devPhoneOtp}
           initialDevEmailOtp={devEmailOtp}
           redirectTo="/"
         />

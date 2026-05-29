@@ -9,10 +9,7 @@ import Spinner from "@/components/ui/Spinner";
 export default function RegisterForm() {
   const [step, setStep] = useState<"form" | "otp">("form");
   const [userId, setUserId] = useState<string>("");
-  const [devPhoneOtp, setDevPhoneOtp] = useState<string | undefined>();
   const [devEmailOtp, setDevEmailOtp] = useState<string | undefined>();
-  const [needsPhone, setNeedsPhone] = useState(true);
-  const [needsEmail, setNeedsEmail] = useState(true);
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -58,10 +55,7 @@ export default function RegisterForm() {
         return;
       }
       setUserId(data.userId);
-      setDevPhoneOtp(data.devPhoneOtp);
       setDevEmailOtp(data.devEmailOtp);
-      setNeedsPhone(data.needsPhoneVerification ?? true);
-      setNeedsEmail(data.needsEmailVerification ?? true);
       setStep("otp");
     } catch {
       setError("Bir hata oluştu. Tekrar deneyin.");
@@ -71,7 +65,6 @@ export default function RegisterForm() {
   }
 
   if (step === "otp") {
-    const phoneMasked = maskPhone(phone);
     const emailMasked = maskEmail(email);
     return (
       <div>
@@ -93,15 +86,11 @@ export default function RegisterForm() {
             lineHeight: 1.55,
           }}
         >
-          Telefonuna SMS, e-postana doğrulama kodu gönderildi. İkisini de gir.
+          E-postana 6 haneli doğrulama kodu gönderildi.
         </p>
         <OtpForm
           userId={userId}
-          needsPhone={needsPhone}
-          needsEmail={needsEmail}
-          phoneMasked={phoneMasked}
           emailMasked={emailMasked}
-          initialDevPhoneOtp={devPhoneOtp}
           initialDevEmailOtp={devEmailOtp}
           redirectTo="/"
         />
@@ -343,12 +332,6 @@ function PasswordChecklist({ value }: { value: string }) {
       ))}
     </ul>
   );
-}
-
-function maskPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, "");
-  if (digits.length < 4) return phone;
-  return digits.slice(0, 3) + "****" + digits.slice(-2);
 }
 
 function maskEmail(email: string): string {
