@@ -76,6 +76,13 @@ export default function MessagesClient({
     setError(null);
   }, [activeUserId]);
 
+  // router.refresh() server'dan yeni activeMessages prop'u getirdiğinde
+  // optimistic temp mesajları temizle — yoksa kullanıcı kendi mesajını
+  // 2 kere görüyor (temp + sunucu kopyası).
+  useEffect(() => {
+    setOptimistic([]);
+  }, [activeMessages]);
+
   useEffect(() => {
     threadEnd.current?.scrollIntoView({ behavior: "smooth" });
   }, [allMessages.length]);
