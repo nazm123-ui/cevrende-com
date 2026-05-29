@@ -5,8 +5,6 @@ import { useTransition } from "react";
 import { PENDIK_NEIGHBORHOODS } from "@/lib/constants/pendik-neighborhoods";
 import Icon from "@/components/ui/Icon";
 
-const DISTRICTS = ["Tümü", "Pendik", "Tuzla", "Kartal"];
-
 export default function TopFilterBar() {
   const router = useRouter();
   const params = useSearchParams();
@@ -14,20 +12,16 @@ export default function TopFilterBar() {
 
   const current = {
     q: params.get("q") ?? "",
-    ilce: params.get("ilce") ?? "Tümü",
     mahalle: params.get("mahalle") ?? "",
   };
 
   function submit(formData: FormData) {
     const next = new URLSearchParams(params.toString());
     const q = (formData.get("q") as string)?.trim() || "";
-    const ilce = (formData.get("ilce") as string) || "Tümü";
     const mahalle = (formData.get("mahalle") as string) || "";
 
     if (q) next.set("q", q);
     else next.delete("q");
-    if (ilce && ilce !== "Tümü") next.set("ilce", ilce);
-    else next.delete("ilce");
     if (mahalle) next.set("mahalle", mahalle);
     else next.delete("mahalle");
 
@@ -39,7 +33,7 @@ export default function TopFilterBar() {
   return (
     <form
       action={submit}
-      className="bg-white border border-ink-100 rounded-[14px] p-3 sm:p-3.5 grid gap-2 sm:gap-2.5 grid-cols-1 sm:grid-cols-[1.4fr_1fr_1fr_auto] sm:items-center"
+      className="bg-white border border-ink-100 rounded-[14px] p-3 sm:p-3.5 grid gap-2 sm:gap-2.5 grid-cols-1 sm:grid-cols-[1.6fr_1fr_auto] sm:items-center"
     >
       {/* Arama input */}
       <div className="relative">
@@ -54,23 +48,6 @@ export default function TopFilterBar() {
           aria-label="İsim, yetkinlik veya pozisyon ara"
           className="!h-11 !pl-10 !border-0 !bg-ink-50 focus:!bg-white"
         />
-      </div>
-
-      {/* İlçe */}
-      <div className="relative">
-        <select
-          name="ilce"
-          defaultValue={current.ilce}
-          aria-label="İlçe seç"
-          className="!h-11 !border-0 !bg-ink-50 !pl-3.5 !pr-9 appearance-none focus:!bg-white"
-        >
-          {DISTRICTS.map((d) => (
-            <option key={d} value={d}>
-              {d}
-            </option>
-          ))}
-        </select>
-        <ChevronIcon />
       </div>
 
       {/* Mahalle */}

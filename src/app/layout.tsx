@@ -61,7 +61,7 @@ export default function RootLayout({
               url: "https://cevrende.com",
               description:
                 "Pendik'te mahallenden usta ve hizmet bulma platformu",
-              areaServed: ["Pendik", "Tuzla", "Kartal", "Istanbul"],
+              areaServed: ["Pendik", "Istanbul"],
               sameAs: [
                 "https://twitter.com/cevrende",
                 "https://instagram.com/cevrende",

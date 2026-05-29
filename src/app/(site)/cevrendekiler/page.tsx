@@ -16,7 +16,6 @@ export const metadata = {
 type SearchParams = Promise<{
   meslek?: string;
   mahalle?: string;
-  ilce?: string;
   q?: string;
   siralama?: string;
 }>;
@@ -44,7 +43,7 @@ export default async function CevrendekilerPage({
 
   const categoryNameBySlug = new Map(categories.map((c) => [c.slug, c.name]));
   const canContact = !!user && user.isEmailVerified;
-  const hasActiveFilters = !!(sp.meslek || sp.mahalle || sp.ilce || sp.q);
+  const hasActiveFilters = !!(sp.meslek || sp.mahalle || sp.q);
 
   return (
     <div className="page">
