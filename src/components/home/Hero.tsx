@@ -73,6 +73,11 @@ export default async function Hero() {
             popular={popular}
             totalCount={total}
             allCategories={allCategories}
+            districts={districts.map((d) => ({
+              slug: d.slug,
+              name: d.name,
+              neighborhoods: d.neighborhoods,
+            }))}
           />
         </div>
       </div>

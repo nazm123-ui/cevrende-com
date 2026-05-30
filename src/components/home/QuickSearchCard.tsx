@@ -2,15 +2,20 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PENDIK_NEIGHBORHOODS } from "@/lib/constants/pendik-neighborhoods";
 
 type Profession = { slug: string; name: string; count: number };
 type Category = { slug: string; name: string };
+type DistrictOption = {
+  slug: string;
+  name: string;
+  neighborhoods: string[];
+};
 
 type Props = {
   popular: Profession[];
   totalCount: number;
   allCategories: Category[];
+  districts: DistrictOption[];
 };
 
 function normalize(s: string): string {
@@ -28,13 +33,24 @@ export default function QuickSearchCard({
   popular,
   totalCount,
   allCategories,
+  districts,
 }: Props) {
   const router = useRouter();
+  const multi = districts.length > 1;
+  const single = !multi ? districts[0] : null;
+
   const [query, setQuery] = useState("");
+  const [ilce, setIlce] = useState("");
   const [mahalle, setMahalle] = useState("");
   const [suggestionsOpen, setSuggestionsOpen] = useState(false);
   const [highlightIdx, setHighlightIdx] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const activeDistrict = useMemo(() => {
+    if (single) return single;
+    return districts.find((d) => d.slug === ilce) ?? null;
+  }, [districts, single, ilce]);
+  const mahalleOptions = activeDistrict?.neighborhoods ?? [];
 
   const suggestions = useMemo(() => {
     const q = query.trim();
@@ -65,6 +81,7 @@ export default function QuickSearchCard({
   function goToCategory(slug: string) {
     const params = new URLSearchParams();
     params.set("meslek", slug);
+    if (ilce) params.set("ilce", ilce);
     if (mahalle) params.set("mahalle", mahalle);
     fetch("/api/search/log", {
       method: "POST",
@@ -87,8 +104,9 @@ export default function QuickSearchCard({
     const params = new URLSearchParams();
     const q = query.trim();
     if (q) params.set("q", q);
+    if (ilce) params.set("ilce", ilce);
     if (mahalle) params.set("mahalle", mahalle);
-    if (q || mahalle) {
+    if (q || ilce || mahalle) {
       fetch("/api/search/log", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -174,6 +192,37 @@ export default function QuickSearchCard({
           )}
         </div>
 
+        {multi && (
+          <div className="relative">
+            <span
+              className="absolute top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none"
+              style={{ left: 18, display: "flex", alignItems: "center" }}
+            >
+              <PinIcon />
+            </span>
+            <select
+              value={ilce}
+              onChange={(e) => {
+                setIlce(e.target.value);
+                setMahalle("");
+              }}
+              aria-label="İlçe"
+              className="w-full rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition appearance-none focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
+              style={{ height: 48, paddingLeft: 48, paddingRight: 40 }}
+            >
+              <option value="">Tüm ilçeler</option>
+              {districts.map((d) => (
+                <option key={d.slug} value={d.slug}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none">
+              <ChevronIcon />
+            </span>
+          </div>
+        )}
+
         <div className="relative">
           <span
             className="absolute top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none"
@@ -184,11 +233,15 @@ export default function QuickSearchCard({
           <select
             value={mahalle}
             onChange={(e) => setMahalle(e.target.value)}
-            className="w-full rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition appearance-none focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
+            disabled={multi && !activeDistrict}
+            aria-label="Mahalle"
+            className="w-full rounded-[12px] border border-ink-200 bg-white text-[15px] text-ink-900 outline-none transition appearance-none focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5 disabled:bg-ink-50 disabled:text-ink-400 disabled:cursor-not-allowed"
             style={{ height: 48, paddingLeft: 48, paddingRight: 40 }}
           >
-            <option value="">Tüm mahalleler</option>
-            {PENDIK_NEIGHBORHOODS.map((n) => (
+            <option value="">
+              {multi && !activeDistrict ? "Önce ilçe seç" : "Tüm mahalleler"}
+            </option>
+            {mahalleOptions.map((n) => (
               <option key={n} value={n}>
                 {n}
               </option>

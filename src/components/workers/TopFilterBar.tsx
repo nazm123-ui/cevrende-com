@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTransition } from "react";
+import { useMemo, useTransition } from "react";
 import Icon from "@/components/ui/Icon";
 
 type DistrictOption = {
@@ -15,23 +15,36 @@ type Props = {
 };
 
 export default function TopFilterBar({ districts }: Props) {
-  const single = districts.length === 1 ? districts[0] : null;
   const router = useRouter();
   const params = useSearchParams();
   const [, startTransition] = useTransition();
 
+  const multi = districts.length > 1;
+  const single = !multi ? districts[0] : null;
+
   const current = {
     q: params.get("q") ?? "",
+    ilce: params.get("ilce") ?? "",
     mahalle: params.get("mahalle") ?? "",
   };
+
+  const activeDistrict = useMemo(() => {
+    if (single) return single;
+    return districts.find((d) => d.slug === current.ilce) ?? null;
+  }, [districts, single, current.ilce]);
+
+  const mahalleOptions = activeDistrict?.neighborhoods ?? [];
 
   function submit(formData: FormData) {
     const next = new URLSearchParams(params.toString());
     const q = (formData.get("q") as string)?.trim() || "";
+    const ilce = (formData.get("ilce") as string) || "";
     const mahalle = (formData.get("mahalle") as string) || "";
 
     if (q) next.set("q", q);
     else next.delete("q");
+    if (ilce) next.set("ilce", ilce);
+    else next.delete("ilce");
     if (mahalle) next.set("mahalle", mahalle);
     else next.delete("mahalle");
 
@@ -40,10 +53,15 @@ export default function TopFilterBar({ districts }: Props) {
     });
   }
 
+  // Grid: multi-ilçede 4 sütun (q, ilçe, mahalle, btn); tekli ilçede 3 sütun
+  const gridCls = multi
+    ? "sm:grid-cols-[1.5fr_0.9fr_0.9fr_auto]"
+    : "sm:grid-cols-[1.6fr_1fr_auto]";
+
   return (
     <form
       action={submit}
-      className="bg-white border border-ink-100 rounded-[14px] p-3 sm:p-3.5 grid gap-2 sm:gap-2.5 grid-cols-1 sm:grid-cols-[1.6fr_1fr_auto] sm:items-center"
+      className={`bg-white border border-ink-100 rounded-[14px] p-3 sm:p-3.5 grid gap-2 sm:gap-2.5 grid-cols-1 ${gridCls} sm:items-center`}
     >
       {/* Arama input */}
       <div className="relative">
@@ -60,6 +78,26 @@ export default function TopFilterBar({ districts }: Props) {
         />
       </div>
 
+      {/* İlçe (sadece 2+ ilçe aktifse) */}
+      {multi && (
+        <div className="relative">
+          <select
+            name="ilce"
+            defaultValue={current.ilce}
+            aria-label="İlçe seç"
+            className="!h-11 !border-0 !bg-ink-50 !pl-3.5 !pr-9 appearance-none focus:!bg-white"
+          >
+            <option value="">Tüm ilçeler</option>
+            {districts.map((d) => (
+              <option key={d.slug} value={d.slug}>
+                {d.name}
+              </option>
+            ))}
+          </select>
+          <ChevronIcon />
+        </div>
+      )}
+
       {/* Mahalle */}
       <div className="relative">
         <select
@@ -69,20 +107,12 @@ export default function TopFilterBar({ districts }: Props) {
           className="!h-11 !border-0 !bg-ink-50 !pl-3.5 !pr-9 appearance-none focus:!bg-white"
         >
           <option value="">Tüm mahalleler</option>
-          {single
-            ? single.neighborhoods.map((n) => (
+          {multi && !activeDistrict
+            ? null
+            : mahalleOptions.map((n) => (
                 <option key={n} value={n}>
                   {n}
                 </option>
-              ))
-            : districts.map((d) => (
-                <optgroup key={d.slug} label={d.name}>
-                  {d.neighborhoods.map((n) => (
-                    <option key={`${d.slug}-${n}`} value={n}>
-                      {n}
-                    </option>
-                  ))}
-                </optgroup>
               ))}
         </select>
         <ChevronIcon />

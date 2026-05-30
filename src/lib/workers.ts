@@ -30,10 +30,11 @@ export function isUserOnline(lastSeenAt: Date | null): boolean {
 
 export async function getActiveWorkers(filters: {
   profession?: string;
+  district?: string;
   neighborhood?: string;
   q?: string;
 }): Promise<WorkerListItem[]> {
-  const { profession, neighborhood, q } = filters;
+  const { profession, district, neighborhood, q } = filters;
 
   // Müsait olmayan işçiler listede görünmez (yalnızca profil URL'i ile açılır).
   const where: Prisma.UserWhereInput = {
@@ -43,6 +44,9 @@ export async function getActiveWorkers(filters: {
     professions: profession ? { has: profession } : { isEmpty: false },
   };
 
+  if (district) {
+    where.district = district;
+  }
   if (neighborhood) {
     where.neighborhood = neighborhood;
   }

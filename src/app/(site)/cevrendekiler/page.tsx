@@ -21,6 +21,7 @@ export async function generateMetadata() {
 
 type SearchParams = Promise<{
   meslek?: string;
+  ilce?: string;
   mahalle?: string;
   q?: string;
   siralama?: string;
@@ -32,10 +33,17 @@ export default async function CevrendekilerPage({
   searchParams: SearchParams;
 }) {
   const sp = await searchParams;
-  const [user, workers, professions, categories, districts] = await Promise.all([
+  const districtsAll = await getEnabledDistricts();
+  // sp.ilce slug, ilçe adına çevir
+  const selectedDistrict = sp.ilce
+    ? districtsAll.find((d) => d.slug === sp.ilce)
+    : null;
+
+  const [user, workers, professions, categories] = await Promise.all([
     getCurrentUser(),
     getActiveWorkers({
       profession: sp.meslek,
+      district: selectedDistrict?.name,
       neighborhood: sp.mahalle,
       q: sp.q,
     }),
@@ -45,12 +53,12 @@ export default async function CevrendekilerPage({
       orderBy: { order: "asc" },
       select: { slug: true, name: true },
     }),
-    getEnabledDistricts(),
   ]);
+  const districts = districtsAll;
 
   const categoryNameBySlug = new Map(categories.map((c) => [c.slug, c.name]));
   const canContact = !!user && user.isEmailVerified;
-  const hasActiveFilters = !!(sp.meslek || sp.mahalle || sp.q);
+  const hasActiveFilters = !!(sp.meslek || sp.ilce || sp.mahalle || sp.q);
 
   return (
     <div className="page">
