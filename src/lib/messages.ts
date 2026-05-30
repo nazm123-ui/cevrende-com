@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/db";
+import { getPublicUrl } from "@/lib/r2";
 
 export type ConversationSummary = {
   otherUserId: string;
   otherUserName: string;
+  otherUserPhotoUrl: string | null;
   lastMessage: string;
   lastMessageAt: Date;
   lastMessageFromMe: boolean;
@@ -66,6 +68,7 @@ export async function getConversations(
     select: {
       id: true,
       fullName: true,
+      profilePhotoKey: true,
     },
   });
 
@@ -75,6 +78,9 @@ export async function getConversations(
       return {
         otherUserId: o.id,
         otherUserName: o.fullName,
+        otherUserPhotoUrl: o.profilePhotoKey
+          ? getPublicUrl(o.profilePhotoKey)
+          : null,
         lastMessage: conv.lastMessage,
         lastMessageAt: conv.lastMessageAt,
         lastMessageFromMe: conv.lastMessageFromMe,

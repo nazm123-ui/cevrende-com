@@ -20,6 +20,7 @@ export type ProfileUser = {
   neighborhood: string | null;
   professions: string[];
   bio: string;
+  profilePhotoUrl: string | null;
   createdAt: string;
 };
 
@@ -104,7 +105,11 @@ export default function ProfileClient({
               flexWrap: "wrap",
             }}
           >
-            <Avatar initials={user.initials} size={84} />
+            <Avatar
+              initials={user.initials}
+              size={84}
+              photoUrl={user.profilePhotoUrl}
+            />
             <div style={{ flex: "1 1 280px", minWidth: 0 }}>
               <h2 style={{ fontSize: 32 }}>{user.fullName}</h2>
               <div

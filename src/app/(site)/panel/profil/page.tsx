@@ -3,6 +3,7 @@ import { requireVerifiedUser } from "@/lib/require-auth";
 import { getConversations } from "@/lib/messages";
 import { getPhoneVisibility } from "@/lib/phone-visibility";
 import { parseExperiences } from "@/lib/experience";
+import { getPublicUrl } from "@/lib/r2";
 import ProfileClient from "@/components/profile/ProfileClient";
 
 export const metadata = { title: "Profilim — Cevrende.com" };
@@ -26,6 +27,7 @@ export default async function ProfilPage() {
         workerSettings: true,
         experiences: true,
         isAvailable: true,
+        profilePhotoKey: true,
         createdAt: true,
       },
     }),
@@ -93,6 +95,10 @@ export default async function ProfilPage() {
     unread: c.unreadCount,
   }));
 
+  const profilePhotoUrl = user.profilePhotoKey
+    ? getPublicUrl(user.profilePhotoKey)
+    : null;
+
   return (
     <ProfileClient
       user={{
@@ -105,6 +111,7 @@ export default async function ProfilPage() {
         neighborhood: user.neighborhood,
         professions: user.professions,
         bio: user.bio ?? "",
+        profilePhotoUrl,
         createdAt: user.createdAt.toISOString(),
       }}
       stats={{

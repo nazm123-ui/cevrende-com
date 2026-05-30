@@ -1,6 +1,7 @@
 import LogoutButton from "@/components/auth/LogoutButton";
 import AccountForm from "./AccountForm";
 import PushNotificationToggle from "@/components/PushNotificationToggle";
+import ProfilePhotoUpload from "./ProfilePhotoUpload";
 import type { ProfileUser } from "./ProfileClient";
 
 type Props = {
@@ -17,6 +18,16 @@ export default function AccountTab({ user }: Props) {
       >
         Ad ve mahalle bilgini buradan güncelleyebilirsin. E-posta ve telefon değişiklikleri için destekle iletişime geç.
       </p>
+
+      <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>
+        Profil fotoğrafı
+      </h4>
+      <ProfilePhotoUpload
+        currentPhotoUrl={user.profilePhotoUrl}
+        initials={user.initials}
+      />
+
+      <div className="divider" style={{ margin: "32px 0 24px" }} />
 
       <AccountForm
         initial={{

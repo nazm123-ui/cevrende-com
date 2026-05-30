@@ -7,6 +7,7 @@ import {
   markThreadAsRead,
 } from "@/lib/messages";
 import { getInitials } from "@/lib/initials";
+import { getPublicUrl } from "@/lib/r2";
 import MessagesClient from "@/components/messages/MessagesClient";
 
 export const metadata = { title: "Sohbet — Cevrende.com" };
@@ -26,6 +27,7 @@ export default async function ThreadPage({
       id: true,
       fullName: true,
       isActive: true,
+      profilePhotoKey: true,
     },
   });
 
@@ -45,6 +47,9 @@ export default async function ThreadPage({
         {
           otherUserId: other.id,
           otherUserName: other.fullName,
+          otherUserPhotoUrl: other.profilePhotoKey
+            ? getPublicUrl(other.profilePhotoKey)
+            : null,
           lastMessage: "",
           lastMessageAt: new Date(),
           lastMessageFromMe: false,
@@ -60,6 +65,7 @@ export default async function ThreadPage({
         otherUserId: c.otherUserId,
         otherUserName: c.otherUserName,
         initials: getInitials(c.otherUserName),
+        photoUrl: c.otherUserPhotoUrl,
         lastMessage: c.lastMessage,
         lastMessageAt: c.lastMessageAt.toISOString(),
         lastMessageFromMe: c.lastMessageFromMe,

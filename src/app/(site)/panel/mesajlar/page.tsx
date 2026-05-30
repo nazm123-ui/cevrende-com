@@ -17,6 +17,7 @@ export default async function MesajlarPage() {
         otherUserId: c.otherUserId,
         otherUserName: c.otherUserName,
         initials: getInitials(c.otherUserName),
+        photoUrl: c.otherUserPhotoUrl,
         lastMessage: c.lastMessage,
         lastMessageAt: c.lastMessageAt.toISOString(),
         lastMessageFromMe: c.lastMessageFromMe,

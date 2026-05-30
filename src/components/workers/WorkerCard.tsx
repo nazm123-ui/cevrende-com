@@ -60,9 +60,19 @@ export default function WorkerCard({
         className="flex gap-4 items-start rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ink-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
       >
         <div className="relative shrink-0">
-          <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-brand-50 border border-ink-200 text-ink-900 text-[18px] font-medium tracking-[-0.01em]">
-            {initials}
-          </div>
+          {worker.profilePhotoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={worker.profilePhotoUrl}
+              alt={worker.fullName}
+              loading="lazy"
+              className="h-[52px] w-[52px] rounded-full object-cover border border-ink-200 bg-brand-50"
+            />
+          ) : (
+            <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-brand-50 border border-ink-200 text-ink-900 text-[18px] font-medium tracking-[-0.01em]">
+              {initials}
+            </div>
+          )}
           {worker.isOnline && (
             <span
               className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white"

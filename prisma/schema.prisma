@@ -22,6 +22,7 @@ model User {
   isAvailable     Boolean   @default(true)
   lastSeenAt      DateTime?
   passwordChangedAt DateTime?
+  profilePhotoKey String?
 
   professions     String[]  @default([])
   bio             String?

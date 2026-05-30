@@ -10,6 +10,7 @@ export type ConversationItem = {
   otherUserId: string;
   otherUserName: string;
   initials: string;
+  photoUrl: string | null;
   lastMessage: string;
   lastMessageAt: string;
   lastMessageFromMe: boolean;
@@ -187,7 +188,11 @@ export default function MessagesClient({
                         }`}
                       >
                         <div className="flex items-start gap-3">
-                          <Avatar initials={c.initials} size={40} />
+                          <Avatar
+                            initials={c.initials}
+                            size={40}
+                            photoUrl={c.photoUrl}
+                          />
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-center gap-2">
                               <div className="text-[14.5px] font-medium tracking-[-0.005em] whitespace-nowrap overflow-hidden text-ellipsis">
@@ -247,7 +252,11 @@ export default function MessagesClient({
                         }
                         className="flex items-center gap-3 bg-transparent border-0 p-0 cursor-pointer font-[inherit] text-left min-w-0"
                       >
-                        <Avatar initials={activeConv.initials} size={40} />
+                        <Avatar
+                          initials={activeConv.initials}
+                          size={40}
+                          photoUrl={activeConv.photoUrl}
+                        />
                         <div className="min-w-0">
                           <div className="text-[15px] font-medium tracking-[-0.005em]">
                             {activeConv.otherUserName}

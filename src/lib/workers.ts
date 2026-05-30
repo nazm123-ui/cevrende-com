@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import type { WorkerSettings } from "@/lib/phone-visibility";
+import { getPublicUrl } from "@/lib/r2";
 
 export type { WorkerSettings };
 
@@ -15,6 +16,7 @@ export type WorkerListItem = {
   workerSettings: WorkerSettings;
   isAvailable: boolean;
   isOnline: boolean;
+  profilePhotoUrl: string | null;
   createdAt: Date;
 };
 
@@ -81,6 +83,7 @@ export async function getActiveWorkers(filters: {
       workerSettings: true,
       isAvailable: true,
       lastSeenAt: true,
+      profilePhotoKey: true,
       createdAt: true,
     },
     orderBy: { createdAt: "desc" },
@@ -98,6 +101,7 @@ export async function getActiveWorkers(filters: {
     workerSettings: (w.workerSettings ?? {}) as WorkerSettings,
     isAvailable: w.isAvailable,
     isOnline: isUserOnline(w.lastSeenAt),
+    profilePhotoUrl: w.profilePhotoKey ? getPublicUrl(w.profilePhotoKey) : null,
     createdAt: w.createdAt,
   }));
 

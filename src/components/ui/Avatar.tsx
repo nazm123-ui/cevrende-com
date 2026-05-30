@@ -1,12 +1,40 @@
 // Tasarımdan birebir: cream background, ink text, hairline border
+// photoUrl verilirse fotoğrafı gösterir, yoksa initials.
 
 interface AvatarProps {
   initials: string;
   size?: number;
   className?: string;
+  photoUrl?: string | null;
 }
 
-export default function Avatar({ initials, size = 44, className = "" }: AvatarProps) {
+export default function Avatar({
+  initials,
+  size = 44,
+  className = "",
+  photoUrl,
+}: AvatarProps) {
+  if (photoUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={photoUrl}
+        alt={initials}
+        className={className}
+        loading="lazy"
+        style={{
+          width: size,
+          height: size,
+          borderRadius: "50%",
+          objectFit: "cover",
+          flex: `0 0 ${size}px`,
+          border: "1px solid var(--color-ink-200)",
+          background: "#F4F2EB",
+        }}
+      />
+    );
+  }
+
   return (
     <div
       className={className}
@@ -31,5 +59,4 @@ export default function Avatar({ initials, size = 44, className = "" }: AvatarPr
   );
 }
 
-// Backward-compat named export
 export { Avatar };
