@@ -240,7 +240,8 @@ export default function MessagesClient({
                     <div className="flex items-center gap-3 min-w-0">
                       <button
                         onClick={() => router.push("/panel/mesajlar")}
-                        className="msg-back hidden bg-transparent border-0 p-1 cursor-pointer text-ink-700"
+                        aria-label="Sohbet listesine dön"
+                        className="msg-back hidden w-11 h-11 -ml-2 rounded-full items-center justify-center bg-transparent border-0 cursor-pointer text-ink-700 text-[22px] leading-none active:bg-ink-100"
                       >
                         ←
                       </button>
