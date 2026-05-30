@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireVerifiedUser } from "@/lib/require-auth";
 import { accountInfoSchema } from "@/lib/validators";
-import { PENDIK_NEIGHBORHOODS } from "@/lib/constants/pendik-neighborhoods";
+import { getDistrictByName } from "@/lib/districts";
 
 export async function PATCH(req: Request) {
   const user = await requireVerifiedUser();
@@ -24,9 +24,14 @@ export async function PATCH(req: Request) {
 
   const { fullName, neighborhood } = parsed.data;
 
-  if (!PENDIK_NEIGHBORHOODS.includes(neighborhood as never)) {
+  // Mahallenin kullanıcının ilçesinde olduğunu doğrula
+  const district = await getDistrictByName(user.district);
+  if (district && !district.neighborhoods.includes(neighborhood)) {
     return NextResponse.json(
-      { error: "Geçersiz mahalle.", issues: { neighborhood: ["Listeden bir mahalle seç."] } },
+      {
+        error: "Geçersiz mahalle.",
+        issues: { neighborhood: ["Listeden bir mahalle seç."] },
+      },
       { status: 400 },
     );
   }

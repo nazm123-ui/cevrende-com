@@ -2,16 +2,22 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getActiveWorkers, getProfessionCounts } from "@/lib/workers";
+import { getEnabledDistricts, formatDistrictListTr } from "@/lib/districts";
 import WorkerCard from "@/components/workers/WorkerCard";
 import TopFilterBar from "@/components/workers/TopFilterBar";
 import CategorySidebar from "@/components/workers/CategorySidebar";
 import SortDropdown from "@/components/workers/SortDropdown";
 
-export const metadata = {
-  title: "Çevrendekiler — Pendik'te Usta ve Hizmet",
-  description:
-    "Pendik ve çevresinde mesleğe göre işçi ara. Profil incele, doğrudan mesajla, aracısız iletişime geç.",
-};
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  const districts = await getEnabledDistricts();
+  const label = formatDistrictListTr(districts.map((d) => d.name));
+  return {
+    title: `Çevrendekiler — ${label}'te Usta ve Hizmet`,
+    description: `${label} ve çevresinde mesleğe göre işçi ara. Profil incele, doğrudan mesajla, aracısız iletişime geç.`,
+  };
+}
 
 type SearchParams = Promise<{
   meslek?: string;
@@ -26,7 +32,7 @@ export default async function CevrendekilerPage({
   searchParams: SearchParams;
 }) {
   const sp = await searchParams;
-  const [user, workers, professions, categories] = await Promise.all([
+  const [user, workers, professions, categories, districts] = await Promise.all([
     getCurrentUser(),
     getActiveWorkers({
       profession: sp.meslek,
@@ -39,6 +45,7 @@ export default async function CevrendekilerPage({
       orderBy: { order: "asc" },
       select: { slug: true, name: true },
     }),
+    getEnabledDistricts(),
   ]);
 
   const categoryNameBySlug = new Map(categories.map((c) => [c.slug, c.name]));
@@ -50,7 +57,13 @@ export default async function CevrendekilerPage({
       {/* Search + filter bar */}
       <section className="pt-8 pb-6">
         <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
-          <TopFilterBar />
+          <TopFilterBar
+            districts={districts.map((d) => ({
+              slug: d.slug,
+              name: d.name,
+              neighborhoods: d.neighborhoods,
+            }))}
+          />
         </div>
       </section>
 

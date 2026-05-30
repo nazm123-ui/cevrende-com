@@ -6,6 +6,7 @@ import { sendOtpEmail } from "@/lib/email";
 import { registerSchema } from "@/lib/validators";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { logActivity } from "@/lib/activity-log";
+import { getDistrictBySlug } from "@/lib/districts";
 
 export async function POST(req: Request) {
   const limited = await checkRateLimit(req, "auth-strict");
@@ -26,7 +27,28 @@ export async function POST(req: Request) {
     );
   }
 
-  const { fullName, email, phone, password, neighborhood } = parsed.data;
+  const { fullName, email, phone, password, districtSlug, neighborhood } = parsed.data;
+
+  // İlçe doğrulama: seçilen ilçe gerçekten aktif mi ve mahalle ona ait mi?
+  const district = await getDistrictBySlug(districtSlug);
+  if (!district || !district.isEnabled) {
+    return NextResponse.json(
+      {
+        error: "Seçilen ilçe şu anda hizmet vermiyor.",
+        issues: { districtSlug: ["Geçerli bir ilçe seç."] },
+      },
+      { status: 400 },
+    );
+  }
+  if (!district.neighborhoods.includes(neighborhood)) {
+    return NextResponse.json(
+      {
+        error: "Mahalle ilçeyle uyumsuz.",
+        issues: { neighborhood: ["Mahalleyi tekrar seç."] },
+      },
+      { status: 400 },
+    );
+  }
 
   const existing = await prisma.user.findFirst({
     where: { OR: [{ email }, { phone }] },
@@ -66,6 +88,7 @@ export async function POST(req: Request) {
       email,
       phone,
       passwordHash,
+      district: district.name,
       neighborhood: neighborhood || null,
       isPhoneVerified: true,
     },

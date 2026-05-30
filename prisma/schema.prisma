@@ -80,6 +80,19 @@ model JobCategory {
   createdAt DateTime  @default(now())
 }
 
+model District {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String   @unique
+  isEnabled     Boolean  @default(false)
+  order         Int      @default(0)
+  neighborhoods String[] @default([])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([isEnabled, order])
+}
+
 model SearchEvent {
   id              String   @id @default(cuid())
   userId          String?

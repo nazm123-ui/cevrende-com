@@ -4,6 +4,7 @@ import { getConversations } from "@/lib/messages";
 import { getPhoneVisibility } from "@/lib/phone-visibility";
 import { parseExperiences } from "@/lib/experience";
 import { getPublicUrl } from "@/lib/r2";
+import { getDistrictByName } from "@/lib/districts";
 import ProfileClient from "@/components/profile/ProfileClient";
 
 export const metadata = { title: "Profilim — Cevrende.com" };
@@ -99,6 +100,9 @@ export default async function ProfilPage() {
     ? getPublicUrl(user.profilePhotoKey)
     : null;
 
+  const district = await getDistrictByName(user.district);
+  const neighborhoods = district?.neighborhoods ?? [];
+
   return (
     <ProfileClient
       user={{
@@ -129,6 +133,7 @@ export default async function ProfilPage() {
         experiences,
       }}
       initialIsAvailable={user.isAvailable}
+      neighborhoods={neighborhoods}
     />
   );
 }

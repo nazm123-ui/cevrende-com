@@ -7,7 +7,8 @@ export type ActivityType =
   | "warn"
   | "deactivate"
   | "activate"
-  | "category";
+  | "category"
+  | "district";
 
 type LogInput = {
   type: ActivityType;

@@ -2,10 +2,11 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getProfessionCounts } from "@/lib/workers";
 import { getCurrentUser } from "@/lib/auth";
+import { getEnabledDistricts, formatDistrictListTr } from "@/lib/districts";
 import QuickSearchCard from "@/components/home/QuickSearchCard";
 
 export default async function Hero() {
-  const [withCounts, allCategories, user] = await Promise.all([
+  const [withCounts, allCategories, user, districts] = await Promise.all([
     getProfessionCounts(),
     prisma.jobCategory.findMany({
       where: { isActive: true },
@@ -13,7 +14,9 @@ export default async function Hero() {
       select: { slug: true, name: true },
     }),
     getCurrentUser(),
+    getEnabledDistricts(),
   ]);
+  const districtLabel = formatDistrictListTr(districts.map((d) => d.name));
   const popular =
     withCounts.length > 0
       ? withCounts.sort((a, b) => b.count - a.count).slice(0, 8)
@@ -25,7 +28,7 @@ export default async function Hero() {
       <div className="hero-split mx-auto max-w-[1200px] px-5 sm:px-6 grid items-center gap-10 lg:gap-16 lg:grid-cols-[1.15fr_0.95fr]">
         <div className="min-w-0">
           <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
-            Pendik
+            {districtLabel}
           </p>
 
           <h1 className="mt-4 text-[26px] sm:text-[44px] lg:text-[60px] font-semibold tracking-[-0.025em] leading-[1.12] sm:leading-[1.05] lg:max-w-[560px] text-balance">
@@ -34,7 +37,7 @@ export default async function Hero() {
           </h1>
 
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg text-ink-700 lg:max-w-[480px] leading-relaxed">
-            Pendik ve çevresindeki ustayı, kuryeyi, bakıcıyı doğrudan bulursun. Aracı yok.
+            {districtLabel} ve çevresindeki ustayı, kuryeyi, bakıcıyı doğrudan bulursun. Aracı yok.
           </p>
 
           {!user && (

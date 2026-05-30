@@ -2,17 +2,20 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
-import { PENDIK_NEIGHBORHOODS } from "@/lib/constants/pendik-neighborhoods";
 
 type Profession = { slug: string; name: string; count: number };
+type DistrictOption = { slug: string; name: string; neighborhoods: string[] };
 
 export default function WorkerFilters({
   professions,
   total,
+  districts = [],
 }: {
   professions: Profession[];
   total: number;
+  districts?: DistrictOption[];
 }) {
+  const single = districts.length === 1 ? districts[0] : null;
   const router = useRouter();
   const params = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -123,11 +126,21 @@ export default function WorkerFilters({
           className="w-full h-11 px-3.5 rounded-[12px] border border-ink-200 bg-white text-[14px] text-ink-900 outline-none transition focus:border-ink-900 focus:ring-4 focus:ring-ink-900/5"
         >
           <option value="">Tüm mahalleler</option>
-          {PENDIK_NEIGHBORHOODS.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
+          {single
+            ? single.neighborhoods.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))
+            : districts.map((d) => (
+                <optgroup key={d.slug} label={d.name}>
+                  {d.neighborhoods.map((n) => (
+                    <option key={`${d.slug}-${n}`} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
         </select>
       </div>
 

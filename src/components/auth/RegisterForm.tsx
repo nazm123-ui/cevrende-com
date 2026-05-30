@@ -1,23 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { PENDIK_NEIGHBORHOODS } from "@/lib/constants/pendik-neighborhoods";
 import OtpForm from "./OtpForm";
 import Spinner from "@/components/ui/Spinner";
 
-export default function RegisterForm() {
+type EnabledDistrict = {
+  slug: string;
+  name: string;
+  neighborhoods: string[];
+};
+
+type Props = {
+  districts: EnabledDistrict[];
+};
+
+export default function RegisterForm({ districts }: Props) {
   const [step, setStep] = useState<"form" | "otp">("form");
   const [userId, setUserId] = useState<string>("");
   const [devEmailOtp, setDevEmailOtp] = useState<string | undefined>();
+
+  const singleDistrict = districts.length === 1 ? districts[0] : null;
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [districtSlug, setDistrictSlug] = useState(singleDistrict?.slug ?? "");
   const [neighborhood, setNeighborhood] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
+
+  const activeNeighborhoods = useMemo(() => {
+    const d = districts.find((x) => x.slug === districtSlug);
+    return d ? d.neighborhoods : [];
+  }, [districts, districtSlug]);
 
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<
@@ -40,6 +57,7 @@ export default function RegisterForm() {
           phone,
           password,
           confirmPassword,
+          districtSlug,
           neighborhood,
           acceptTerms,
         }),
@@ -137,16 +155,36 @@ export default function RegisterForm() {
         />
       </div>
 
+      {!singleDistrict && (
+        <Field
+          label="İlçe"
+          name="districtSlug"
+          type="select"
+          value={districtSlug}
+          onChange={(v) => {
+            setDistrictSlug(v);
+            setNeighborhood("");
+          }}
+          options={districts.map((d) => ({ value: d.slug, label: d.name }))}
+          placeholder="İlçe seç"
+          errors={fieldErrors.districtSlug}
+        />
+      )}
+
       <Field
         label="Mahalle"
         name="neighborhood"
         type="select"
         value={neighborhood}
         onChange={setNeighborhood}
-        options={PENDIK_NEIGHBORHOODS.map((n) => ({ value: n, label: n }))}
-        placeholder="Mahalle seç"
+        options={activeNeighborhoods.map((n) => ({ value: n, label: n }))}
+        placeholder={districtSlug ? "Mahalle seç" : "Önce ilçe seç"}
         errors={fieldErrors.neighborhood}
-        hint="Yakındaki kişilerle eşleşmen kolaylaşır."
+        hint={
+          singleDistrict
+            ? "Yakındaki kişilerle eşleşmen kolaylaşır."
+            : `${activeNeighborhoods.length} mahalle`
+        }
       />
 
       <div>

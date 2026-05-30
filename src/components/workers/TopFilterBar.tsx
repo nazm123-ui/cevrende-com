@@ -2,10 +2,20 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
-import { PENDIK_NEIGHBORHOODS } from "@/lib/constants/pendik-neighborhoods";
 import Icon from "@/components/ui/Icon";
 
-export default function TopFilterBar() {
+type DistrictOption = {
+  slug: string;
+  name: string;
+  neighborhoods: string[];
+};
+
+type Props = {
+  districts: DistrictOption[];
+};
+
+export default function TopFilterBar({ districts }: Props) {
+  const single = districts.length === 1 ? districts[0] : null;
   const router = useRouter();
   const params = useSearchParams();
   const [, startTransition] = useTransition();
@@ -59,11 +69,21 @@ export default function TopFilterBar() {
           className="!h-11 !border-0 !bg-ink-50 !pl-3.5 !pr-9 appearance-none focus:!bg-white"
         >
           <option value="">Tüm mahalleler</option>
-          {PENDIK_NEIGHBORHOODS.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
+          {single
+            ? single.neighborhoods.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))
+            : districts.map((d) => (
+                <optgroup key={d.slug} label={d.name}>
+                  {d.neighborhoods.map((n) => (
+                    <option key={`${d.slug}-${n}`} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
         </select>
         <ChevronIcon />
       </div>

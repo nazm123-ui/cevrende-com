@@ -51,6 +51,7 @@ type Props = {
   categories: { slug: string; name: string }[];
   initialFormState: ProfileFormInitial;
   initialIsAvailable: boolean;
+  neighborhoods: string[];
 };
 
 export default function ProfileClient({
@@ -61,6 +62,7 @@ export default function ProfileClient({
   categories,
   initialFormState,
   initialIsAvailable,
+  neighborhoods,
 }: Props) {
   const [tab, setTab] = useState<Tab>("overview");
   const [isAvailable, setIsAvailable] = useState(initialIsAvailable);
@@ -275,7 +277,7 @@ export default function ProfileClient({
               savedProfiles={savedProfiles}
             />
           )}
-          {tab === "account" && <AccountTab user={user} />}
+          {tab === "account" && <AccountTab user={user} neighborhoods={neighborhoods} />}
           {tab === "profile" && (
             <ProfileSettingsTab
               categories={categories}

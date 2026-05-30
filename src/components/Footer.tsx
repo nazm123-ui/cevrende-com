@@ -1,7 +1,10 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
+import { getEnabledDistricts, formatDistrictListTr } from "@/lib/districts";
 
-export default function Footer() {
+export default async function Footer() {
+  const districts = await getEnabledDistricts();
+  const label = formatDistrictListTr(districts.map((d) => d.name));
   return (
     <footer
       className="border-t border-ink-100 pt-14 pb-10 bg-ink-50 mt-12"
@@ -11,8 +14,8 @@ export default function Footer() {
         <div className="col-span-2 sm:col-span-1">
           <Logo size="sm" />
           <p className="mt-4 text-[13.5px] text-ink-500 max-w-[280px] leading-relaxed">
-            Pendik ve çevresindeki iş arayanlarla işverenleri doğrudan
-            buluşturur.
+            {label}&apos;{districts.length > 1 ? "deki" : "teki"} iş arayanlarla
+            işverenleri doğrudan buluşturur.
           </p>
         </div>
 
@@ -36,7 +39,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom mx-auto max-w-[1200px] px-5 sm:px-6 mt-12 flex flex-wrap items-center justify-between gap-3 text-[13px] text-ink-500">
-        <span>© {new Date().getFullYear()} çevrende · Pendik, İstanbul</span>
+        <span>© {new Date().getFullYear()} çevrende · {label}, İstanbul</span>
         <span className="font-mono text-ink-500">v1.0</span>
       </div>
     </footer>

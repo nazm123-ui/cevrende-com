@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PENDIK_NEIGHBORHOODS } from "@/lib/constants/pendik-neighborhoods";
 import { formatPhone } from "@/lib/format";
 
 type Props = {
@@ -13,9 +12,10 @@ type Props = {
     district: string;
     neighborhood: string;
   };
+  neighborhoods: string[];
 };
 
-export default function AccountForm({ initial }: Props) {
+export default function AccountForm({ initial, neighborhoods }: Props) {
   const router = useRouter();
   const [fullName, setFullName] = useState(initial.fullName);
   const [neighborhood, setNeighborhood] = useState(initial.neighborhood || "");
@@ -76,7 +76,7 @@ export default function AccountForm({ initial }: Props) {
           className={inputCls}
         >
           <option value="">Mahalle seç</option>
-          {PENDIK_NEIGHBORHOODS.map((n) => (
+          {neighborhoods.map((n) => (
             <option key={n} value={n}>
               {n}
             </option>

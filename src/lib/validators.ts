@@ -39,6 +39,11 @@ export const registerSchema = z
     phone: phoneSchema,
     password: passwordRule,
     confirmPassword: z.string().min(1, "Şifreyi tekrar girin."),
+    districtSlug: z
+      .string()
+      .trim()
+      .min(1, "İlçe seçmelisin.")
+      .max(60),
     neighborhood: z
       .string()
       .trim()

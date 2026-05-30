@@ -6,9 +6,10 @@ import type { ProfileUser } from "./ProfileClient";
 
 type Props = {
   user: ProfileUser;
+  neighborhoods: string[];
 };
 
-export default function AccountTab({ user }: Props) {
+export default function AccountTab({ user, neighborhoods }: Props) {
   return (
     <div style={{ maxWidth: 640 }}>
       <h3 style={{ marginBottom: 8 }}>Hesap bilgileri</h3>
@@ -37,6 +38,7 @@ export default function AccountTab({ user }: Props) {
           district: user.district,
           neighborhood: user.neighborhood ?? "",
         }}
+        neighborhoods={neighborhoods}
       />
 
       <div className="divider" style={{ margin: "40px 0 24px" }} />
