@@ -153,14 +153,15 @@ export default function MessagesClient({
             <div className="msg-list border-r border-ink-100 bg-[#FCFBF8]">
               <div className="px-[18px] pt-[18px] pb-[14px] border-b border-ink-100">
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none flex items-center">
                     <Icon name="search" size={16} />
                   </span>
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Sohbetlerde ara…"
-                    className="w-full pl-9 h-[38px] border border-ink-100 bg-white text-[14px]"
+                    aria-label="Sohbetlerde ara"
+                    className="w-full !pl-10 !h-[38px] border border-ink-100 bg-white text-[14px]"
                   />
                 </div>
               </div>
