@@ -400,9 +400,44 @@ export default function MessagesClient({
           body="Ekibimiz incelemeye alır. Bildirimler isimsizdir."
           confirmLabel="Bildir"
           onCancel={() => setConfirmType(null)}
-          onConfirm={() => {
-            setReported((r) => ({ ...r, [activeUserId]: true }));
-            setConfirmType(null);
+          onConfirm={async () => {
+            // Karşı taraftan gelen son mesajı bul — rapor o mesaja bağlanır.
+            const lastIncoming = [...activeMessages]
+              .reverse()
+              .find((m) => !m.fromMe);
+            if (!lastIncoming) {
+              alert(
+                "Bu kişiden henüz mesaj almadığın için rapor oluşturulamadı.",
+              );
+              setConfirmType(null);
+              return;
+            }
+            try {
+              const res = await fetch("/api/messages/report", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  messageId: lastIncoming.id,
+                  reason: "Konuşma penceresinden bildirildi",
+                }),
+              });
+              const data = await res.json().catch(() => ({}));
+              if (res.ok) {
+                setReported((r) => ({ ...r, [activeUserId]: true }));
+                alert("Bildirim alındı. Yöneticiler inceleyecek.");
+              } else {
+                alert(
+                  "Bildirim gönderilemedi: " +
+                    (data.error || `Hata ${res.status}`),
+                );
+              }
+            } catch {
+              alert(
+                "Bağlantı hatası. İnternetini kontrol edip tekrar dene.",
+              );
+            } finally {
+              setConfirmType(null);
+            }
           }}
         />
       )}
