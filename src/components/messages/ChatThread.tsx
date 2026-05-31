@@ -144,21 +144,40 @@ export default function ChatThread({
                   </div>
                   {!fromMe && (
                     <button
-                      onClick={() => {
-                        if (confirm("Bu mesajı rapor etmek istediğine emin misin?")) {
-                          fetch("/api/messages/report", {
+                      onClick={async () => {
+                        const reason = prompt(
+                          "Bu mesajı neden rapor ediyorsun? (Örn: hakaret, spam, dolandırıcılık)",
+                          "",
+                        );
+                        if (!reason || !reason.trim()) return;
+                        try {
+                          const res = await fetch("/api/messages/report", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
                               messageId: m.id,
-                              reason: "Uygunsuz içerik",
+                              reason: reason.trim(),
                             }),
-                          }).then((res) => {
-                            if (res.ok) alert("Rapor gönderildi.");
                           });
+                          const data = await res.json().catch(() => ({}));
+                          if (res.ok) {
+                            alert(
+                              "Rapor gönderildi. Yöneticiler en kısa sürede inceleyecek.",
+                            );
+                          } else {
+                            alert(
+                              "Rapor gönderilemedi: " +
+                                (data.error || `Hata ${res.status}`),
+                            );
+                          }
+                        } catch {
+                          alert(
+                            "Bağlantı hatası. İnternetini kontrol edip tekrar dene.",
+                          );
                         }
                       }}
-                      className="text-[9px] text-red-500 hover:text-red-600 self-start transition"
+                      aria-label="Bu mesajı rapor et"
+                      className="text-[11px] text-red-600 hover:text-red-700 self-start transition px-2 py-1 -ml-2 rounded-md active:bg-red-50"
                     >
                       Rapor et
                     </button>
