@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminIcon from "@/components/admin/AdminIcon";
 import { getInitials } from "@/lib/initials";
+import {
+  WARNING_CATEGORIES,
+  WARNING_TEMPLATES,
+  type WarningCategory,
+} from "@/lib/warning-templates";
 
 type UserMini = { id: string; fullName: string; email: string };
 
@@ -48,6 +53,7 @@ export default function ReportsList({ reports }: { reports: AdminReport[] }) {
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [warnTarget, setWarnTarget] = useState<{
+    reportId: string;
     userId: string;
     name: string;
   } | null>(null);
@@ -203,9 +209,9 @@ export default function ReportsList({ reports }: { reports: AdminReport[] }) {
           target={warnTarget}
           onClose={() => setWarnTarget(null)}
           onError={(msg) => setError(msg)}
-          onDone={() => {
+          onDone={(category) => {
             setWarnTarget(null);
-            showToast("Uyarı maili gönderildi.");
+            showToast(`Uyarı gönderildi (${category}).`);
             router.refresh();
           }}
         />
@@ -231,7 +237,7 @@ function ReportCard({
   onReopen: () => void;
   onDelete: () => void;
   onToggleActive: (makeActive: boolean) => void;
-  onWarn: (target: { userId: string; name: string }) => void;
+  onWarn: (target: { reportId: string; userId: string; name: string }) => void;
 }) {
   const isOpen = r.status === "open";
 
@@ -451,6 +457,7 @@ function ReportCard({
                   className="btn btn-secondary btn-sm"
                   onClick={() =>
                     onWarn({
+                      reportId: r.id,
                       userId: r.message!.sender.id,
                       name: r.message!.sender.fullName,
                     })
@@ -523,33 +530,35 @@ function WarnModal({
   onError,
   onDone,
 }: {
-  target: { userId: string; name: string };
+  target: { reportId: string; userId: string; name: string };
   onClose: () => void;
   onError: (msg: string) => void;
-  onDone: () => void;
+  onDone: (categoryLabel: string) => void;
 }) {
-  const [note, setNote] = useState("");
+  const [category, setCategory] = useState<WarningCategory>("hakaret");
+  const [customNote, setCustomNote] = useState("");
   const [sending, setSending] = useState(false);
 
+  const template = useMemo(() => WARNING_TEMPLATES[category], [category]);
+
   async function send() {
-    const trimmed = note.trim();
-    if (trimmed.length < 10) {
-      onError("Uyarı en az 10 karakter olmalı.");
-      return;
-    }
     setSending(true);
     try {
-      const res = await fetch(`/api/admin/users/${target.userId}/warn`, {
+      const res = await fetch("/api/admin/warn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ note: trimmed }),
+        body: JSON.stringify({
+          reportId: target.reportId,
+          category,
+          customNote: customNote.trim() || undefined,
+        }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         onError(data.error || "Uyarı gönderilemedi.");
         return;
       }
-      onDone();
+      onDone(template.label);
     } catch {
       onError("Bağlantı hatası.");
     } finally {
@@ -572,29 +581,88 @@ function WarnModal({
     >
       <div
         className="card"
-        style={{ width: "100%", maxWidth: 460, padding: 20 }}
+        style={{
+          width: "100%",
+          maxWidth: 540,
+          padding: 22,
+          maxHeight: "90vh",
+          overflowY: "auto",
+        }}
       >
-        <h3 style={{ fontSize: 16 }}>{target.name} için uyarı</h3>
-        <p
+        <h3 style={{ fontSize: 16, marginBottom: 4 }}>
+          {target.name} için uyarı gönder
+        </h3>
+        <p style={{ fontSize: 13, color: "var(--muted)", marginBottom: 16 }}>
+          Sistem mesajı + email birlikte gönderilir, rapor otomatik çözülür,
+          kullanıcının uyarı sayacı artar.
+        </p>
+
+        <label
           style={{
-            marginTop: 4,
-            fontSize: 13,
+            fontSize: 12,
+            fontWeight: 500,
             color: "var(--muted)",
+            display: "block",
+            marginBottom: 6,
           }}
         >
-          Kullanıcının kayıtlı e-posta adresine gönderilir.
-        </p>
+          İhlal kategorisi
+        </label>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value as WarningCategory)}
+          className="!h-10"
+          style={{ marginBottom: 16 }}
+        >
+          {WARNING_CATEGORIES.map((c) => (
+            <option key={c.slug} value={c.slug}>
+              {c.label}
+            </option>
+          ))}
+        </select>
+
+        <div
+          style={{
+            background: "#FAFAF7",
+            border: "1px solid var(--color-ink-100, #ECEAE2)",
+            borderRadius: 10,
+            padding: 12,
+            fontSize: 12.5,
+            lineHeight: 1.55,
+            color: "var(--ink, #2A2A28)",
+            marginBottom: 16,
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 12 }}>
+            Önizleme (sohbete düşecek):
+          </div>
+          {template.systemMessage}
+        </div>
+
+        <label
+          style={{
+            fontSize: 12,
+            fontWeight: 500,
+            color: "var(--muted)",
+            display: "block",
+            marginBottom: 6,
+          }}
+        >
+          Ek yönetim notu (opsiyonel, max 400 karakter)
+        </label>
         <textarea
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          placeholder="Uyarı metni — kullanıcı bunu okuyacak."
-          rows={5}
+          value={customNote}
+          onChange={(e) => setCustomNote(e.target.value.slice(0, 400))}
+          placeholder="Boş bırakılırsa sadece şablon gönderilir."
+          rows={3}
           className="textarea"
-          style={{ marginTop: 12 }}
+          style={{ marginBottom: 16 }}
         />
+
         <div
           className="row"
-          style={{ justifyContent: "flex-end", gap: 8, marginTop: 16 }}
+          style={{ justifyContent: "flex-end", gap: 8 }}
         >
           <button
             type="button"
@@ -607,10 +675,10 @@ function WarnModal({
           <button
             type="button"
             onClick={send}
-            disabled={sending || note.trim().length < 10}
+            disabled={sending}
             className="btn btn-primary btn-sm"
           >
-            {sending ? "Gönderiliyor..." : "Gönder"}
+            {sending ? "Gönderiliyor..." : "Uyarıyı gönder"}
           </button>
         </div>
       </div>

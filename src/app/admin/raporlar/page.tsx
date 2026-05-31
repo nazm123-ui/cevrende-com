@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import AdminIcon from "@/components/admin/AdminIcon";
 import ReportsList from "@/components/admin/ReportsList";
+import TopReportedUsers from "@/components/admin/TopReportedUsers";
 
 export const metadata = { title: "Raporlar — Admin" };
 
@@ -16,6 +17,56 @@ export default async function AdminReportsPage({
   const status = sp.status ?? "open";
 
   const where = status === "all" ? {} : { status };
+
+  // Çok rapor edilen / uyarılan kullanıcılar (top 10)
+  // Her mesajın senderId'sine göre rapor sayısını grupla
+  const allReportsAggregate = await prisma.$queryRaw<
+    Array<{
+      sender_id: string;
+      report_count: bigint;
+      open_count: bigint;
+    }>
+  >`
+    SELECT
+      m."senderId" as sender_id,
+      COUNT(r.id) as report_count,
+      COUNT(CASE WHEN r.status = 'open' THEN 1 END) as open_count
+    FROM "MessageReport" r
+    INNER JOIN "Message" m ON m.id = r."messageId"
+    GROUP BY m."senderId"
+    ORDER BY report_count DESC
+    LIMIT 10
+  `;
+  const topUserIds = allReportsAggregate.map((r) => r.sender_id);
+  const topUsers = topUserIds.length
+    ? await prisma.user.findMany({
+        where: { id: { in: topUserIds } },
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+          isActive: true,
+          warningCount: true,
+          lastWarnedAt: true,
+        },
+      })
+    : [];
+  const topUsersData = allReportsAggregate
+    .map((row) => {
+      const user = topUsers.find((u) => u.id === row.sender_id);
+      if (!user) return null;
+      return {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        isActive: user.isActive,
+        warningCount: user.warningCount,
+        lastWarnedAt: user.lastWarnedAt?.toISOString() ?? null,
+        totalReports: Number(row.report_count),
+        openReports: Number(row.open_count),
+      };
+    })
+    .filter((u): u is NonNullable<typeof u> => u !== null);
 
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
@@ -196,6 +247,11 @@ export default async function AdminReportsPage({
           En yeni <AdminIcon name="chevron-down" size={12} />
         </span>
       </div>
+
+      {/* Top reported users panel */}
+      {topUsersData.length > 0 && (
+        <TopReportedUsers users={topUsersData} />
+      )}
 
       {/* Reports list */}
       <ReportsList reports={enriched} />

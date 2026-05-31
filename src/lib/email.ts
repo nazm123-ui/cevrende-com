@@ -143,3 +143,36 @@ export async function sendPasswordResetEmail(to: string, code: string) {
     `,
   });
 }
+
+// Kategorize uyarı emaili — admin /admin/raporlar'dan bir kategori seçtiğinde
+// kullanılır. Subject + plain text body parametre olarak gelir.
+export async function sendCategorizedWarningEmail(payload: {
+  to: string;
+  name: string;
+  subject: string;
+  body: string;
+  categoryLabel: string;
+}) {
+  const adminEmail = process.env.GMAIL_USER;
+  if (!transporter || !adminEmail) {
+    console.info("[DEV CATEGORIZED WARNING]", JSON.stringify(payload));
+    return;
+  }
+  const safeBody = escapeHtml(payload.body).replace(/\n/g, "<br>");
+  const safeCat = escapeHtml(payload.categoryLabel);
+  await transporter.sendMail({
+    from: `"Çevrende.com Yönetim" <${adminEmail}>`,
+    to: payload.to,
+    subject: payload.subject,
+    text: payload.body,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; color: #0f172a;">
+        <div style="background: #fee2e2; border-left: 4px solid #dc2626; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px;">
+          <strong style="color: #991b1b; font-size: 13px;">İHLAL KATEGORİSİ: ${safeCat}</strong>
+        </div>
+        <div style="font-size: 14px; line-height: 1.65;">${safeBody}</div>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 32px;">Çevrende.com — Bu mesaj otomatik bir yönetim uyarısıdır.</p>
+      </div>
+    `,
+  });
+}
