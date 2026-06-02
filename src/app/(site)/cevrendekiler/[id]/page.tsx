@@ -19,10 +19,64 @@ export async function generateMetadata({
   const { id } = await params;
   const w = await prisma.user.findUnique({
     where: { id },
-    select: { fullName: true },
+    select: {
+      fullName: true,
+      bio: true,
+      professions: true,
+      district: true,
+      neighborhood: true,
+      isActive: true,
+      isEmailVerified: true,
+    },
   });
-  if (!w) return { title: "Profil — Cevrende.com" };
-  return { title: `${w.fullName} — Cevrende.com` };
+  if (!w) {
+    return {
+      title: "Profil bulunamadı",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  // Aktif olmayan / doğrulanmamış profiller indeksleme
+  if (!w.isActive || !w.isEmailVerified) {
+    return {
+      title: `${w.fullName}`,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  // Meslekleri okunabilir hale getir (kategori slug → isim çevirisi)
+  const categories = await prisma.jobCategory.findMany({
+    where: { slug: { in: w.professions } },
+    select: { slug: true, name: true },
+  });
+  const professionNames = categories.map((c) => c.name);
+  const profStr =
+    professionNames.length > 0 ? professionNames.slice(0, 3).join(", ") : "Usta";
+  const locStr = w.neighborhood
+    ? `${w.neighborhood}, ${w.district}`
+    : w.district;
+
+  const title = `${w.fullName} — ${profStr} · ${locStr}`;
+  const description = w.bio
+    ? `${w.bio.slice(0, 140)}${w.bio.length > 140 ? "…" : ""} ${locStr}'te ${profStr.toLowerCase()} arayanlar için Çevrende profili.`
+    : `${w.fullName} — ${locStr}'te ${profStr.toLowerCase()} hizmeti veriyor. Doğrudan mesajlaş, aracısız iletişime geç. Cevrende.com`;
+
+  return {
+    title,
+    description: description.slice(0, 160),
+    alternates: { canonical: `/cevrendekiler/${id}` },
+    openGraph: {
+      title,
+      description: description.slice(0, 200),
+      url: `/cevrendekiler/${id}`,
+      type: "profile",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description: description.slice(0, 200),
+    },
+  };
 }
 
 export default async function WorkerProfilePage({

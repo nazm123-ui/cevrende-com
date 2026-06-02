@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import PwaRegister from "@/components/PwaRegister";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
+import { SITE_URL, SITE_NAME } from "@/lib/site-url";
 import "./globals.css";
 
 const geist = Geist({
@@ -17,9 +18,56 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cevrende — Pendik'te Mahallenden Usta ve Hizmet",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Cevrende — Pendik'te Mahallenden Usta ve Hizmet",
+    template: "%s — Cevrende",
+  },
   description:
     "Pendik'te güvenilir temizlikçi, çilingir, tadilat ustası ve daha fazlasını mahallenden bul. Aracısız, ücretsiz iletişim.",
+  applicationName: SITE_NAME,
+  authors: [{ name: "Çevrende Ekibi" }],
+  generator: "Next.js",
+  keywords: [
+    "Pendik usta",
+    "Pendik temizlikçi",
+    "Pendik çilingir",
+    "Pendik tadilat",
+    "Pendik kurye",
+    "Pendik iş ilanları",
+    "mahallenden usta",
+    "iş arama Pendik",
+    "yerel hizmet Pendik",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "tr_TR",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: "Cevrende — Pendik'te Mahallenden Usta ve Hizmet",
+    description:
+      "Pendik'te güvenilir temizlikçi, çilingir, tadilat ustası ve daha fazlasını mahallenden bul. Aracısız, ücretsiz iletişim.",
+    // OG image opengraph-image.tsx üzerinden otomatik enjekte edilir
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cevrende — Pendik'te Mahallenden Usta ve Hizmet",
+    description:
+      "Pendik'te güvenilir usta, kurye, bakıcı ve daha fazlasını mahallenden bul. Aracı yok, komisyon yok.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -57,11 +105,23 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: "Cevrende",
-              url: "https://cevrende.com",
+              name: SITE_NAME,
+              url: SITE_URL,
+              logo: `${SITE_URL}/icon-512.png`,
               description:
                 "Pendik'te mahallenden usta ve hizmet bulma platformu",
-              areaServed: ["Pendik", "Istanbul"],
+              areaServed: {
+                "@type": "AdministrativeArea",
+                name: "Pendik",
+                containedInPlace: {
+                  "@type": "City",
+                  name: "İstanbul",
+                  address: {
+                    "@type": "PostalAddress",
+                    addressCountry: "TR",
+                  },
+                },
+              },
               sameAs: [
                 "https://twitter.com/cevrende",
                 "https://instagram.com/cevrende",
@@ -75,14 +135,57 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              url: "https://cevrende.com",
+              name: SITE_NAME,
+              url: SITE_URL,
+              inLanguage: "tr-TR",
               potentialAction: {
                 "@type": "SearchAction",
                 target: {
                   "@type": "EntryPoint",
-                  urlTemplate:
-                    "https://cevrende.com/cevrendekiler?q={search_term_string}",
+                  urlTemplate: `${SITE_URL}/cevrendekiler?q={search_term_string}`,
                 },
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              "@id": `${SITE_URL}#localbusiness`,
+              name: "Cevrende — Pendik İş Eşleştirme",
+              description:
+                "Pendik ve çevre mahallelerde işçi-işveren eşleştirme platformu. Temizlik, tadilat, çilingir, kurye, garson ve daha fazlası.",
+              url: SITE_URL,
+              image: `${SITE_URL}/og-default.png`,
+              priceRange: "Ücretsiz",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Pendik",
+                addressRegion: "İstanbul",
+                addressCountry: "TR",
+              },
+              areaServed: {
+                "@type": "AdministrativeArea",
+                name: "Pendik, İstanbul",
+              },
+              telephone: "",
+              openingHoursSpecification: {
+                "@type": "OpeningHoursSpecification",
+                dayOfWeek: [
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                  "Sunday",
+                ],
+                opens: "00:00",
+                closes: "23:59",
               },
             }),
           }}
