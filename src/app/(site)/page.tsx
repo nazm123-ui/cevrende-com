@@ -5,6 +5,8 @@ import TrustMessage from "@/components/home/TrustMessage";
 import PreviewListings from "@/components/home/PreviewListings";
 import FAQ from "@/components/home/FAQ";
 import FinalCTA from "@/components/home/FinalCTA";
+import { HOME_FAQS, HOW_TO_STEPS } from "@/lib/home-faqs";
+import { SITE_URL } from "@/lib/site-url";
 
 export const metadata = {
   title: "Cevrende — Pendik'te Mahallenden Usta ve Hizmet",
@@ -17,33 +19,6 @@ export const metadata = {
 export const revalidate = 60;
 
 export default function HomePage() {
-  const faqs = [
-    {
-      q: "Pendik'te güvenilir temizlikçi nasıl bulurum?",
-      a: "Cevrende'ye giriş yapıp 'Temizlik' kategorisine filtrele. Her işçinin profili, yapılan işler ve kullanıcı değerlendirmeleri görürsün. Direkt mesaj yazabilir, telefonla iletişime geçebilirsin.",
-    },
-    {
-      q: "Pendik'te çilingir nasıl çabuk bulabilirim?",
-      a: "Mahallendekiler sayfasında 'Çilingir' ya da 'Kilit' yazdığında, Pendik ve çevresindeki tüm usta listelenecek. Profiline bakıp mesaj gönderebilir, ücret hakkında anlaşabilirsin.",
-    },
-    {
-      q: "İşçiye telefon vermeden mesajlaşabilir miyim?",
-      a: "Evet. Platform içinden mesajla başlayabilirsin. İşçi onay verince ve mesajlaştıktan sonra isteğe bağlı olarak WhatsApp/telefona geçebilirsin.",
-    },
-    {
-      q: "Pendik'te işçi profili açmak kaç para tutuyor?",
-      a: "Tamamen ücretsiz. Profil aç, mesleğini seç, mahalleni ekle. Hiçbir ücret, hiçbir komisyon yok. Müşteriler seni direkt arayacak.",
-    },
-    {
-      q: "Çevrendekiler listesine nasıl eklenebilirim?",
-      a: "Ücretsiz hesap aç, e-postanı doğrula. Profil ayarlarında mesleğini seç (Temizlik, Tadilat, Çilingir, vb.) ve mahalleni belirle. Hemen listelenmeye başlarsın.",
-    },
-    {
-      q: "Pendik'te işçi ararken hangi bilgilerim paylaşılır?",
-      a: "Sana gösterilen profilde, işçinin istediği bilgiler görünür. Mesajlaştıktan sonra, işçi kendi güvenlik ayarlarına göre adını, telefonu, adresi seçerek paylaşabilir.",
-    },
-  ];
-
   return (
     <>
       <script
@@ -52,7 +27,7 @@ export default function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            mainEntity: faqs.map((faq) => ({
+            mainEntity: HOME_FAQS.map((faq) => ({
               "@type": "Question",
               name: faq.q,
               acceptedAnswer: {
@@ -63,12 +38,38 @@ export default function HomePage() {
           }),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "HowTo",
+            name: "Pendik'te işçi/usta nasıl bulunur?",
+            description:
+              "Cevrende.com üzerinden Pendik bölgesinde güvenilir işçi/usta bulmanın adım adım yöntemi.",
+            totalTime: "PT5M",
+            estimatedCost: {
+              "@type": "MonetaryAmount",
+              currency: "TRY",
+              value: "0",
+            },
+            inLanguage: "tr-TR",
+            step: HOW_TO_STEPS.map((s, i) => ({
+              "@type": "HowToStep",
+              position: i + 1,
+              name: s.name,
+              text: s.text,
+              url: `${SITE_URL}/#step-${i + 1}`,
+            })),
+          }),
+        }}
+      />
       <Hero />
       <CountStrip />
       <HowItWorks />
       <TrustMessage />
       <PreviewListings />
-      <FAQ />
+      <FAQ faqs={HOME_FAQS} />
       <FinalCTA />
     </>
   );

@@ -1,10 +1,23 @@
 import Link from "next/link";
+import { Children, isValidElement, type ReactNode } from "react";
 
 export const metadata = {
   title: "Yardım Merkezi — Cevrende.com",
   description:
     "Cevrende.com kullanımı hakkında sık sorulan sorular: kayıt, profil, mesajlaşma, telefon görünürlüğü ve hesap güvenliği.",
 };
+
+// React node içeriğini düz metne çevirir — FAQPage schema için.
+function extractText(node: ReactNode): string {
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join("");
+  if (isValidElement(node)) {
+    const children = (node.props as { children?: ReactNode }).children;
+    return extractText(children);
+  }
+  return "";
+}
 
 const FAQS: { q: string; a: React.ReactNode }[] = [
   {
@@ -103,9 +116,38 @@ const FAQS: { q: string; a: React.ReactNode }[] = [
   },
 ];
 
+// AI search'ün net cevap çıkartabilmesi için Article + FAQPage schema
+// birlikte gönderilir. Article freshness (datePublished/dateModified) AI
+// sistemlerinin "ne kadar yeni?" sinyali için kritik.
+const LAST_UPDATED = "2026-06-02";
+
 export default function YardimPage() {
+  // Plain-text FAQs for schema (React node a → readable string)
+  const faqsPlain = FAQS.map((f) => ({
+    q: f.q,
+    a: typeof f.a === "string" ? f.a : extractText(f.a),
+  }));
+
   return (
     <div className="page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            inLanguage: "tr-TR",
+            datePublished: "2026-04-01",
+            dateModified: LAST_UPDATED,
+            mainEntity: faqsPlain.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+          }),
+        }}
+      />
+
       <section style={{ padding: "56px 0 24px" }}>
         <div className="container" style={{ maxWidth: 800 }}>
           <div className="eyebrow" style={{ marginBottom: 12 }}>
@@ -127,6 +169,16 @@ export default function YardimPage() {
               bize ulaş
             </Link>
             .
+          </p>
+          <p
+            style={{
+              marginTop: 14,
+              fontSize: 13,
+              color: "var(--color-ink-400)",
+            }}
+          >
+            Son güncelleme:{" "}
+            <time dateTime={LAST_UPDATED}>2 Haziran 2026</time>
           </p>
         </div>
       </section>

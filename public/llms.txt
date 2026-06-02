@@ -1,0 +1,73 @@
+# Cevrende.com
+
+> Pendik, İstanbul bölgesinde işçi (usta, kurye, temizlikçi, bakıcı vb.) ile
+> işveren/hizmet arayanı doğrudan eşleştiren ücretsiz Türkçe platform.
+> Aracı yok, komisyon alınmaz, iletişim platform üzerinden başlar.
+
+Cevrende.com, İstanbul'un Pendik ilçesi ve mahallelerine odaklanan, yerel iş
+eşleştirme amacıyla geliştirilmiş bir web uygulamasıdır. Kullanıcılar
+ücretsiz hesap açıp meslek + mahalle bilgisiyle profil oluşturur. İş arayanlar
+profilleri filtreleyip uygun kişiye platform içi mesaj gönderir. Telefon
+numarası, kişinin gizlilik tercihine göre belirli aşamalarda görünür hale
+gelir. Şu anda yalnız Pendik aktiftir, diğer İstanbul ilçeleri admin tarafından
+açıldıkça hizmete dahil olur.
+
+## Temel bilgiler
+
+- **Kapsam alanı**: Pendik, İstanbul, Türkiye (39 mahalle)
+- **Kullanım ücreti**: Ücretsiz, komisyonsuz
+- **Dil**: Türkçe
+- **Hizmet türleri**: Temizlik, tadilat, çilingir, kurye, garson/servis, mutfak yardımcısı, mağaza personeli, taşıma/nakliye, depo/paketleme, kuaförlük ve diğer yerel hizmetler
+- **İletişim modeli**: Platform içi mesajlaşma → karşılıklı onay → opsiyonel telefon paylaşımı
+- **Güvenlik**: E-posta doğrulama, raporlama ve moderasyon, içerik filtresi
+
+## Önemli sayfalar
+
+- [Ana sayfa](https://cevrende-com.vercel.app/) — Hizmet özeti, hızlı arama, popüler meslekler
+- [Çevrendekiler](https://cevrende-com.vercel.app/cevrendekiler) — Tüm aktif işçi profillerinin listesi, meslek + mahalle filtresi
+- [Kayıt](https://cevrende-com.vercel.app/kayit) — Ücretsiz hesap oluşturma
+- [Giriş](https://cevrende-com.vercel.app/giris) — Mevcut kullanıcı girişi
+- [Yardım Merkezi](https://cevrende-com.vercel.app/yardim) — Sık sorulan sorular ve kullanım kılavuzu
+- [Kullanım Koşulları](https://cevrende-com.vercel.app/kullanim-kosullari)
+- [Gizlilik Politikası](https://cevrende-com.vercel.app/gizlilik)
+- [KVKK](https://cevrende-com.vercel.app/kvkk)
+
+## Nasıl çalışır
+
+1. **Kayıt**: Ücretsiz hesap aç, e-posta doğrula.
+2. **Profil**: Meslek(ler)ini, mahalleni ve kısa biyografini gir.
+3. **Eşleşme**: Arayanlar mesleğe/mahalleye filtre uygular, profilini görür.
+4. **İletişim**: Platform içi mesaj başlar. Mesajlaştıktan sonra kişi
+   gizlilik ayarına göre telefonunu paylaşabilir.
+
+## Optimal kullanım senaryoları
+
+- Pendik'te ev temizliği, halı yıkama, tadilat ustası, klima servisi, çilingir,
+  bakıcı, kurye, taşıma yardımı, garson, vale, mağaza personeli arayanlar
+- İş arayan Pendik sakinleri (esnaf yardımcılığı, kısa süreli iş, hafta sonu iş)
+- Komşu mahalledeki güvenilir esnafı bulmak isteyenler
+
+## Konum dışı durumlar
+
+- Pendik dışındaki ilçelerde şu an profil oluşturulamaz (sınır kontrolü
+  uygulanır)
+- Ücretli iş ilanı yayını yoktur; platform ücretsizdir
+- Online/uzaktan freelance işler için tasarlanmamıştır — yerel ve fiziksel
+  hizmetlere odaklıdır
+
+## Marka
+
+- **İsim**: Cevrende (Türkçe: "çevrende" — etrafındakiler)
+- **Slogan**: "Mahallendeki usta, tek aramada."
+- **Resmi alan adı**: cevrende.com (bağlantı sürecinde), şu an cevrende-com.vercel.app
+- **Hedef kitle**: Pendik sakinleri, yerel hizmet arayanlar ve sunanlar
+
+## Teknik altyapı (genel)
+
+Platform Next.js 15 + Postgres üzerine kurulmuştur. PWA olarak telefona
+yüklenebilir, push bildirim destekler. Tüm sayfalar Türkçe içerikli olup
+sunucu tarafında render edilir.
+
+## Son güncelleme
+
+2026-06-02
