@@ -1,15 +1,15 @@
 const items = [
   {
-    title: "Yerel",
-    body: "Sadece Pendik ve çevre semtler. Uzak kalmaz.",
+    title: "Sadece Pendik",
+    body: "39 mahallede çalışırız. Uzaktaki ilanlarla vakit kaybetmezsin — yan komşudaki ustayı bulursun.",
   },
   {
-    title: "Ücretsiz",
-    body: "Profil oluşturmak ve görüntülemek tamamen ücretsizdir.",
+    title: "Komisyonsuz",
+    body: "Profil aç, mesaj at, anlaş. Üyelik ücreti yok, ilan ücreti yok, aracı kesintisi yok.",
   },
   {
-    title: "Hızlı iletişim",
-    body: "Aracısız telefon veya mesaj. Vakit kaybı yok.",
+    title: "Doğrudan iletişim",
+    body: "İlk mesaj platformdan başlar. Telefon, WhatsApp, adres — ne paylaşılacağına sen karar verirsin.",
   },
 ];
 

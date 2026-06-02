@@ -13,10 +13,10 @@ export default async function CountStrip() {
       : workersCount.toString();
 
   const stats = [
-    { n: workersDisplay, lbl: "iş arayan" },
-    { n: "7", lbl: "semt — Pendik & çevresi" },
-    { n: "~2 sa", lbl: "ortalama yanıt" },
-    { n: "%0", lbl: "komisyon" },
+    { n: workersDisplay, lbl: "Pendik'te kayıtlı işçi" },
+    { n: "39", lbl: "mahalle kapsama alanı" },
+    { n: "~2 sa", lbl: "ortalama mesaj yanıt süresi" },
+    { n: "%0", lbl: "komisyon ve üyelik ücreti" },
   ];
 
   return (

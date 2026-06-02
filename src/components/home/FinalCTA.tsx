@@ -7,11 +7,11 @@ export default function FinalCTA() {
         <div className="bg-ink-900 text-white rounded-[18px] p-7 sm:p-12 lg:p-14 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 sm:gap-8">
           <div className="flex-1 min-w-0">
             <h2 className="text-balance text-white max-w-[520px]">
-              İş arıyorsan, çevren seni görsün.
+              Pendik'te iş arıyorsan, mahallen seni bulsun.
             </h2>
             <p className="text-[15px] sm:text-[16px] mt-3 sm:mt-3.5 text-white/70 max-w-[480px] leading-[1.55]">
-              İki dakikada profilini oluştur. Sadece çevrendeki işverenler
-              görür, doğrudan ulaşır.
+              2 dakikada profilini aç. Mesleğini ve mahalleni yaz — Pendik'teki
+              işverenler seni doğrudan arar. Komisyon yok, ilan ücreti yok.
             </p>
           </div>
           <Link

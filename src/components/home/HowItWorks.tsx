@@ -1,18 +1,18 @@
 const steps = [
   {
     n: "01",
-    title: "Profilini yayınla",
-    body: "Ne iş yaptığını, deneyimini ve nerede çalışmak istediğini birkaç adımda yaz.",
+    title: "2 dakikada profil aç",
+    body: "Mesleğini, mahalleni ve deneyimini gir. Hesap açma ücretsiz, e-posta doğrulamayla biter.",
   },
   {
     n: "02",
-    title: "İşveren seni bulur",
-    body: "Pendik'te sana uygun iş arayan işverenler profilini görür.",
+    title: "Pendik'teki işveren seni bulur",
+    body: "Aradıkları meslek senin profilinle eşleşince listede görünürsün. Mahalleye göre öncelik kazanırsın.",
   },
   {
     n: "03",
-    title: "Doğrudan iletişim",
-    body: "Telefon ya da mesajla aracısız konuşur, vakit kaybetmezsin.",
+    title: "Aracısız mesajlaş, iş başla",
+    body: "İşveren doğrudan platformdan mesaj atar. Telefonu sadece sen onaylarsan paylaşırsın.",
     highlight: true,
   },
 ];
