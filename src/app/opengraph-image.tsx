@@ -70,8 +70,8 @@ export default async function OpengraphImage() {
               maxWidth: 1040,
             }}
           >
-            Mahallendeki usta,{" "}
-            <span style={{ color: "#D4541C" }}>tek aramada.</span>
+            Çevrendekiler{" "}
+            <span style={{ color: "#D4541C" }}>seni bulsun.</span>
           </div>
           <div
             style={{

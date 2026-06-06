@@ -207,7 +207,7 @@ export async function sendCategoryApprovedEmail(payload: {
         <p style="font-size: 14px; line-height: 1.65;">
           Önerdiğin <strong>${safeCat}</strong> mesleğini Çevrende.com kategorilerine ekledik. Katkın için teşekkürler! ${profileLine}
         </p>
-        <p style="font-size: 12px; color: #94a3b8; margin-top: 32px;">Çevrende.com — Mahallendeki usta, tek aramada.</p>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 32px;">Çevrende.com — Çevrendekiler seni bulsun.</p>
       </div>
     `,
   });

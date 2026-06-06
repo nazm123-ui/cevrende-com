@@ -23,14 +23,14 @@ açıldıkça hizmete dahil olur.
 
 ## Önemli sayfalar
 
-- [Ana sayfa](https://cevrende-com.vercel.app/) — Hizmet özeti, hızlı arama, popüler meslekler
-- [Çevrendekiler](https://cevrende-com.vercel.app/cevrendekiler) — Tüm aktif işçi profillerinin listesi, meslek + mahalle filtresi
-- [Kayıt](https://cevrende-com.vercel.app/kayit) — Ücretsiz hesap oluşturma
-- [Giriş](https://cevrende-com.vercel.app/giris) — Mevcut kullanıcı girişi
-- [Yardım Merkezi](https://cevrende-com.vercel.app/yardim) — Sık sorulan sorular ve kullanım kılavuzu
-- [Kullanım Koşulları](https://cevrende-com.vercel.app/kullanim-kosullari)
-- [Gizlilik Politikası](https://cevrende-com.vercel.app/gizlilik)
-- [KVKK](https://cevrende-com.vercel.app/kvkk)
+- [Ana sayfa](https://cevrende.com/) — Hizmet özeti, hızlı arama, popüler meslekler
+- [Çevrendekiler](https://cevrende.com/cevrendekiler) — Tüm aktif işçi profillerinin listesi, meslek + mahalle filtresi
+- [Kayıt](https://cevrende.com/kayit) — Ücretsiz hesap oluşturma
+- [Giriş](https://cevrende.com/giris) — Mevcut kullanıcı girişi
+- [Yardım Merkezi](https://cevrende.com/yardim) — Sık sorulan sorular ve kullanım kılavuzu
+- [Kullanım Koşulları](https://cevrende.com/kullanim-kosullari)
+- [Gizlilik Politikası](https://cevrende.com/gizlilik)
+- [KVKK](https://cevrende.com/kvkk)
 
 ## Nasıl çalışır
 
@@ -58,8 +58,8 @@ açıldıkça hizmete dahil olur.
 ## Marka
 
 - **İsim**: Cevrende (Türkçe: "çevrende" — etrafındakiler)
-- **Slogan**: "Mahallendeki usta, tek aramada."
-- **Resmi alan adı**: cevrende.com (bağlantı sürecinde), şu an cevrende-com.vercel.app
+- **Slogan**: "Çevrendekiler seni bulsun."
+- **Resmi alan adı**: cevrende.com
 - **Hedef kitle**: Pendik sakinleri, yerel hizmet arayanlar ve sunanlar
 
 ## Teknik altyapı (genel)

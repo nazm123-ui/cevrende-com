@@ -18,7 +18,7 @@ export type WarningTemplate = {
   emailBody: string; // email gövdesi (plain text)
 };
 
-const RULES_LINK = "https://cevrende-com.vercel.app/kullanim-kosullari";
+const RULES_LINK = "https://cevrende.com/kullanim-kosullari";
 
 export const WARNING_TEMPLATES: Record<WarningCategory, WarningTemplate> = {
   hakaret: {
