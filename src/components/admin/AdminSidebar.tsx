@@ -10,6 +10,7 @@ type Counts = {
   reports: number;
   categories: number;
   districts: number;
+  suggestions: number;
 };
 
 type Props = {
@@ -45,6 +46,14 @@ const NAV = {
       icon: "tag",
       label: "Kategoriler",
       countKey: "categories" as const,
+    },
+    {
+      href: "/admin/oneriler",
+      id: "suggestions",
+      icon: "msg",
+      label: "Öneriler",
+      countKey: "suggestions" as const,
+      dotIfOpen: true,
     },
     {
       href: "/admin/ilceler",

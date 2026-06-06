@@ -20,11 +20,18 @@ export default async function AdminLayout({
 }) {
   const admin = await requireAdmin();
 
-  const [usersCount, categoriesCount, openReportsCount, districtsCount] = await Promise.all([
+  const [
+    usersCount,
+    categoriesCount,
+    openReportsCount,
+    districtsCount,
+    pendingSuggestionsCount,
+  ] = await Promise.all([
     prisma.user.count(),
     prisma.jobCategory.count({ where: { isActive: true } }),
     prisma.messageReport.count({ where: { status: "open" } }),
     prisma.district.count({ where: { isEnabled: true } }),
+    prisma.categorySuggestion.count({ where: { status: "pending" } }),
   ]);
 
   return (
@@ -36,6 +43,7 @@ export default async function AdminLayout({
             reports: openReportsCount,
             categories: categoriesCount,
             districts: districtsCount,
+            suggestions: pendingSuggestionsCount,
           }}
           adminName={admin.fullName}
           adminInitials={initialsFrom(admin.fullName)}

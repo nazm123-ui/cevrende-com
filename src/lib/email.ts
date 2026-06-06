@@ -176,3 +176,39 @@ export async function sendCategorizedWarningEmail(payload: {
     `,
   });
 }
+
+export async function sendCategoryApprovedEmail(payload: {
+  to: string;
+  name: string;
+  categoryName: string;
+  addedToProfile: boolean;
+}) {
+  const adminEmail = process.env.GMAIL_USER;
+  if (!transporter || !adminEmail) {
+    console.info("[DEV CATEGORY APPROVED]", JSON.stringify(payload));
+    return;
+  }
+  const safeName = escapeHtml(payload.name);
+  const safeCat = escapeHtml(payload.categoryName);
+  const profileLine = payload.addedToProfile
+    ? `<strong>${safeCat}</strong> mesleğini profiline ekledik — dilersen panelden kontrol edip güncelleyebilirsin.`
+    : `Artık profil ayarlarından <strong>${safeCat}</strong> mesleğini seçebilirsin.`;
+  await transporter.sendMail({
+    from: `"Çevrende.com" <${adminEmail}>`,
+    to: payload.to,
+    subject: `Önerdiğin meslek eklendi: ${payload.categoryName}`,
+    text: `Merhaba ${payload.name},\n\nÖnerdiğin "${payload.categoryName}" mesleğini Çevrende.com'a ekledik. Teşekkürler!\n\nÇevrende.com`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; color: #0f172a;">
+        <div style="background: #dcfce7; border-left: 4px solid #16a34a; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px;">
+          <strong style="color: #166534; font-size: 13px;">Önerin onaylandı 🎉</strong>
+        </div>
+        <p style="font-size: 14px; line-height: 1.65;">Merhaba ${safeName},</p>
+        <p style="font-size: 14px; line-height: 1.65;">
+          Önerdiğin <strong>${safeCat}</strong> mesleğini Çevrende.com kategorilerine ekledik. Katkın için teşekkürler! ${profileLine}
+        </p>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 32px;">Çevrende.com — Mahallendeki usta, tek aramada.</p>
+      </div>
+    `,
+  });
+}

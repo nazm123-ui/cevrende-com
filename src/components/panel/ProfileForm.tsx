@@ -277,7 +277,16 @@ function ProfessionAutocomplete({
   const [highlight, setHighlight] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  // "Mesleğim listede yok" öneri akışı
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const [suggestName, setSuggestName] = useState("");
+  const [suggestNote, setSuggestNote] = useState("");
+  const [suggestLoading, setSuggestLoading] = useState(false);
+  const [suggestErr, setSuggestErr] = useState<string | null>(null);
+  const [suggestDone, setSuggestDone] = useState(false);
+
   const selectedSet = useMemo(() => new Set(selected), [selected]);
+  const hasDiger = selectedSet.has("diger");
 
   const suggestions = useMemo(() => {
     const q = query.trim();
@@ -309,6 +318,46 @@ function ProfessionAutocomplete({
     onAdd(slug);
     setQuery("");
     setOpen(false);
+  }
+
+  function openSuggest() {
+    setSuggestName(query.trim());
+    setSuggestNote("");
+    setSuggestErr(null);
+    setSuggestDone(false);
+    setSuggestOpen(true);
+    setOpen(false);
+  }
+
+  async function submitSuggest() {
+    const name = suggestName.trim();
+    if (name.length < 2) {
+      setSuggestErr("Meslek adı en az 2 karakter olmalı.");
+      return;
+    }
+    setSuggestLoading(true);
+    setSuggestErr(null);
+    try {
+      const res = await fetch("/api/category-suggestions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          suggestedName: name,
+          note: suggestNote.trim() || undefined,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSuggestErr(data.error || "Öneri gönderilemedi.");
+        return;
+      }
+      setSuggestDone(true);
+      setQuery("");
+    } catch {
+      setSuggestErr("Bir hata oluştu. Tekrar deneyin.");
+    } finally {
+      setSuggestLoading(false);
+    }
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -367,7 +416,103 @@ function ProfessionAutocomplete({
             ))}
           </ul>
         )}
+
+        {open && !atMax && query.trim().length >= 2 && suggestions.length === 0 && (
+          <div className="absolute z-20 left-0 right-0 top-full mt-2 rounded-[12px] border border-ink-100 bg-white shadow-[0_12px_28px_-12px_rgba(15,17,16,0.18)] p-3">
+            <p className="text-[13px] text-ink-700">
+              <span className="font-medium">&ldquo;{query.trim()}&rdquo;</span> listede yok.
+            </p>
+            <button
+              type="button"
+              onClick={openSuggest}
+              className="mt-2 w-full btn-ink h-10 rounded-lg text-[14px]"
+            >
+              Bu mesleği bize öner
+            </button>
+            <p className="mt-2 text-[12px] text-ink-500 leading-relaxed">
+              İncelendikten sonra kategoriye ekleyeceğiz ve sana haber vereceğiz.
+            </p>
+          </div>
+        )}
       </div>
+
+      {suggestOpen && !suggestDone && (
+        <div className="rounded-xl border border-ink-200 bg-ink-50/50 p-3 space-y-2.5">
+          <p className="text-[13px] font-medium text-ink-900">Meslek öner</p>
+          <input
+            type="text"
+            value={suggestName}
+            onChange={(e) => setSuggestName(e.target.value)}
+            placeholder="Meslek adı (örn. Doğalgaz Tesisatçısı)"
+            maxLength={60}
+            className={inputCls}
+          />
+          <textarea
+            value={suggestNote}
+            onChange={(e) => setSuggestNote(e.target.value)}
+            rows={2}
+            maxLength={300}
+            placeholder="İstersen kısaca ne iş yaptığını yaz (opsiyonel)"
+            className={inputCls}
+          />
+          {suggestErr && <p className="text-xs text-red-600">{suggestErr}</p>}
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setSuggestOpen(false)}
+              className="h-9 rounded-full border border-ink-200 px-4 text-sm text-ink-700 hover:border-ink-900 transition"
+            >
+              Vazgeç
+            </button>
+            <button
+              type="button"
+              onClick={submitSuggest}
+              disabled={suggestLoading}
+              className="btn-ink h-9 px-4 rounded-full text-sm"
+            >
+              {suggestLoading ? "Gönderiliyor..." : "Gönder"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {suggestDone && (
+        <div className="rounded-xl border border-green-200 bg-green-50 p-3 space-y-2.5">
+          <p className="text-[13px] font-medium text-green-800">
+            Önerini aldık ✓
+          </p>
+          <p className="text-[12.5px] text-green-700 leading-relaxed">
+            Meslek incelenip eklenince sana mesaj ve e-posta ile haber vereceğiz.
+            Bu sırada profilini yayında tutmak için &ldquo;Diğer&rdquo; kategorisini
+            ekleyebilirsin — meslek eklenince güncelleriz.
+          </p>
+          <div className="flex flex-wrap justify-end gap-2">
+            {!hasDiger && categories.some((c) => c.slug === "diger") && (
+              <button
+                type="button"
+                onClick={() => {
+                  onAdd("diger");
+                  setSuggestDone(false);
+                  setSuggestOpen(false);
+                }}
+                className="h-9 rounded-full border border-ink-300 px-4 text-sm text-ink-800 hover:border-ink-900 transition"
+              >
+                &ldquo;Diğer&rdquo;i ekle
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                setSuggestDone(false);
+                setSuggestOpen(false);
+              }}
+              className="btn-ink h-9 px-4 rounded-full text-sm"
+            >
+              Tamam
+            </button>
+          </div>
+        </div>
+      )}
 
       {selected.length > 0 && (
         <div className="flex flex-wrap gap-2">

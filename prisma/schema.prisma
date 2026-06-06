@@ -43,6 +43,7 @@ model User {
   savedProfiles      SavedProfile[]   @relation("SavedBy")
   savedByOthers      SavedProfile[]   @relation("SavedAs")
   pushSubscriptions  PushSubscription[]
+  categorySuggestions CategorySuggestion[] @relation("SuggestedBy")
 }
 
 model Message {
@@ -81,6 +82,28 @@ model JobCategory {
   order     Int       @default(0)
   isActive  Boolean   @default(true)
   createdAt DateTime  @default(now())
+}
+
+model CategorySuggestion {
+  id              String    @id @default(cuid())
+  // Öneren kişi (kayıtlı kullanıcı; profil formundan gelir)
+  userId          String
+  user            User      @relation("SuggestedBy", fields: [userId], references: [id], onDelete: Cascade)
+  // Kullanıcının yazdığı meslek adı (ham)
+  suggestedName   String
+  // Opsiyonel açıklama / not
+  note            String?
+  // pending | approved | rejected
+  status          String    @default("pending")
+  // Onaylandığında oluşturulan kategoriye işaret eder
+  resultSlug      String?
+  resultName      String?
+  reviewedAt      DateTime?
+  reviewNote      String?
+  createdAt       DateTime  @default(now())
+
+  @@index([status, createdAt])
+  @@index([userId])
 }
 
 model District {

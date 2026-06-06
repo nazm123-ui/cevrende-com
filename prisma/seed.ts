@@ -26,12 +26,16 @@ const CATEGORIES = [
   // Ev tadilat / yapı ustaları
   { slug: "elektrikci", name: "Elektrikçi" },
   { slug: "tesisatci", name: "Tesisatçı / Su Tesisatçısı" },
+  { slug: "tikaniklik-acma", name: "Tıkanıklık / Gider Açma" },
+  { slug: "su-kacagi-tespiti", name: "Su Kaçağı Tespiti" },
   { slug: "boyaci", name: "Boyacı" },
   { slug: "marangoz", name: "Marangoz / Mobilya Ustası" },
+  { slug: "parke-laminat", name: "Parke / Laminat Ustası" },
   { slug: "fayans-mermer", name: "Fayans / Mermer Ustası" },
   { slug: "siva-alcipan", name: "Sıva / Alçıpan Ustası" },
   { slug: "pvc-dograma", name: "PVC / Doğrama / Cam Balkon" },
   { slug: "cati-izolasyon", name: "Çatı / İzolasyon" },
+  { slug: "mantolama-cephe", name: "Mantolama / Dış Cephe" },
   // Tamir / bakım
   { slug: "cilingir", name: "Çilingir" },
   { slug: "klima-tamiri", name: "Klima Tamiri / Kurulumu" },
@@ -82,6 +86,7 @@ const CATEGORIES = [
   // Sağlık genişletme
   { slug: "fizyoterapist", name: "Fizyoterapist (Evde)" },
   { slug: "diyetisyen", name: "Diyetisyen" },
+  { slug: "psikolog-danisman", name: "Psikolog / Psikolojik Danışman" },
   { slug: "cocuk-gelisimi", name: "Çocuk Gelişimi Uzmanı" },
   // Etkinlik hizmetleri
   { slug: "pasta-hamur", name: "Pasta / Hamur İşi Ustası" },
@@ -98,6 +103,7 @@ const CATEGORIES = [
   { slug: "oto-elektrik", name: "Oto Elektrik / Akü" },
   { slug: "motosiklet-tamiri", name: "Motosiklet Tamiri" },
   { slug: "lastik-balans", name: "Lastik / Balans / Rot Ayarı" },
+  { slug: "cekici-yol-yardim", name: "Çekici / Yol Yardım" },
   // Elektronik kurulum
   { slug: "uydu-tv-kurulum", name: "Uydu / TV / Anten Kurulumu" },
   { slug: "guvenlik-kamera-kurulum", name: "Güvenlik Kamera / Alarm Kurulumu" },
