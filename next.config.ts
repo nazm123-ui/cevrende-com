@@ -7,7 +7,7 @@ const csp = [
   // Next.js needs 'unsafe-inline' for hydration scripts; 'unsafe-eval' only in dev for HMR.
   `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://*.r2.dev https://*.r2.cloudflarestorage.com",
+  "img-src 'self' data: blob: https://*.r2.dev https://*.r2.cloudflarestorage.com https://media.cevrende.com",
   "font-src 'self' data:",
   "connect-src 'self'",
   "frame-ancestors 'none'",
