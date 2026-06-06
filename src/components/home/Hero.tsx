@@ -32,12 +32,12 @@ export default async function Hero() {
           </p>
 
           <h1 className="mt-4 text-[26px] sm:text-[44px] lg:text-[60px] font-semibold tracking-[-0.025em] leading-[1.12] sm:leading-[1.05] lg:max-w-[560px] text-balance">
-            Mahallendeki usta,{" "}
-            <span className="text-accent-600">tek aramada.</span>
+            Çevrendekiler{" "}
+            <span className="text-accent-600">seni bulsun.</span>
           </h1>
 
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg text-ink-700 lg:max-w-[480px] leading-relaxed">
-            {districtLabel} ve çevresindeki ustayı, kuryeyi, bakıcıyı doğrudan bulursun. Aracı yok.
+            Profilini aç, mesleğini ve mahalleni yaz — {districtLabel} çevresindeki işverenler seni doğrudan arasın.
           </p>
 
           {!user && (
