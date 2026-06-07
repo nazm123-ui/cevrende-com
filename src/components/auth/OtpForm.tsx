@@ -82,6 +82,12 @@ export default function OtpForm({
       <div className="rounded-[12px] border border-ink-100 bg-brand-50 px-3.5 py-3 text-[13.5px] text-ink-700 leading-relaxed">
         <strong className="text-ink-900">{emailMasked}</strong>{" "}
         adresine gönderilen 6 haneli e-posta kodunu girin.
+        <span className="mt-1.5 flex items-start gap-1.5 text-[12.5px] text-ink-500">
+          <span aria-hidden>📩</span>
+          <span>
+            Kod birkaç dakika içinde gelmezse <strong className="text-ink-700">Spam / Gereksiz (Junk)</strong> klasörünü kontrol edin.
+          </span>
+        </span>
       </div>
 
       {devEmailOtp && (

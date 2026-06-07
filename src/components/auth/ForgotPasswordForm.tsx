@@ -124,7 +124,8 @@ export default function ForgotPasswordForm() {
               color: "var(--color-ink-500)",
             }}
           >
-            adresine 6 haneli kod gönderildi. 10 dakika geçerli.
+            adresine 6 haneli kod gönderildi. 10 dakika geçerli. Kod gelmezse
+            Spam / Gereksiz (Junk) klasörünü kontrol edin.
           </p>
           {devCode && (
             <p
