@@ -11,8 +11,8 @@ export async function generateMetadata() {
   const names = districts.map((d) => d.name);
   const locationLabel = formatDistrictListTr(names);
   return {
-    title: `${locationLabel}'te Usta Profili Aç — Ücretsiz Hizmet Bulma`,
-    description: `${locationLabel}'te mesleğini paylaş, mahallendeki işverenler seni bulsun. Ücretsiz profil, komisyonsuz iletişim.`,
+    title: `${locationLabel}'te Hizmet Veriyorsan Ücretsiz Profil Oluştur`,
+    description: `${locationLabel}'te mesleğini ve mahalleni ekle, çevrendeki insanlar sana doğrudan ulaşsın. Ücretsiz profil, komisyonsuz iletişim, üyelik ücreti yok.`,
   };
 }
 
@@ -24,9 +24,9 @@ export default async function KayitPage() {
 
   return (
     <AuthShell
-      eyebrow="Aramıza katıl"
-      title="Ücretsiz hesap aç"
-      subtitle="Mahallendeki meslek sahibi kişilerle aracısız tanışmak için."
+      eyebrow="Pendik'te görünür ol"
+      title="Ücretsiz profil oluştur"
+      subtitle="Mesleğini, hizmetlerini ve mahalleni ekle — çevrendeki insanlar sana doğrudan ulaşsın. Komisyon yok, aracı yok, üyelik ücreti yok."
     >
       <RegisterForm
         districts={districts.map((d) => ({

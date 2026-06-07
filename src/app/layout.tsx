@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     "Pendik çilingir",
     "Pendik tadilat",
     "Pendik kurye",
-    "Pendik iş ilanları",
+    "Pendik hizmet veren",
     "mahallenden usta",
-    "iş arama Pendik",
+    "Pendik usta bul",
     "yerel hizmet Pendik",
   ],
   alternates: {
@@ -156,9 +156,9 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "LocalBusiness",
               "@id": `${SITE_URL}#localbusiness`,
-              name: "Cevrende — Pendik İş Eşleştirme",
+              name: "Cevrende — Pendik Yerel Hizmet Veren Platformu",
               description:
-                "Pendik ve çevre mahallelerde işçi-işveren eşleştirme platformu. Temizlik, tadilat, çilingir, kurye, garson ve daha fazlası.",
+                "Pendik ve çevre mahallelerde hizmet verenlerin ücretsiz profil oluşturup çevresindeki insanlara görünür olduğu yerel platform. Temizlik, tadilat, çilingir, kurye, garson ve daha fazlası.",
               url: SITE_URL,
               image: `${SITE_URL}/og-default.png`,
               priceRange: "Ücretsiz",

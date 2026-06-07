@@ -11,7 +11,7 @@ export type Experience = {
 const currentYear = new Date().getFullYear();
 
 export const experienceSchema = z.object({
-  role: z.string().trim().min(2, "Pozisyon en az 2 karakter").max(80),
+  role: z.string().trim().min(2, "Görev en az 2 karakter").max(80),
   workplace: z.string().trim().min(2, "İşyeri en az 2 karakter").max(80),
   fromYear: z
     .number()

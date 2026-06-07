@@ -37,7 +37,7 @@ export default async function Hero() {
           </h1>
 
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg text-ink-700 lg:max-w-[480px] leading-relaxed">
-            Profilini aç, mesleğini ve mahalleni yaz — {districtLabel} çevresindeki işverenler seni doğrudan arasın.
+            Profilini aç, mesleğini ve mahalleni yaz — {districtLabel} çevresindeki insanlar sana doğrudan ulaşsın. Ücretsiz, komisyonsuz ve aracısız.
           </p>
 
           {!user && (
@@ -54,7 +54,7 @@ export default async function Hero() {
                 className="inline-flex items-center gap-1.5 text-[14px] text-ink-700 hover:text-ink-900 transition self-start sm:self-auto group"
               >
                 <span className="underline underline-offset-[6px] decoration-ink-300 group-hover:decoration-ink-900 transition">
-                  Önce çevrendekilere bak
+                  Çevrendeki hizmet verenleri gör
                 </span>
                 <span aria-hidden className="transition group-hover:translate-x-0.5">→</span>
               </Link>

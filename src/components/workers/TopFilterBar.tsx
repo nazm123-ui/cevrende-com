@@ -72,8 +72,8 @@ export default function TopFilterBar({ districts }: Props) {
           name="q"
           type="search"
           defaultValue={current.q}
-          placeholder="İsim, yetkinlik, pozisyon…"
-          aria-label="İsim, yetkinlik veya pozisyon ara"
+          placeholder="İsim, hizmet, meslek…"
+          aria-label="İsim, hizmet veya meslek ara"
           className="!h-11 !pl-10 !border-0 !bg-ink-50 focus:!bg-white"
         />
       </div>

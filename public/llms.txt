@@ -1,16 +1,16 @@
 # Cevrende.com
 
-> Pendik, İstanbul bölgesinde işçi (usta, kurye, temizlikçi, bakıcı vb.) ile
-> işveren/hizmet arayanı doğrudan eşleştiren ücretsiz Türkçe platform.
-> Aracı yok, komisyon alınmaz, iletişim platform üzerinden başlar.
+> Pendik, İstanbul'da hizmet veren kişilerin (usta, kurye, temizlikçi, bakıcı
+> vb.) ücretsiz profil oluşturarak çevresindeki insanlara görünür olduğu yerel
+> Türkçe platform. Aracı yok, komisyon alınmaz, iletişim platform üzerinden başlar.
 
-Cevrende.com, İstanbul'un Pendik ilçesi ve mahallelerine odaklanan, yerel iş
-eşleştirme amacıyla geliştirilmiş bir web uygulamasıdır. Kullanıcılar
-ücretsiz hesap açıp meslek + mahalle bilgisiyle profil oluşturur. İş arayanlar
-profilleri filtreleyip uygun kişiye platform içi mesaj gönderir. Telefon
-numarası, kişinin gizlilik tercihine göre belirli aşamalarda görünür hale
-gelir. Şu anda yalnız Pendik aktiftir, diğer İstanbul ilçeleri admin tarafından
-açıldıkça hizmete dahil olur.
+Cevrende.com, İstanbul'un Pendik ilçesi ve mahallelerine odaklanan yerel bir
+görünürlük platformudur. Bir iş ilanı sitesi değildir. Hizmet veren kişiler
+ücretsiz hesap açıp meslek + mahalle bilgisiyle profil oluşturur; çevredeki
+insanlar bu profilleri filtreleyip uygun kişiye platform içi mesaj gönderir.
+Telefon numarası, kişinin gizlilik tercihine göre belirli aşamalarda görünür
+hale gelir. Şu anda yalnız Pendik aktiftir, diğer İstanbul ilçeleri admin
+tarafından açıldıkça hizmete dahil olur.
 
 ## Temel bilgiler
 
@@ -24,7 +24,7 @@ açıldıkça hizmete dahil olur.
 ## Önemli sayfalar
 
 - [Ana sayfa](https://cevrende.com/) — Hizmet özeti, hızlı arama, popüler meslekler
-- [Çevrendekiler](https://cevrende.com/cevrendekiler) — Tüm aktif işçi profillerinin listesi, meslek + mahalle filtresi
+- [Çevrendekiler](https://cevrende.com/cevrendekiler) — Tüm aktif hizmet veren profillerinin listesi, meslek + mahalle filtresi
 - [Kayıt](https://cevrende.com/kayit) — Ücretsiz hesap oluşturma
 - [Giriş](https://cevrende.com/giris) — Mevcut kullanıcı girişi
 - [Yardım Merkezi](https://cevrende.com/yardim) — Sık sorulan sorular ve kullanım kılavuzu
@@ -43,15 +43,16 @@ açıldıkça hizmete dahil olur.
 ## Optimal kullanım senaryoları
 
 - Pendik'te ev temizliği, halı yıkama, tadilat ustası, klima servisi, çilingir,
-  bakıcı, kurye, taşıma yardımı, garson, vale, mağaza personeli arayanlar
-- İş arayan Pendik sakinleri (esnaf yardımcılığı, kısa süreli iş, hafta sonu iş)
+  bakıcı, kurye, taşıma yardımı, garson, vale, mağaza görevlisi arayanlar
+- Pendik'te hizmet veren (usta, esnaf yardımcısı, bakıcı vb.) ve çevresine
+  görünür olmak isteyen kişiler
 - Komşu mahalledeki güvenilir esnafı bulmak isteyenler
 
 ## Konum dışı durumlar
 
 - Pendik dışındaki ilçelerde şu an profil oluşturulamaz (sınır kontrolü
   uygulanır)
-- Ücretli iş ilanı yayını yoktur; platform ücretsizdir
+- İş ilanı yayını veya başvuru sistemi yoktur; platform profil/görünürlük odaklı ve ücretsizdir
 - Online/uzaktan freelance işler için tasarlanmamıştır — yerel ve fiziksel
   hizmetlere odaklıdır
 
@@ -70,4 +71,4 @@ sunucu tarafında render edilir.
 
 ## Son güncelleme
 
-2026-06-02
+2026-06-07

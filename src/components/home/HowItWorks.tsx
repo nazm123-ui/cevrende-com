@@ -6,13 +6,13 @@ const steps = [
   },
   {
     n: "02",
-    title: "Pendik'teki işveren seni bulur",
+    title: "Çevrendeki kişiler seni bulur",
     body: "Aradıkları meslek senin profilinle eşleşince listede görünürsün. Mahalleye göre öncelik kazanırsın.",
   },
   {
     n: "03",
-    title: "Aracısız mesajlaş, iş başla",
-    body: "İşveren doğrudan platformdan mesaj atar. Telefonu sadece sen onaylarsan paylaşırsın.",
+    title: "Aracısız mesajlaş, anlaş",
+    body: "Çevrendeki kişiler doğrudan platformdan mesaj atar. Telefonunu sadece sen onaylarsan paylaşırsın.",
     highlight: true,
   },
 ];
@@ -25,7 +25,7 @@ export default function HowItWorks() {
           <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium">
             Nasıl çalışır
           </p>
-          <h2 className="mt-3 text-balance">Üç adımda, mahallenden iş.</h2>
+          <h2 className="mt-3 text-balance">Üç adımda, mahallende görünür ol.</h2>
         </div>
 
         <div className="how-grid grid grid-cols-1 sm:grid-cols-3 border-t border-ink-100">

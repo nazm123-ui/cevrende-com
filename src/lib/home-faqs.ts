@@ -14,28 +14,28 @@ export const HOME_FAQS: HomeFaq[] = [
     a: "Çevrendekiler sayfasında 'Çilingir' kategorisini seç ve mahalleni belirt. Online çevrimiçi ustaları öncelik sırasına göre görür, profilden doğrudan mesaj atarsın. Ortalama yanıt süresi 2 saattir.",
   },
   {
-    q: "İşçiye telefon vermeden mesajlaşabilir miyim?",
-    a: "Evet. Tüm iletişim platform içi mesajlaşmayla başlar. Telefon numarası sadece işçinin gizlilik ayarına bağlı olarak — herkes, sadece onaylananlar, veya hiç kimse — şeklinde görünür. Karşılıklı mesajlaştıktan sonra WhatsApp paylaşımı tercihe bağlıdır.",
+    q: "Telefon numaramı vermeden mesajlaşabilir miyim?",
+    a: "Evet. Tüm iletişim platform içi mesajlaşmayla başlar. Telefon numarası sadece hizmet verenin gizlilik ayarına bağlı olarak — herkes, sadece onaylananlar, veya hiç kimse — şeklinde görünür. Karşılıklı mesajlaştıktan sonra WhatsApp paylaşımı tercihe bağlıdır.",
   },
   {
-    q: "Pendik'te işçi profili açmak kaç para tutuyor?",
-    a: "Cevrende.com tamamen ücretsizdir. Profil oluşturma, görünme, mesaj alma ve gönderme komisyonsuzdur. Hizmet bedeli, işçi ve işveren arasında doğrudan kararlaştırılır, platform aracılık etmez.",
+    q: "Pendik'te hizmet veren profili açmak kaç para tutuyor?",
+    a: "Cevrende.com tamamen ücretsizdir. Profil oluşturma, görünme, mesaj alma ve gönderme komisyonsuzdur. Hizmet bedeli, hizmet veren ile hizmet alan arasında doğrudan kararlaştırılır, platform aracılık etmez.",
   },
   {
     q: "Çevrendekiler listesine nasıl eklenebilirim?",
     a: "1) Ücretsiz hesap aç. 2) E-posta doğrula. 3) Profil → Hesap sekmesinde meslek(ler)ini seç. 4) Mahalleni belirle. Bu adımlardan sonra profilin otomatik olarak Çevrendekiler listesinde görünür ve aranabilir hale gelir.",
   },
   {
-    q: "Pendik'te işçi ararken hangi bilgilerim paylaşılır?",
-    a: "İşçi profilinde, kişinin gizlilik tercihine göre ad-soyad, meslek, mahalle, deneyim ve biyografi gösterilir. Telefon numarası varsayılan olarak gizlidir; mesaj atan veya onay alan kişilere açılır. Adres bilgisi paylaşılmaz.",
+    q: "Profilimde çevremdeki kişilere hangi bilgilerim görünür?",
+    a: "Profilinde, kendi gizlilik tercihine göre ad-soyad, meslek, mahalle, deneyim ve biyografi gösterilir. Telefon numarası varsayılan olarak gizlidir; mesaj atan veya onay verdiğin kişilere açılır. Adres bilgisi hiçbir zaman paylaşılmaz.",
   },
   {
     q: "Cevrende.com hangi ilçelerde aktif?",
     a: "Şu an yalnız Pendik aktiftir. Platform, İstanbul'un diğer 38 ilçesine kademeli olarak açılacak şekilde tasarlandı. Yeni ilçe eklendiğinde mevcut kullanıcılara bildirim gider.",
   },
   {
-    q: "Cevrende.com Sahibinden veya Eleman.net'ten farkı ne?",
-    a: "Cevrende sadece Pendik ilçesine ve mahalle bazlı eşleşmeye odaklanır. İlan ücreti yoktur, premium paket yoktur, komisyon alınmaz. Sahibinden ve Eleman.net Türkiye genelinde geniş kapsamlı çalışırken Cevrende yerel ve ücretsizdir.",
+    q: "Cevrende bir iş ilanı sitesi mi?",
+    a: "Hayır. Cevrende bir iş ilanı sitesi değil, yerel bir görünürlük platformudur. İlan verip başvuru beklemezsin; ücretsiz profil oluşturup mesleğini ve mahalleni gösterirsin, Pendik'te çevrendeki insanlar seni bulup doğrudan ulaşır. İlan ücreti, üyelik ücreti ve komisyon yoktur.",
   },
 ];
 

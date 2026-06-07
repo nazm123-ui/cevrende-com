@@ -79,7 +79,7 @@ export default function ListingsClient() {
                 <Icon name="search" size={18} />
               </span>
               <input
-                placeholder="İsim, yetkinlik, pozisyon…"
+                placeholder="İsim, hizmet, meslek…"
                 style={{
                   paddingLeft: 42,
                   height: 44,

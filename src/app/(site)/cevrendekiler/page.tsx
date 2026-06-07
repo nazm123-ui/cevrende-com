@@ -14,8 +14,8 @@ export async function generateMetadata() {
   const districts = await getEnabledDistricts();
   const label = formatDistrictListTr(districts.map((d) => d.name));
   return {
-    title: `Çevrendekiler — ${label}'te Usta ve Hizmet`,
-    description: `${label} ve çevresinde mesleğe göre işçi ara. Profil incele, doğrudan mesajla, aracısız iletişime geç.`,
+    title: `Çevrendekiler — ${label}'te Hizmet Verenler`,
+    description: `${label} ve çevresinde mesleğe göre hizmet veren ara. Profil incele, doğrudan mesajla, aracısız iletişime geç.`,
   };
 }
 

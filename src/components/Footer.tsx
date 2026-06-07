@@ -14,8 +14,9 @@ export default async function Footer() {
         <div className="col-span-2 sm:col-span-1">
           <Logo size="sm" />
           <p className="mt-4 text-[13.5px] text-ink-500 max-w-[280px] leading-relaxed">
-            {label}&apos;{districts.length > 1 ? "deki" : "teki"} iş arayanlarla
-            işverenleri doğrudan buluşturur.
+            {label}&apos;{districts.length > 1 ? "deki" : "teki"} hizmet verenlerin
+            çevresindeki insanlarla doğrudan iletişim kurmasını sağlayan yerel
+            profil platformu.
           </p>
         </div>
 

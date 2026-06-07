@@ -9,7 +9,7 @@ export default function FAQ({ faqs }: { faqs: HomeFaq[] }) {
             Sorular & Cevaplar
           </p>
           <h2 className="mt-2 text-[32px] sm:text-[40px] font-semibold tracking-[-0.025em] leading-[1.08] text-balance">
-            Pendik'te işçi bulma hakkında sık sorulanlar
+            Pendik'te hizmet veren bulma hakkında sık sorulanlar
           </h2>
         </div>
 

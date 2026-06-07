@@ -46,7 +46,7 @@ export default function KullanimKosullariPage() {
             4. Ücretlendirme
           </h2>
           <p>
-            Cevrende platformu tamamen ücretsizdir. Hiçbir kullanıcıdan platform kullanımı, mesajlaşma, profil açma veya işçi arama
+            Cevrende platformu tamamen ücretsizdir. Hiçbir kullanıcıdan platform kullanımı, mesajlaşma, profil açma veya hizmet veren arama
             için para alınmaz.
           </p>
         </section>

@@ -44,9 +44,9 @@ export default function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "HowTo",
-            name: "Pendik'te işçi/usta nasıl bulunur?",
+            name: "Pendik'te hizmet veren nasıl bulunur?",
             description:
-              "Cevrende.com üzerinden Pendik bölgesinde güvenilir işçi/usta bulmanın adım adım yöntemi.",
+              "Cevrende.com üzerinden Pendik bölgesinde güvenilir hizmet veren (usta, temizlikçi, çilingir vb.) bulmanın adım adım yöntemi.",
             totalTime: "PT5M",
             estimatedCost: {
               "@type": "MonetaryAmount",

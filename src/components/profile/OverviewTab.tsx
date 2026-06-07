@@ -129,7 +129,7 @@ export default function OverviewTab({
                   lineHeight: 1.55,
                 }}
               >
-                Henüz profil kaydetmedin. Bir işçi profilinde "Profili kaydet"e basarak buraya ekleyebilirsin.
+                Henüz profil kaydetmedin. Bir hizmet veren profilinde "Profili kaydet"e basarak buraya ekleyebilirsin.
               </div>
             ) : (
               savedProfiles.map((p, i) => (

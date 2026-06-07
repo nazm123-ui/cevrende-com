@@ -730,7 +730,7 @@ function ExperienceEditor({
     setErr(null);
     const r = role.trim();
     const w = workplace.trim();
-    if (r.length < 2) return setErr("Pozisyon en az 2 karakter.");
+    if (r.length < 2) return setErr("Görev en az 2 karakter.");
     if (w.length < 2) return setErr("İşyeri en az 2 karakter.");
     if (!ongoing && toYear !== null && toYear < fromYear) {
       return setErr("Bitiş yılı başlangıçtan önce olamaz.");
@@ -753,7 +753,7 @@ function ExperienceEditor({
         <input
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          placeholder="Pozisyon (örn. Garson)"
+          placeholder="Görev (örn. Garson)"
           className={inputCls}
           maxLength={80}
         />

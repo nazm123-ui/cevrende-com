@@ -45,7 +45,7 @@ const FAQS: { q: string; a: React.ReactNode }[] = [
     a: (
       <>
         Profilim → Hesap sekmesindeki <b>İş Deneyimi</b> bölümünden{" "}
-        <b>+ Deneyim ekle</b> butonuyla pozisyon, işyeri ve yıl bilgisi girip
+        <b>+ Deneyim ekle</b> butonuyla görev, işyeri ve yıl bilgisi girip
         kaydet. Eklediğin deneyimler herkesin gördüğü profilinde sıralı olarak
         görünür.
       </>
@@ -55,9 +55,10 @@ const FAQS: { q: string; a: React.ReactNode }[] = [
     q: "Mesajlaşma nasıl çalışır?",
     a: (
       <>
-        Bir işçinin profiline gir, <b>Mesaj gönder</b>'e tıkla. Eğer işçinin
-        gizlilik ayarı "onay sonrası" ise önce iletişim talebi gönderilir; işçi
-        kabul ederse sohbet açılır. Tüm mesajlar platform üzerinden geçer,
+        Bir hizmet verenin profiline gir, <b>Mesaj gönder</b>'e tıkla. Eğer
+        kişinin gizlilik ayarı "onay sonrası" ise önce iletişim talebi
+        gönderilir; kişi kabul ederse sohbet açılır. Tüm mesajlar platform
+        üzerinden geçer,
         numara paylaşılmadan iletişim kurabilirsin.
       </>
     ),
