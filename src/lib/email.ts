@@ -1,18 +1,29 @@
 import nodemailer from "nodemailer";
 
-const hasCredentials = Boolean(
-  process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD,
-);
+// Gönderen kimliği — cevrende.com'dan gönderiyoruz (DKIM/SPF/DMARC ile doğrulanmış,
+// spam'e düşmez). Yanıtlar yine yönetim Gmail'ine düşsün diye reply-to ayarlı.
+const EMAIL_FROM = process.env.EMAIL_FROM || "Çevrende <bildirim@cevrende.com>";
+const REPLY_TO = process.env.EMAIL_REPLY_TO || "infocevrende@gmail.com";
+// Yönetim bildirimlerinin (geri bildirim vb.) düşeceği gerçek kutu.
+const ADMIN_EMAIL = process.env.GMAIL_USER || "infocevrende@gmail.com";
 
-const transporter = hasCredentials
+// Önce Resend (SMTP) — profesyonel teslimat. Yoksa eski Gmail SMTP'ye düşer.
+const transporter = process.env.RESEND_API_KEY
   ? nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
+      host: "smtp.resend.com",
+      port: 465,
+      secure: true,
+      auth: { user: "resend", pass: process.env.RESEND_API_KEY },
     })
-  : null;
+  : process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD
+    ? nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.GMAIL_USER,
+          pass: process.env.GMAIL_APP_PASSWORD,
+        },
+      })
+    : null;
 
 export async function sendOtpEmail(to: string, code: string) {
   if (!transporter) {
@@ -20,7 +31,8 @@ export async function sendOtpEmail(to: string, code: string) {
     return;
   }
   await transporter.sendMail({
-    from: `"Çevrende.com" <${process.env.GMAIL_USER}>`,
+    from: EMAIL_FROM,
+    replyTo: REPLY_TO,
     to,
     subject: "Çevrende.com – E-posta Doğrulama Kodu",
     text: `Merhaba,\n\nÇevrende.com e-posta doğrulama kodunuz: ${code}\n\nKod 10 dakika geçerlidir. Bu kodu kimseyle paylaşmayın.\n\nÇevrende.com`,
@@ -54,7 +66,7 @@ function escapeHtml(s: string): string {
 }
 
 export async function sendFeedbackEmail(payload: FeedbackPayload) {
-  const adminEmail = process.env.GMAIL_USER;
+  const adminEmail = ADMIN_EMAIL;
   if (!transporter || !adminEmail) {
     console.info("[DEV FEEDBACK]", JSON.stringify(payload));
     return;
@@ -65,7 +77,7 @@ export async function sendFeedbackEmail(payload: FeedbackPayload) {
   const safeUserId = payload.fromUserId ? escapeHtml(payload.fromUserId) : "—";
 
   await transporter.sendMail({
-    from: `"Çevrende.com Geri Bildirim" <${adminEmail}>`,
+    from: EMAIL_FROM,
     to: adminEmail,
     replyTo: payload.fromEmail,
     subject: `[Geri Bildirim - ${payload.topic}] ${payload.fromEmail}`,
@@ -93,7 +105,7 @@ type WarningPayload = {
 };
 
 export async function sendUserWarningEmail(payload: WarningPayload) {
-  const adminEmail = process.env.GMAIL_USER;
+  const adminEmail = ADMIN_EMAIL;
   if (!transporter || !adminEmail) {
     console.info("[DEV USER WARNING]", JSON.stringify(payload));
     return;
@@ -102,7 +114,8 @@ export async function sendUserWarningEmail(payload: WarningPayload) {
   const safeNote = escapeHtml(payload.note).replace(/\n/g, "<br>");
 
   await transporter.sendMail({
-    from: `"Çevrende.com" <${adminEmail}>`,
+    from: EMAIL_FROM,
+    replyTo: REPLY_TO,
     to: payload.to,
     subject: "Çevrende.com — Hesap uyarısı",
     text: `Merhaba ${payload.name},\n\nHesabınızla ilgili bir uyarı aldınız:\n\n${payload.note}\n\nKurallarımızı tekrar gözden geçirmenizi rica ederiz. Aynı durumun tekrarlanması halinde hesabınız pasifleştirilebilir.\n\nÇevrende.com`,
@@ -127,7 +140,8 @@ export async function sendPasswordResetEmail(to: string, code: string) {
     return;
   }
   await transporter.sendMail({
-    from: `"Çevrende.com" <${process.env.GMAIL_USER}>`,
+    from: EMAIL_FROM,
+    replyTo: REPLY_TO,
     to,
     subject: "Çevrende.com – Şifre Sıfırlama Kodu",
     text: `Merhaba,\n\nŞifre sıfırlama kodunuz: ${code}\n\nKod 10 dakika geçerlidir. Bu işlemi siz başlatmadıysanız bu e-postayı görmezden gelin.\n\nÇevrende.com`,
@@ -153,7 +167,7 @@ export async function sendCategorizedWarningEmail(payload: {
   body: string;
   categoryLabel: string;
 }) {
-  const adminEmail = process.env.GMAIL_USER;
+  const adminEmail = ADMIN_EMAIL;
   if (!transporter || !adminEmail) {
     console.info("[DEV CATEGORIZED WARNING]", JSON.stringify(payload));
     return;
@@ -161,7 +175,8 @@ export async function sendCategorizedWarningEmail(payload: {
   const safeBody = escapeHtml(payload.body).replace(/\n/g, "<br>");
   const safeCat = escapeHtml(payload.categoryLabel);
   await transporter.sendMail({
-    from: `"Çevrende.com Yönetim" <${adminEmail}>`,
+    from: EMAIL_FROM,
+    replyTo: REPLY_TO,
     to: payload.to,
     subject: payload.subject,
     text: payload.body,
@@ -177,13 +192,84 @@ export async function sendCategorizedWarningEmail(payload: {
   });
 }
 
+export async function sendWelcomeEmail(payload: {
+  to: string;
+  name: string;
+  password: string;
+  loginUrl: string;
+}) {
+  if (!transporter) {
+    console.log(
+      `[DEV WELCOME] to=${payload.to} pass=${payload.password} login=${payload.loginUrl}`,
+    );
+    return;
+  }
+  const safeName = escapeHtml(payload.name);
+  const safeEmail = escapeHtml(payload.to);
+  const safePass = escapeHtml(payload.password);
+  await transporter.sendMail({
+    from: EMAIL_FROM,
+    replyTo: REPLY_TO,
+    to: payload.to,
+    subject: "Çevrende.com — Hesabın oluşturuldu",
+    text: `Merhaba ${payload.name},\n\nÇevrende.com'da senin için bir hesap oluşturuldu.\n\nGiriş bilgilerin:\nE-posta: ${payload.to}\nGeçici şifre: ${payload.password}\n\nGiriş yap: ${payload.loginUrl}\n\nGüvenliğin için ilk girişten sonra şifreni değiştirmeni öneririz.\n\nÇevrende.com — Çevrendekiler seni bulsun.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; color: #0f172a;">
+        <h2 style="color: #0f172a; margin: 0 0 16px;">Çevrende.com'a hoş geldin!</h2>
+        <p style="font-size: 14px; line-height: 1.6;">Merhaba ${safeName}, senin için bir hesap oluşturuldu. Aşağıdaki bilgilerle giriş yapabilirsin:</p>
+        <div style="background: #f1f5f9; padding: 16px; border-radius: 8px; font-size: 14px; color: #0f172a; line-height: 1.8; margin: 12px 0;">
+          <strong>E-posta:</strong> ${safeEmail}<br>
+          <strong>Geçici şifre:</strong> <span style="font-family: monospace; font-size: 15px;">${safePass}</span>
+        </div>
+        <p style="margin: 18px 0;">
+          <a href="${payload.loginUrl}" style="display: inline-block; background: #0f172a; color: #fff; text-decoration: none; padding: 12px 22px; border-radius: 999px; font-size: 14px; font-weight: 600;">Giriş yap</a>
+        </p>
+        <p style="font-size: 13px; color: #64748b;">Güvenliğin için ilk girişten sonra <strong>şifreni değiştirmeni</strong> öneririz.</p>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 32px;">Çevrende.com — Çevrendekiler seni bulsun.</p>
+      </div>
+    `,
+  });
+}
+
+export async function sendAdminMessageEmail(payload: {
+  to: string;
+  name: string;
+  content: string;
+}) {
+  const adminEmail = ADMIN_EMAIL;
+  if (!transporter || !adminEmail) {
+    console.info("[DEV ADMIN MESSAGE]", JSON.stringify(payload));
+    return;
+  }
+  const safeName = escapeHtml(payload.name);
+  const safeBody = escapeHtml(payload.content).replace(/\n/g, "<br>");
+  await transporter.sendMail({
+    from: EMAIL_FROM,
+    replyTo: REPLY_TO,
+    to: payload.to,
+    subject: "Çevrende.com — Yönetimden mesajın var",
+    text: `Merhaba ${payload.name},\n\n${payload.content}\n\nBu mesaja Çevrende.com hesabından platform içi mesajlardan da ulaşabilirsin.\n\nÇevrende.com`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; color: #0f172a;">
+        <h2 style="color: #0f172a; margin: 0 0 16px;">Çevrende.com — Yönetim Mesajı</h2>
+        <p style="font-size: 14px; line-height: 1.6;">Merhaba ${safeName},</p>
+        <div style="background: #f1f5f9; padding: 16px; border-radius: 8px; font-size: 15px; color: #0f172a; line-height: 1.6; margin: 12px 0;">
+          ${safeBody}
+        </div>
+        <p style="font-size: 13px; color: #64748b;">Bu mesaja Çevrende.com hesabından platform içi mesajlardan da ulaşabilirsin.</p>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 32px;">Çevrende.com — Çevrendekiler seni bulsun.</p>
+      </div>
+    `,
+  });
+}
+
 export async function sendCategoryApprovedEmail(payload: {
   to: string;
   name: string;
   categoryName: string;
   addedToProfile: boolean;
 }) {
-  const adminEmail = process.env.GMAIL_USER;
+  const adminEmail = ADMIN_EMAIL;
   if (!transporter || !adminEmail) {
     console.info("[DEV CATEGORY APPROVED]", JSON.stringify(payload));
     return;
@@ -194,7 +280,8 @@ export async function sendCategoryApprovedEmail(payload: {
     ? `<strong>${safeCat}</strong> mesleğini profiline ekledik — dilersen panelden kontrol edip güncelleyebilirsin.`
     : `Artık profil ayarlarından <strong>${safeCat}</strong> mesleğini seçebilirsin.`;
   await transporter.sendMail({
-    from: `"Çevrende.com" <${adminEmail}>`,
+    from: EMAIL_FROM,
+    replyTo: REPLY_TO,
     to: payload.to,
     subject: `Önerdiğin meslek eklendi: ${payload.categoryName}`,
     text: `Merhaba ${payload.name},\n\nÖnerdiğin "${payload.categoryName}" mesleğini Çevrende.com'a ekledik. Teşekkürler!\n\nÇevrende.com`,
