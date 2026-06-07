@@ -135,6 +135,8 @@ const CATEGORIES = [
   { slug: "yasam-kocu", name: "Yaşam Koçu / Kişisel Gelişim" },
   // Tente
   { slug: "tente-cadir", name: "Tente / Çadır / Pergola Kurulumu" },
+  // Sanayi / üretim
+  { slug: "cnc-talasli-imalat", name: "CNC Torna / Freze / Talaşlı İmalat" },
   // En sonda
   { slug: "diger", name: "Diğer" },
 ];
