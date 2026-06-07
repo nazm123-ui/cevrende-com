@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -151,21 +150,7 @@ async function main() {
     });
   }
 
-  const passwordHash = await bcrypt.hash("demo1234", 10);
-  await prisma.user.upsert({
-    where: { email: "admin@example.com" },
-    update: {},
-    create: {
-      fullName: "Admin User",
-      email: "admin@example.com",
-      phone: "05300000000",
-      passwordHash,
-      isPhoneVerified: true,
-      isEmailVerified: true,
-    },
-  });
-
-  console.log(`Seeded ${CATEGORIES.length} categories + admin user.`);
+  console.log(`Seeded ${CATEGORIES.length} categories.`);
 }
 
 main()
