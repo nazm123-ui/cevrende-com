@@ -8,7 +8,10 @@ export type ActivityType =
   | "deactivate"
   | "activate"
   | "category"
-  | "district";
+  | "district"
+  | "create"
+  | "edit"
+  | "message";
 
 type LogInput = {
   type: ActivityType;

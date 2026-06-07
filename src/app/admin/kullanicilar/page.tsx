@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { isAdminEmail } from "@/lib/constants/admin-emails";
+import { getEnabledDistricts } from "@/lib/districts";
 import AdminIcon from "@/components/admin/AdminIcon";
 import UsersTable from "@/components/admin/UsersTable";
+import AddUserDialog from "@/components/admin/AddUserDialog";
 
 export const metadata = { title: "Kullanıcılar — Admin" };
 
@@ -36,32 +38,46 @@ export default async function AdminUsersPage({
     filters.push({ isActive: false });
   }
 
-  const [users, totalCount, workerCount, inactiveCount] = await Promise.all([
-    prisma.user.findMany({
-      where: filters.length ? { AND: filters } : undefined,
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
-        phone: true,
-        district: true,
-        neighborhood: true,
-        professions: true,
-        isActive: true,
-        isEmailVerified: true,
-        isPhoneVerified: true,
-        createdAt: true,
-        _count: {
-          select: { sentMessages: true, receivedMessages: true },
+  const [users, totalCount, workerCount, inactiveCount, categories, districts] =
+    await Promise.all([
+      prisma.user.findMany({
+        where: filters.length ? { AND: filters } : undefined,
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+          phone: true,
+          district: true,
+          neighborhood: true,
+          professions: true,
+          bio: true,
+          isActive: true,
+          isAvailable: true,
+          isEmailVerified: true,
+          isPhoneVerified: true,
+          createdAt: true,
+          _count: {
+            select: { sentMessages: true, receivedMessages: true },
+          },
         },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 200,
-    }),
-    prisma.user.count(),
-    prisma.user.count({ where: { professions: { isEmpty: false } } }),
-    prisma.user.count({ where: { isActive: false } }),
-  ]);
+        orderBy: { createdAt: "desc" },
+        take: 200,
+      }),
+      prisma.user.count(),
+      prisma.user.count({ where: { professions: { isEmpty: false } } }),
+      prisma.user.count({ where: { isActive: false } }),
+      prisma.jobCategory.findMany({
+        where: { isActive: true },
+        orderBy: { order: "asc" },
+        select: { slug: true, name: true },
+      }),
+      getEnabledDistricts(),
+    ]);
+
+  const districtOptions = districts.map((d) => ({
+    name: d.name,
+    neighborhoods: d.neighborhoods,
+  }));
 
   const enriched = users.map((u) => ({
     ...u,
@@ -92,6 +108,7 @@ export default async function AdminUsersPage({
             Toplam {totalCount}
           </p>
         </div>
+        <AddUserDialog categories={categories} districts={districtOptions} />
       </div>
 
       {/* Quick stats */}
@@ -182,7 +199,11 @@ export default async function AdminUsersPage({
         </FilterChip>
       </div>
 
-      <UsersTable users={enriched} />
+      <UsersTable
+        users={enriched}
+        categories={categories}
+        districts={districtOptions}
+      />
     </div>
   );
 }

@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminIcon from "@/components/admin/AdminIcon";
+import AdminModal from "@/components/admin/AdminModal";
+import ProfessionPicker from "@/components/admin/ProfessionPicker";
+import Toggle from "@/components/admin/Toggle";
 import { getInitials } from "@/lib/initials";
+
+type Category = { slug: string; name: string };
+type District = { name: string; neighborhoods: string[] };
 
 export type AdminUserRow = {
   id: string;
@@ -13,7 +19,9 @@ export type AdminUserRow = {
   district: string;
   neighborhood: string | null;
   professions: string[];
+  bio: string | null;
   isActive: boolean;
+  isAvailable: boolean;
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
   isAdmin: boolean;
@@ -32,11 +40,21 @@ function formatDate(iso: string): string {
   });
 }
 
-export default function UsersTable({ users }: { users: AdminUserRow[] }) {
+export default function UsersTable({
+  users,
+  categories,
+  districts,
+}: {
+  users: AdminUserRow[];
+  categories: Category[];
+  districts: District[];
+}) {
   const router = useRouter();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [editUser, setEditUser] = useState<AdminUserRow | null>(null);
+  const [msgUser, setMsgUser] = useState<AdminUserRow | null>(null);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -58,9 +76,7 @@ export default function UsersTable({ users }: { users: AdminUserRow[] }) {
         setError(data.error || "İşlem başarısız.");
         return;
       }
-      showToast(
-        !u.isActive ? "Hesap aktif edildi." : "Hesap pasifleştirildi.",
-      );
+      showToast(!u.isActive ? "Hesap aktif edildi." : "Hesap pasifleştirildi.");
       router.refresh();
     } catch {
       setError("Bağlantı hatası.");
@@ -119,9 +135,7 @@ export default function UsersTable({ users }: { users: AdminUserRow[] }) {
         {/* Header */}
         <div
           className="list-row head"
-          style={{
-            gridTemplateColumns: "1.6fr 1.2fr 1fr 0.7fr auto",
-          }}
+          style={{ gridTemplateColumns: "1.6fr 1.2fr 1fr 0.7fr auto" }}
         >
           <div className="col">Kullanıcı</div>
           <div className="col">İletişim</div>
@@ -273,12 +287,25 @@ export default function UsersTable({ users }: { users: AdminUserRow[] }) {
             {/* İşlem */}
             <div
               className="col"
-              style={{
-                display: "flex",
-                gap: 6,
-                justifyContent: "flex-end",
-              }}
+              style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}
             >
+              <button
+                type="button"
+                onClick={() => setEditUser(u)}
+                className="btn btn-secondary btn-xs"
+                title="Bilgileri düzenle"
+              >
+                Düzenle
+              </button>
+              <button
+                type="button"
+                onClick={() => setMsgUser(u)}
+                disabled={u.isAdmin}
+                className="btn btn-secondary btn-xs"
+                title="Mesaj gönder"
+              >
+                Mesaj
+              </button>
               <button
                 type="button"
                 onClick={() => toggleActive(u)}
@@ -302,7 +329,290 @@ export default function UsersTable({ users }: { users: AdminUserRow[] }) {
         ))}
       </div>
 
+      {editUser && (
+        <EditUserModal
+          user={editUser}
+          categories={categories}
+          districts={districts}
+          onClose={() => setEditUser(null)}
+          onDone={(msg) => {
+            setEditUser(null);
+            showToast(msg);
+            router.refresh();
+          }}
+        />
+      )}
+
+      {msgUser && (
+        <MessageUserModal
+          user={msgUser}
+          onClose={() => setMsgUser(null)}
+          onDone={(msg) => {
+            setMsgUser(null);
+            showToast(msg);
+            router.refresh();
+          }}
+        />
+      )}
+
       {toast && <div className="admin-toast">{toast}</div>}
     </>
   );
 }
+
+function EditUserModal({
+  user,
+  categories,
+  districts,
+  onClose,
+  onDone,
+}: {
+  user: AdminUserRow;
+  categories: Category[];
+  districts: District[];
+  onClose: () => void;
+  onDone: (msg: string) => void;
+}) {
+  const [fullName, setFullName] = useState(user.fullName);
+  const [email, setEmail] = useState(user.email);
+  const [phone, setPhone] = useState(user.phone);
+  const [district, setDistrict] = useState(user.district);
+  const [neighborhood, setNeighborhood] = useState(user.neighborhood ?? "");
+  const [bio, setBio] = useState(user.bio ?? "");
+  const [professions, setProfessions] = useState<string[]>(user.professions);
+  const [isAvailable, setIsAvailable] = useState(user.isAvailable);
+  const [isEmailVerified, setIsEmailVerified] = useState(user.isEmailVerified);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(user.isPhoneVerified);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // İlçe listesinde mevcut ilçe yoksa başa ekle (pasif ilçe ihtimali)
+  const districtNames = useMemo(() => {
+    const names = districts.map((d) => d.name);
+    return names.includes(district) ? names : [district, ...names];
+  }, [districts, district]);
+
+  const neighborhoods = useMemo(
+    () => districts.find((d) => d.name === district)?.neighborhoods ?? [],
+    [districts, district],
+  );
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/users/${user.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName,
+          email,
+          phone,
+          district,
+          neighborhood: neighborhood || null,
+          bio: bio || null,
+          professions,
+          isAvailable,
+          isEmailVerified,
+          isPhoneVerified,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || "Kaydedilemedi.");
+        return;
+      }
+      onDone("Bilgiler güncellendi.");
+    } catch {
+      setError("Bağlantı hatası.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <AdminModal
+      title={`${user.fullName} — düzenle`}
+      onClose={() => !saving && onClose()}
+    >
+      <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <ModalField label="Ad soyad">
+          <input className="input" value={fullName} onChange={(e) => setFullName(e.target.value)} required maxLength={80} />
+        </ModalField>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <ModalField label="E-posta">
+            <input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </ModalField>
+          <ModalField label="Telefon">
+            <input className="input" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+          </ModalField>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <ModalField label="İlçe">
+            <select
+              className="select"
+              value={district}
+              onChange={(e) => {
+                setDistrict(e.target.value);
+                setNeighborhood("");
+              }}
+            >
+              {districtNames.map((n) => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
+          </ModalField>
+          <ModalField label="Mahalle">
+            {neighborhoods.length > 0 ? (
+              <select className="select" value={neighborhood} onChange={(e) => setNeighborhood(e.target.value)}>
+                <option value="">Seçiniz</option>
+                {neighborhoods.map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+            ) : (
+              <input className="input" value={neighborhood} onChange={(e) => setNeighborhood(e.target.value)} maxLength={80} />
+            )}
+          </ModalField>
+        </div>
+
+        <ModalField label="Tanıtım / Hakkında">
+          <textarea className="textarea" value={bio} onChange={(e) => setBio(e.target.value)} maxLength={500} rows={4} />
+        </ModalField>
+
+        <ProfessionPicker categories={categories} value={professions} onChange={setProfessions} />
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+            padding: 12,
+            background: "var(--surface-2)",
+            borderRadius: 10,
+          }}
+        >
+          <Toggle
+            checked={isEmailVerified}
+            onChange={setIsEmailVerified}
+            label="E-posta doğrulanmış"
+            hint="Güvendiğin kişiler için elle onayla — kullanıcı sonra profilden değiştirebilir."
+          />
+          <Toggle
+            checked={isPhoneVerified}
+            onChange={setIsPhoneVerified}
+            label="Telefon doğrulanmış"
+          />
+          <Toggle
+            checked={isAvailable}
+            onChange={setIsAvailable}
+            label="Profili aramada / Çevrendekiler listesinde göster"
+          />
+        </div>
+
+        {error && <div style={{ color: "var(--danger)", fontSize: 13 }}>{error}</div>}
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 4 }}>
+          <button type="button" className="btn btn-secondary" onClick={onClose} disabled={saving}>
+            İptal
+          </button>
+          <button type="submit" className="btn btn-primary" disabled={saving}>
+            {saving ? "Kaydediliyor…" : "Kaydet"}
+          </button>
+        </div>
+      </form>
+    </AdminModal>
+  );
+}
+
+function MessageUserModal({
+  user,
+  onClose,
+  onDone,
+}: {
+  user: AdminUserRow;
+  onClose: () => void;
+  onDone: (msg: string) => void;
+}) {
+  const [content, setContent] = useState("");
+  const [sendEmail, setSendEmail] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!content.trim()) return;
+    setError(null);
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/users/${user.id}/message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, sendEmail }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || "Mesaj gönderilemedi.");
+        return;
+      }
+      onDone("Mesaj gönderildi.");
+    } catch {
+      setError("Bağlantı hatası.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <AdminModal
+      title={`${user.fullName} — mesaj gönder`}
+      subtitle="Mesaj kullanıcının platform içi sohbetine düşer. İstersen e-posta olarak da gönderilir."
+      onClose={() => !saving && onClose()}
+    >
+      <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <ModalField label="Mesaj">
+          <textarea
+            className="textarea"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            maxLength={2000}
+            rows={5}
+            placeholder="Mesajını yaz…"
+            autoFocus
+            required
+          />
+        </ModalField>
+
+        <Toggle
+          checked={sendEmail}
+          onChange={setSendEmail}
+          label="E-posta olarak da gönder"
+        />
+
+        {error && <div style={{ color: "var(--danger)", fontSize: 13 }}>{error}</div>}
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 4 }}>
+          <button type="button" className="btn btn-secondary" onClick={onClose} disabled={saving}>
+            İptal
+          </button>
+          <button type="submit" className="btn btn-primary" disabled={saving || !content.trim()}>
+            {saving ? "Gönderiliyor…" : "Gönder"}
+          </button>
+        </div>
+      </form>
+    </AdminModal>
+  );
+}
+
+function ModalField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label style={{ display: "block" }}>
+      <span className="label">{label}</span>
+      {children}
+    </label>
+  );
+}
+
