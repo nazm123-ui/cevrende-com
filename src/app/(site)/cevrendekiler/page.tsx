@@ -39,7 +39,7 @@ export default async function CevrendekilerPage({
     ? districtsAll.find((d) => d.slug === sp.ilce)
     : null;
 
-  const [user, workers, professions, categories] = await Promise.all([
+  const [user, workerResult, professions, categories] = await Promise.all([
     getCurrentUser(),
     getActiveWorkers({
       profession: sp.meslek,
@@ -55,10 +55,13 @@ export default async function CevrendekilerPage({
     }),
   ]);
   const districts = districtsAll;
+  const { workers, widenedToDistrict } = workerResult;
 
   const categoryNameBySlug = new Map(categories.map((c) => [c.slug, c.name]));
   const canContact = !!user && user.isEmailVerified;
   const hasActiveFilters = !!(sp.meslek || sp.ilce || sp.mahalle || sp.q);
+  // Mahalle aranıp sonuç çıkmayınca ilçe geneline genişlettiysek bildir.
+  const districtLabel = selectedDistrict?.name ?? "ilçe";
 
   return (
     <div className="page">
@@ -92,6 +95,17 @@ export default async function CevrendekilerPage({
           />
 
           <div>
+            {widenedToDistrict && (
+              <div className="mb-4 flex items-start gap-3 rounded-[12px] border border-accent-100 bg-accent-50 px-4 py-3 text-[13.5px] text-ink-700">
+                <InfoIcon />
+                <span>
+                  <strong className="font-semibold">{sp.mahalle}</strong>{" "}
+                  mahallesinde bu kriterlere uygun kimseyi bulamadık. Bunun
+                  yerine <strong className="font-semibold">{districtLabel}</strong>{" "}
+                  genelindeki sonuçları gösteriyoruz.
+                </span>
+              </div>
+            )}
             <div className="flex flex-wrap justify-between items-center gap-3 mb-4 text-[13.5px] text-ink-500">
               <span>
                 <span className="font-mono text-ink-700">{workers.length}</span>{" "}
@@ -137,6 +151,26 @@ export default async function CevrendekilerPage({
         </div>
       </section>
     </div>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg
+      width="17"
+      height="17"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="mt-[2px] shrink-0 text-accent-600"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5" />
+      <path d="M12 8h.01" />
+    </svg>
   );
 }
 

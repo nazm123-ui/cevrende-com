@@ -28,52 +28,16 @@ export function isUserOnline(lastSeenAt: Date | null): boolean {
   return Date.now() - lastSeenAt.getTime() < ONLINE_THRESHOLD_MS;
 }
 
-export async function getActiveWorkers(filters: {
-  profession?: string;
-  district?: string;
-  neighborhood?: string;
-  q?: string;
-}): Promise<WorkerListItem[]> {
-  const { profession, district, neighborhood, q } = filters;
+export type WorkerSearchResult = {
+  workers: WorkerListItem[];
+  // Mahalle filtresinde sonuç çıkmadığı için otomatik ilçe geneline
+  // genişletildiyse true olur — arayüzde kullanıcıya bildiriyoruz.
+  widenedToDistrict: boolean;
+};
 
-  // Müsait olmayan işçiler listede görünmez (yalnızca profil URL'i ile açılır).
-  const where: Prisma.UserWhereInput = {
-    isActive: true,
-    isEmailVerified: true,
-    isAvailable: true,
-    professions: profession ? { has: profession } : { isEmpty: false },
-  };
-
-  if (district) {
-    where.district = district;
-  }
-  if (neighborhood) {
-    where.neighborhood = neighborhood;
-  }
-
-  if (q && q.trim()) {
-    const query = q.trim();
-    const matchingCategories = await prisma.jobCategory.findMany({
-      where: {
-        isActive: true,
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { slug: { contains: query, mode: "insensitive" } },
-        ],
-      },
-      select: { slug: true },
-    });
-    const matchingSlugs = matchingCategories.map((c) => c.slug);
-
-    where.OR = [
-      { fullName: { contains: query, mode: "insensitive" } },
-      { bio: { contains: query, mode: "insensitive" } },
-      ...(matchingSlugs.length > 0
-        ? [{ professions: { hasSome: matchingSlugs } }]
-        : []),
-    ];
-  }
-
+async function queryWorkers(
+  where: Prisma.UserWhereInput,
+): Promise<WorkerListItem[]> {
   const workers = await prisma.user.findMany({
     where,
     select: {
@@ -116,6 +80,63 @@ export async function getActiveWorkers(filters: {
   });
 
   return enriched;
+}
+
+export async function getActiveWorkers(filters: {
+  profession?: string;
+  district?: string;
+  neighborhood?: string;
+  q?: string;
+}): Promise<WorkerSearchResult> {
+  const { profession, district, neighborhood, q } = filters;
+
+  // Müsait olmayan işçiler listede görünmez (yalnızca profil URL'i ile açılır).
+  const where: Prisma.UserWhereInput = {
+    isActive: true,
+    isEmailVerified: true,
+    isAvailable: true,
+    professions: profession ? { has: profession } : { isEmpty: false },
+  };
+
+  if (district) {
+    where.district = district;
+  }
+
+  if (q && q.trim()) {
+    const query = q.trim();
+    const matchingCategories = await prisma.jobCategory.findMany({
+      where: {
+        isActive: true,
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { slug: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      select: { slug: true },
+    });
+    const matchingSlugs = matchingCategories.map((c) => c.slug);
+
+    where.OR = [
+      { fullName: { contains: query, mode: "insensitive" } },
+      { bio: { contains: query, mode: "insensitive" } },
+      ...(matchingSlugs.length > 0
+        ? [{ professions: { hasSome: matchingSlugs } }]
+        : []),
+    ];
+  }
+
+  // Önce mahalleye göre dene; mahalle filtresi varsa ekleyerek ara.
+  if (neighborhood) {
+    const inNeighborhood = await queryWorkers({ ...where, neighborhood });
+    if (inNeighborhood.length > 0) {
+      return { workers: inNeighborhood, widenedToDistrict: false };
+    }
+    // Mahallede kimse yoksa otomatik ilçe geneline genişlet.
+    const inDistrict = await queryWorkers(where);
+    return { workers: inDistrict, widenedToDistrict: inDistrict.length > 0 };
+  }
+
+  return { workers: await queryWorkers(where), widenedToDistrict: false };
 }
 
 export async function getProfessionCounts(): Promise<
