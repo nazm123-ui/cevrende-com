@@ -129,5 +129,6 @@
       "/private/tmp",
       "/Users/nazim/.ssh"
     ]
-  }
+  },
+  "enabledMcpjsonServers": ["playwright"]
 }

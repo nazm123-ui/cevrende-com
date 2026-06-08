@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { isAdminEmail } from "@/lib/constants/admin-emails";
 import { getEnabledDistricts } from "@/lib/districts";
+import { getPublicUrl } from "@/lib/r2";
 import AdminIcon from "@/components/admin/AdminIcon";
 import UsersTable from "@/components/admin/UsersTable";
 import AddUserDialog from "@/components/admin/AddUserDialog";
@@ -55,6 +56,8 @@ export default async function AdminUsersPage({
           isAvailable: true,
           isEmailVerified: true,
           isPhoneVerified: true,
+          workerSettings: true,
+          profilePhotoKey: true,
           createdAt: true,
           _count: {
             select: { sentMessages: true, receivedMessages: true },
@@ -79,11 +82,20 @@ export default async function AdminUsersPage({
     neighborhoods: d.neighborhoods,
   }));
 
-  const enriched = users.map((u) => ({
-    ...u,
-    createdAt: u.createdAt.toISOString(),
-    isAdmin: isAdminEmail(u.email),
-  }));
+  const enriched = users.map(({ workerSettings, profilePhotoKey, ...u }) => {
+    const ws =
+      workerSettings && typeof workerSettings === "object"
+        ? (workerSettings as Record<string, unknown>)
+        : {};
+    return {
+      ...u,
+      createdAt: u.createdAt.toISOString(),
+      isAdmin: isAdminEmail(u.email),
+      showDistrict: ws.showDistrict === true,
+      phoneVisibility: ws.phoneVisibility === "public" ? "public" : "private",
+      profilePhotoUrl: profilePhotoKey ? getPublicUrl(profilePhotoKey) : null,
+    } as const;
+  });
 
   return (
     <div className="page-fade">

@@ -29,6 +29,10 @@ const patchSchema = z.object({
   isActive: z.boolean().optional(),
   isEmailVerified: z.boolean().optional(),
   isPhoneVerified: z.boolean().optional(),
+  // Gizlilik ayarları (workerSettings içine yazılır) — yaşlı kullanıcılar
+  // profili düzenleyemediğinde admin elle ayarlayabilsin diye.
+  showDistrict: z.boolean().optional(),
+  phoneVisibility: z.enum(["public", "private"]).optional(),
 });
 
 export async function PATCH(
@@ -59,7 +63,7 @@ export async function PATCH(
 
   const target = await prisma.user.findUnique({
     where: { id },
-    select: { fullName: true, email: true, isActive: true },
+    select: { fullName: true, email: true, isActive: true, workerSettings: true },
   });
   if (!target) {
     return NextResponse.json({ error: "Kullanıcı bulunamadı." }, { status: 404 });
@@ -141,6 +145,23 @@ export async function PATCH(
     data.isEmailVerified = input.isEmailVerified;
   if (input.isPhoneVerified !== undefined)
     data.isPhoneVerified = input.isPhoneVerified;
+
+  // Gizlilik ayarları: mevcut workerSettings'i koruyarak üzerine yaz.
+  if (input.showDistrict !== undefined || input.phoneVisibility !== undefined) {
+    const current =
+      target.workerSettings && typeof target.workerSettings === "object"
+        ? (target.workerSettings as Record<string, unknown>)
+        : {};
+    data.workerSettings = {
+      ...current,
+      ...(input.showDistrict !== undefined
+        ? { showDistrict: input.showDistrict }
+        : {}),
+      ...(input.phoneVisibility !== undefined
+        ? { phoneVisibility: input.phoneVisibility }
+        : {}),
+    };
+  }
 
   if (Object.keys(data).length === 0) {
     return NextResponse.json({ error: "Değiştirilecek alan yok." }, { status: 400 });

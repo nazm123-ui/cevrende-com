@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminIcon from "@/components/admin/AdminIcon";
 import AdminModal from "@/components/admin/AdminModal";
@@ -24,6 +24,9 @@ export type AdminUserRow = {
   isAvailable: boolean;
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
+  showDistrict: boolean;
+  phoneVisibility: "public" | "private";
+  profilePhotoUrl: string | null;
   isAdmin: boolean;
   createdAt: string;
   _count: {
@@ -383,6 +386,10 @@ function EditUserModal({
   const [isAvailable, setIsAvailable] = useState(user.isAvailable);
   const [isEmailVerified, setIsEmailVerified] = useState(user.isEmailVerified);
   const [isPhoneVerified, setIsPhoneVerified] = useState(user.isPhoneVerified);
+  const [showDistrict, setShowDistrict] = useState(user.showDistrict);
+  const [phonePublic, setPhonePublic] = useState(
+    user.phoneVisibility === "public",
+  );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -416,6 +423,8 @@ function EditUserModal({
           isAvailable,
           isEmailVerified,
           isPhoneVerified,
+          showDistrict,
+          phoneVisibility: phonePublic ? "public" : "private",
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -437,6 +446,12 @@ function EditUserModal({
       onClose={() => !saving && onClose()}
     >
       <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <AdminPhotoControl
+          userId={user.id}
+          fullName={user.fullName}
+          initialUrl={user.profilePhotoUrl}
+        />
+
         <ModalField label="Ad soyad">
           <input className="input" value={fullName} onChange={(e) => setFullName(e.target.value)} required maxLength={80} />
         </ModalField>
@@ -510,6 +525,33 @@ function EditUserModal({
             checked={isAvailable}
             onChange={setIsAvailable}
             label="Profili aramada / Çevrendekiler listesinde göster"
+          />
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+            padding: 12,
+            background: "var(--surface-2)",
+            borderRadius: 10,
+          }}
+        >
+          <div className="label" style={{ marginBottom: 2 }}>
+            Gizlilik ayarları
+          </div>
+          <Toggle
+            checked={showDistrict}
+            onChange={setShowDistrict}
+            label="Mahallesini göster"
+            hint="Kapalıysa sadece ilçe (Pendik) görünür. Açıksa mahallesi de görünür."
+          />
+          <Toggle
+            checked={phonePublic}
+            onChange={setPhonePublic}
+            label="Telefon numarası herkese açık"
+            hint="Açıksa giriş yapan herkes numarayı görür. Kapalıysa sadece platform içi mesajlaşma."
           />
         </div>
 
@@ -604,6 +646,136 @@ function MessageUserModal({
         </div>
       </form>
     </AdminModal>
+  );
+}
+
+function AdminPhotoControl({
+  userId,
+  fullName,
+  initialUrl,
+}: {
+  userId: string;
+  fullName: string;
+  initialUrl: string | null;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [url, setUrl] = useState<string | null>(initialUrl);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Dosya 5 MB'dan büyük olamaz.");
+      return;
+    }
+    setError(null);
+    setBusy(true);
+    try {
+      const fd = new FormData();
+      fd.append("photo", file);
+      const res = await fetch(`/api/admin/users/${userId}/photo`, {
+        method: "POST",
+        body: fd,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || "Yükleme başarısız.");
+        return;
+      }
+      setUrl(data.url ?? null);
+    } catch {
+      setError("Bağlantı hatası.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onRemove() {
+    if (!confirm("Profil fotoğrafını kaldırmak istiyor musun?")) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/photo`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Silme başarısız.");
+        return;
+      }
+      setUrl(null);
+    } catch {
+      setError("Bağlantı hatası.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <span className="label">Profil fotoğrafı</span>
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div
+          className="avatar"
+          style={{
+            width: 64,
+            height: 64,
+            fontSize: 20,
+            background: url ? "transparent" : "var(--surface-2)",
+            color: "var(--ink-2)",
+            overflow: "hidden",
+            flexShrink: 0,
+          }}
+        >
+          {url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={url}
+              alt={fullName}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            getInitials(fullName)
+          )}
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            type="button"
+            className="btn btn-secondary btn-xs"
+            onClick={() => inputRef.current?.click()}
+            disabled={busy}
+          >
+            {busy ? "Yükleniyor…" : url ? "Değiştir" : "Fotoğraf yükle"}
+          </button>
+          {url && (
+            <button
+              type="button"
+              className="btn btn-secondary btn-xs"
+              onClick={onRemove}
+              disabled={busy}
+            >
+              Kaldır
+            </button>
+          )}
+        </div>
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/heic"
+          onChange={onFileChange}
+          style={{ display: "none" }}
+        />
+      </div>
+      <span style={{ fontSize: 11.5, color: "var(--muted)" }}>
+        JPG/PNG/WebP, en fazla 5 MB. Otomatik 512×512 ölçeklenir. Hemen kaydedilir.
+      </span>
+      {error && (
+        <span style={{ fontSize: 12.5, color: "var(--danger)" }}>{error}</span>
+      )}
+    </div>
   );
 }
 
