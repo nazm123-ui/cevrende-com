@@ -1,5 +1,5 @@
 // OTOMATİK ÜRETİLDİ — Çevrende markalı e-posta şablonları (tablo tabanlı, inline CSS).
-// Tasarım kaynağı: Cevrende E-posta Sablonlari (standalone). Değişkenler {{...}}.
+// Logo: cevrende.com/email-logo-badge.png. Değişkenler {{...}}.
 
 export type EmailTemplateKey =
   | "verify"
@@ -30,7 +30,7 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, string> = {
 <td style="padding:4px 8px 22px 8px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
 <tr>
-<td style="width:44px;height:44px;background-color:#0F1110;border-radius:12px;text-align:center;vertical-align:middle;font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:bold;color:#ffffff;line-height:44px;">Ç</td>
+<td style="vertical-align:middle;"><img src="https://cevrende.com/email-logo-badge.png" alt="Çevrende" width="44" height="44" style="display:block;border:0;outline:none;text-decoration:none;border-radius:12px;"></td>
 <td style="padding-left:12px;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:bold;color:#0F1110;letter-spacing:-0.3px;">Çevrende</td>
 </tr>
 </table>
@@ -98,7 +98,7 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, string> = {
 <td style="padding:4px 8px 22px 8px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
 <tr>
-<td style="width:44px;height:44px;background-color:#0F1110;border-radius:12px;text-align:center;vertical-align:middle;font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:bold;color:#ffffff;line-height:44px;">Ç</td>
+<td style="vertical-align:middle;"><img src="https://cevrende.com/email-logo-badge.png" alt="Çevrende" width="44" height="44" style="display:block;border:0;outline:none;text-decoration:none;border-radius:12px;"></td>
 <td style="padding-left:12px;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:bold;color:#0F1110;letter-spacing:-0.3px;">Çevrende</td>
 </tr>
 </table>
@@ -166,7 +166,7 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, string> = {
 <td style="padding:4px 8px 22px 8px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
 <tr>
-<td style="width:44px;height:44px;background-color:#0F1110;border-radius:12px;text-align:center;vertical-align:middle;font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:bold;color:#ffffff;line-height:44px;">Ç</td>
+<td style="vertical-align:middle;"><img src="https://cevrende.com/email-logo-badge.png" alt="Çevrende" width="44" height="44" style="display:block;border:0;outline:none;text-decoration:none;border-radius:12px;"></td>
 <td style="padding-left:12px;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:bold;color:#0F1110;letter-spacing:-0.3px;">Çevrende</td>
 </tr>
 </table>
@@ -252,7 +252,7 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, string> = {
 <td style="padding:4px 8px 22px 8px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
 <tr>
-<td style="width:44px;height:44px;background-color:#0F1110;border-radius:12px;text-align:center;vertical-align:middle;font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:bold;color:#ffffff;line-height:44px;">Ç</td>
+<td style="vertical-align:middle;"><img src="https://cevrende.com/email-logo-badge.png" alt="Çevrende" width="44" height="44" style="display:block;border:0;outline:none;text-decoration:none;border-radius:12px;"></td>
 <td style="padding-left:12px;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:bold;color:#0F1110;letter-spacing:-0.3px;">Çevrende</td>
 </tr>
 </table>
@@ -331,7 +331,7 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, string> = {
 <td style="padding:4px 8px 22px 8px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
 <tr>
-<td style="width:44px;height:44px;background-color:#0F1110;border-radius:12px;text-align:center;vertical-align:middle;font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:bold;color:#ffffff;line-height:44px;">Ç</td>
+<td style="vertical-align:middle;"><img src="https://cevrende.com/email-logo-badge.png" alt="Çevrende" width="44" height="44" style="display:block;border:0;outline:none;text-decoration:none;border-radius:12px;"></td>
 <td style="padding-left:12px;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:bold;color:#0F1110;letter-spacing:-0.3px;">Çevrende</td>
 </tr>
 </table>
@@ -411,7 +411,7 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, string> = {
 <td style="padding:4px 8px 22px 8px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
 <tr>
-<td style="width:44px;height:44px;background-color:#0F1110;border-radius:12px;text-align:center;vertical-align:middle;font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:bold;color:#ffffff;line-height:44px;">Ç</td>
+<td style="vertical-align:middle;"><img src="https://cevrende.com/email-logo-badge.png" alt="Çevrende" width="44" height="44" style="display:block;border:0;outline:none;text-decoration:none;border-radius:12px;"></td>
 <td style="padding-left:12px;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:bold;color:#0F1110;letter-spacing:-0.3px;">Çevrende</td>
 </tr>
 </table>
@@ -432,7 +432,7 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, string> = {
 <td style="padding:20px 22px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="padding-bottom:12px;">
 <tr>
-<td style="width:30px;height:30px;background-color:#0F1110;border-radius:8px;text-align:center;vertical-align:middle;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;line-height:30px;">Ç</td>
+<td style="vertical-align:middle;"><img src="https://cevrende.com/email-logo-badge.png" alt="Çevrende" width="30" height="30" style="display:block;border:0;outline:none;text-decoration:none;border-radius:8px;"></td>
 <td style="padding-left:10px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#0F1110;">Çevrende Yönetim<div style="font-size:11px;font-weight:normal;color:#8A8A82;padding-top:2px;">resmi mesaj</div></td>
 </tr>
 </table>
@@ -485,9 +485,7 @@ export function renderEmail(
   for (const [k, v] of Object.entries(vars)) {
     html = html.split(`{{${k}}}`).join(v ?? "");
   }
-  // İsim yoksa "Merhaba ," -> "Merhaba,"
   html = html.replace(/Merhaba\s*,/g, "Merhaba,");
-  // Doldurulmamış kalan değişken varsa temizle
   html = html.replace(/\{\{\w+\}\}/g, "");
   return html;
 }
