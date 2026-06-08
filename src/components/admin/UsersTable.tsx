@@ -164,18 +164,31 @@ export default function UsersTable({
               <div
                 className="avatar avatar-sm"
                 style={{
-                  background: u.isAdmin
-                    ? "var(--ink)"
-                    : u.professions.length > 0
-                      ? "var(--accent)"
-                      : "var(--surface-2)",
+                  background: u.profilePhotoUrl
+                    ? "transparent"
+                    : u.isAdmin
+                      ? "var(--ink)"
+                      : u.professions.length > 0
+                        ? "var(--accent)"
+                        : "var(--surface-2)",
                   color:
                     u.isAdmin || u.professions.length > 0
                       ? "#fff"
                       : "var(--ink-2)",
+                  overflow: "hidden",
                 }}
+                title={u.profilePhotoUrl ? "Profil fotoğrafı var" : undefined}
               >
-                {getInitials(u.fullName)}
+                {u.profilePhotoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={u.profilePhotoUrl}
+                    alt={u.fullName}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                ) : (
+                  getInitials(u.fullName)
+                )}
               </div>
               <div style={{ minWidth: 0 }}>
                 <div
@@ -658,6 +671,7 @@ function AdminPhotoControl({
   fullName: string;
   initialUrl: string | null;
 }) {
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState<string | null>(initialUrl);
   const [busy, setBusy] = useState(false);
@@ -686,6 +700,7 @@ function AdminPhotoControl({
         return;
       }
       setUrl(data.url ?? null);
+      router.refresh();
     } catch {
       setError("Bağlantı hatası.");
     } finally {
@@ -707,6 +722,7 @@ function AdminPhotoControl({
         return;
       }
       setUrl(null);
+      router.refresh();
     } catch {
       setError("Bağlantı hatası.");
     } finally {
