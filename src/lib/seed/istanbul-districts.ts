@@ -23,7 +23,7 @@ export const ISTANBUL_DISTRICTS: SeedDistrict[] = [
       "Dumlupınar", "Ertuğrul Gazi", "Esenler", "Esenyalı", "Fatih",
       "Fevzi Çakmak", "Güllübağlar", "Güzelyalı", "Harmandere", "Kavakpınar",
       "Kaynarca", "Kurtköy", "Orhangazi", "Orta", "Ramazanoğlu", "Sapanbağları",
-      "Sülüntepe", "Şeyhli", "Velibaba", "Yayalar", "Yeni", "Yenişehir",
+      "Sülüntepe", "Şeyhli", "Velibaba", "Yayalar", "Yeni Mahalle", "Yenişehir",
     ],
   },
   {

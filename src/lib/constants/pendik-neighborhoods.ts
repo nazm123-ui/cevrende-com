@@ -25,7 +25,7 @@ export const PENDIK_NEIGHBORHOODS = [
   "Şeyhli",
   "Velibaba",
   "Yayalar",
-  "Yeni",
+  "Yeni Mahalle",
   "Yenişehir",
 ] as const;
 
