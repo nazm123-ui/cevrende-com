@@ -204,8 +204,8 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, string> = {
 <tr><td style="padding-bottom:22px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
 <tr>
-<td align="center" bgcolor="#D4541C" style="border-radius:10px;">
-<a href="{{giris_linki}}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:10px;">Giriş yap</a>
+<td align="center" bgcolor="#D4541C" style="border-radius:10px;padding:14px 32px;mso-padding-alt:14px 32px;">
+<a href="{{giris_linki}}" style="display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Giriş yap</a>
 </td>
 </tr>
 </table>
@@ -285,8 +285,8 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, string> = {
 <tr><td>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
 <tr>
-<td align="center" bgcolor="#D4541C" style="border-radius:10px;">
-<a href="{{giris_linki}}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:10px;">Hesabıma git</a>
+<td align="center" bgcolor="#D4541C" style="border-radius:10px;padding:14px 32px;mso-padding-alt:14px 32px;">
+<a href="{{giris_linki}}" style="display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Hesabıma git</a>
 </td>
 </tr>
 </table>
@@ -365,8 +365,8 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, string> = {
 <tr><td>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
 <tr>
-<td align="center" bgcolor="#D4541C" style="border-radius:10px;">
-<a href="{{giris_linki}}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:10px;">Profilini güncelle</a>
+<td align="center" bgcolor="#D4541C" style="border-radius:10px;padding:14px 32px;mso-padding-alt:14px 32px;">
+<a href="{{giris_linki}}" style="display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Profilini güncelle</a>
 </td>
 </tr>
 </table>
@@ -446,8 +446,8 @@ export const EMAIL_TEMPLATES: Record<EmailTemplateKey, string> = {
 <tr><td style="padding-bottom:22px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
 <tr>
-<td align="center" bgcolor="#D4541C" style="border-radius:10px;">
-<a href="{{giris_linki}}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:10px;">Mesajlara git</a>
+<td align="center" bgcolor="#D4541C" style="border-radius:10px;padding:14px 32px;mso-padding-alt:14px 32px;">
+<a href="{{giris_linki}}" style="display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Mesajlara git</a>
 </td>
 </tr>
 </table>
