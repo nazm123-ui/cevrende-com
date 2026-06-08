@@ -13,6 +13,7 @@ export default function PanelTabs({ unreadCount }: { unreadCount?: number }) {
   const pathname = usePathname();
   const tabs: Tab[] = [
     { href: "/panel/profil", label: "Profilim" },
+    { href: "/panel/hesap", label: "Hesap Ayarları" },
     { href: "/panel/mesajlar", label: "Mesajlar", badge: unreadCount },
   ];
 

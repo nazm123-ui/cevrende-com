@@ -35,9 +35,10 @@ function normalize(s: string): string {
 type Props = {
   categories: Category[];
   initial: ProfileFormInitial;
+  onSaved?: () => void;
 };
 
-export default function ProfileForm({ categories, initial }: Props) {
+export default function ProfileForm({ categories, initial, onSaved }: Props) {
   const router = useRouter();
   const [state, setState] = useState<ProfileFormInitial>(initial);
   const [error, setError] = useState<string | null>(null);
@@ -100,6 +101,7 @@ export default function ProfileForm({ categories, initial }: Props) {
       }
       setSuccess("Profil ayarların kaydedildi.");
       router.refresh();
+      onSaved?.();
     } catch {
       setError("Bir hata oluştu. Tekrar deneyin.");
     } finally {
