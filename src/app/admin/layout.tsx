@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/require-auth";
+import { getUnreadCount } from "@/lib/messages";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminTopbar from "@/components/admin/AdminTopbar";
 import "./admin.css";
@@ -26,12 +27,14 @@ export default async function AdminLayout({
     openReportsCount,
     districtsCount,
     pendingSuggestionsCount,
+    unreadMessagesCount,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.jobCategory.count({ where: { isActive: true } }),
     prisma.messageReport.count({ where: { status: "open" } }),
     prisma.district.count({ where: { isEnabled: true } }),
     prisma.categorySuggestion.count({ where: { status: "pending" } }),
+    getUnreadCount(admin.id),
   ]);
 
   return (
@@ -44,6 +47,7 @@ export default async function AdminLayout({
             categories: categoriesCount,
             districts: districtsCount,
             suggestions: pendingSuggestionsCount,
+            messages: unreadMessagesCount,
           }}
           adminName={admin.fullName}
           adminInitials={initialsFrom(admin.fullName)}

@@ -11,6 +11,7 @@ type Counts = {
   categories: number;
   districts: number;
   suggestions: number;
+  messages: number;
 };
 
 type Props = {
@@ -25,6 +26,14 @@ const NAV = {
     { href: "/admin/aktivite", id: "activity", icon: "activity", label: "Aktivite" },
   ],
   management: [
+    {
+      href: "/admin/mesajlar",
+      id: "messages",
+      icon: "msg",
+      label: "Mesajlar",
+      countKey: "messages" as const,
+      dotIfOpen: true,
+    },
     {
       href: "/admin/kullanicilar",
       id: "users",

@@ -29,6 +29,9 @@ type Props = {
   conversations: ConversationItem[];
   activeUserId: string | null;
   activeMessages: ThreadMsg[];
+  // Sohbet listesi/thread route tabanı. Varsayılan kullanıcı paneli; admin
+  // mesaj bölümü "/admin/mesajlar" geçer.
+  basePath?: string;
 };
 
 export default function MessagesClient({
@@ -36,6 +39,7 @@ export default function MessagesClient({
   conversations,
   activeUserId,
   activeMessages,
+  basePath = "/panel/mesajlar",
 }: Props) {
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -179,7 +183,7 @@ export default function MessagesClient({
                       <button
                         key={c.otherUserId}
                         onClick={() => {
-                          router.push(`/panel/mesajlar/${c.otherUserId}`);
+                          router.push(`${basePath}/${c.otherUserId}`);
                           setMenuOpen(false);
                         }}
                         className={`block w-full text-left px-[18px] py-4 border-0 border-b border-ink-100 cursor-pointer font-[inherit] border-l-2 ${
@@ -240,7 +244,7 @@ export default function MessagesClient({
                   <div className="relative px-[22px] py-4 border-b border-ink-100 flex items-center justify-between gap-3 bg-white">
                     <div className="flex items-center gap-3 min-w-0">
                       <button
-                        onClick={() => router.push("/panel/mesajlar")}
+                        onClick={() => router.push(basePath)}
                         aria-label="Sohbet listesine dön"
                         className="msg-back hidden w-11 h-11 -ml-2 rounded-full items-center justify-center bg-transparent border-0 cursor-pointer text-ink-700 text-[22px] leading-none active:bg-ink-100"
                       >
