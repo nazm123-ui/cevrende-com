@@ -90,8 +90,14 @@ export default function TopFilterBar({ districts, categories }: Props) {
     }
     const next = new URLSearchParams(params.toString());
     const query = q.trim();
-    if (query) next.set("q", query);
-    else next.delete("q");
+    if (query) {
+      next.set("q", query);
+      // Serbest metin araması kategoriden bağımsız olsun: takılı kalan
+      // kategori filtresini temizle ki kişi hangi kategoride olursa olsun bulunsun.
+      next.delete("meslek");
+    } else {
+      next.delete("q");
+    }
     if (ilce) next.set("ilce", ilce);
     else next.delete("ilce");
     if (mahalle) next.set("mahalle", mahalle);
