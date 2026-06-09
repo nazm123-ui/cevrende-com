@@ -49,6 +49,15 @@ export const registerSchema = z
       .trim()
       .min(1, "Mahalle seçmelisin.")
       .max(80, "Mahalle en fazla 80 karakter olabilir."),
+    professions: z
+      .array(z.string().min(1).max(60))
+      .min(1, "En az bir meslek seçin.")
+      .max(5, "En fazla 5 meslek seçebilirsin."),
+    bio: z
+      .string()
+      .trim()
+      .min(30, "Hakkımda en az 30 karakter olmalı.")
+      .max(500, "Hakkımda en fazla 500 karakter olabilir."),
     acceptTerms: z.boolean().refine((v) => v === true, {
       message: "Kullanım koşullarını kabul etmelisiniz.",
     }),

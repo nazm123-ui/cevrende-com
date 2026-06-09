@@ -7,6 +7,7 @@ import { registerSchema } from "@/lib/validators";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { logActivity } from "@/lib/activity-log";
 import { getDistrictBySlug } from "@/lib/districts";
+import { checkContent, describeCategories } from "@/lib/content-filter";
 
 export async function POST(req: Request) {
   const limited = await checkRateLimit(req, "auth-strict");
@@ -27,7 +28,16 @@ export async function POST(req: Request) {
     );
   }
 
-  const { fullName, email, phone, password, districtSlug, neighborhood } = parsed.data;
+  const {
+    fullName,
+    email,
+    phone,
+    password,
+    districtSlug,
+    neighborhood,
+    professions,
+    bio,
+  } = parsed.data;
 
   // İlçe doğrulama: seçilen ilçe gerçekten aktif mi ve mahalle ona ait mi?
   const district = await getDistrictBySlug(districtSlug);
@@ -50,6 +60,40 @@ export async function POST(req: Request) {
     );
   }
 
+  // Meslek slug'ları gerçekten var olan aktif kategoriler mi?
+  const validSlugs = new Set(
+    (
+      await prisma.jobCategory.findMany({
+        where: { isActive: true },
+        select: { slug: true },
+      })
+    ).map((c) => c.slug),
+  );
+  if (professions.some((p) => !validSlugs.has(p))) {
+    return NextResponse.json(
+      {
+        error: "Geçersiz meslek seçimi.",
+        issues: { professions: ["Meslekleri listeden seç."] },
+      },
+      { status: 400 },
+    );
+  }
+
+  // Tanıtım metni içerik filtresi (küfür / iletişim bilgisi / spam)
+  const filter = checkContent(bio);
+  if (filter.blockedCategories.length > 0) {
+    return NextResponse.json(
+      {
+        error: `Tanıtım metni uygunsuz içerik barındırıyor (${describeCategories(filter.blockedCategories)}).`,
+        issues: { bio: ["Tanıtım metnini düzenle."] },
+      },
+      { status: 400 },
+    );
+  }
+
+  const workerSettings = { showDistrict: false, phoneVisibility: "private" };
+  const trimmedBio = bio.trim();
+
   const existing = await prisma.user.findFirst({
     where: { OR: [{ email }, { phone }] },
     select: {
@@ -62,6 +106,11 @@ export async function POST(req: Request) {
 
   if (existing) {
     if (!existing.isEmailVerified) {
+      // Yarım kalmış kayıt: yeni girilen meslek/tanıtım bilgilerini güncelle.
+      await prisma.user.update({
+        where: { id: existing.id },
+        data: { professions, bio: trimmedBio, workerSettings },
+      });
       const emailOtp = await createOtp(existing.id, "email_registration");
       await sendOtpEmail(existing.email, emailOtp.code);
 
@@ -91,6 +140,9 @@ export async function POST(req: Request) {
       district: district.name,
       neighborhood: neighborhood || null,
       isPhoneVerified: true,
+      professions,
+      bio: trimmedBio,
+      workerSettings,
     },
     select: { id: true, email: true },
   });

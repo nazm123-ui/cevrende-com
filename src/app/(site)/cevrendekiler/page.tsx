@@ -74,6 +74,7 @@ export default async function CevrendekilerPage({
               name: d.name,
               neighborhoods: d.neighborhoods,
             }))}
+            categories={categories}
           />
         </div>
       </section>

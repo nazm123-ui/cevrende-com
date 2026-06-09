@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import AuthShell from "@/components/auth/AuthShell";
 import RegisterForm from "@/components/auth/RegisterForm";
 import { getCurrentUser } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { getEnabledDistricts, formatDistrictListTr } from "@/lib/districts";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +21,14 @@ export default async function KayitPage() {
   const user = await getCurrentUser();
   if (user) redirect("/");
 
-  const districts = await getEnabledDistricts();
+  const [districts, categories] = await Promise.all([
+    getEnabledDistricts(),
+    prisma.jobCategory.findMany({
+      where: { isActive: true },
+      orderBy: { order: "asc" },
+      select: { slug: true, name: true },
+    }),
+  ]);
 
   return (
     <AuthShell
@@ -34,6 +42,7 @@ export default async function KayitPage() {
           name: d.name,
           neighborhoods: d.neighborhoods,
         }))}
+        categories={categories}
       />
     </AuthShell>
   );

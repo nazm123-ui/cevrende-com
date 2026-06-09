@@ -103,26 +103,45 @@ export async function getActiveWorkers(filters: {
   }
 
   if (q && q.trim()) {
-    const query = q.trim();
-    const matchingCategories = await prisma.jobCategory.findMany({
-      where: {
-        isActive: true,
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { slug: { contains: query, mode: "insensitive" } },
-        ],
-      },
-      select: { slug: true },
-    });
-    const matchingSlugs = matchingCategories.map((c) => c.slug);
+    // Sorguyu kelimelere böl; "matematik öğretmeni" gibi çok kelimeli aramaların
+    // her parçası ad / tanıtım / kategori adından eşleşebilsin. Böylece çatı
+    // kategoriye (örn. "Özel Ders Öğretmeni") üye ama uzmanlığını ("Matematik")
+    // tanıtımına yazan kişiler de bulunur.
+    const tokens = q
+      .trim()
+      .split(/\s+/)
+      .filter((t) => t.length >= 2);
 
-    where.OR = [
-      { fullName: { contains: query, mode: "insensitive" } },
-      { bio: { contains: query, mode: "insensitive" } },
-      ...(matchingSlugs.length > 0
-        ? [{ professions: { hasSome: matchingSlugs } }]
-        : []),
-    ];
+    if (tokens.length > 0) {
+      // Her token için eşleşen kategori slug'larını topla.
+      const tokenClauses = await Promise.all(
+        tokens.map(async (token) => {
+          const matchingCategories = await prisma.jobCategory.findMany({
+            where: {
+              isActive: true,
+              OR: [
+                { name: { contains: token, mode: "insensitive" } },
+                { slug: { contains: token, mode: "insensitive" } },
+              ],
+            },
+            select: { slug: true },
+          });
+          const matchingSlugs = matchingCategories.map((c) => c.slug);
+
+          const or: Prisma.UserWhereInput[] = [
+            { fullName: { contains: token, mode: "insensitive" } },
+            { bio: { contains: token, mode: "insensitive" } },
+          ];
+          if (matchingSlugs.length > 0) {
+            or.push({ professions: { hasSome: matchingSlugs } });
+          }
+          return { OR: or };
+        }),
+      );
+
+      // Kişi her token'ı bir yerde (ad / tanıtım / kategori) karşılamalı.
+      where.AND = tokenClauses;
+    }
   }
 
   // Önce mahalleye göre dene; mahalle filtresi varsa ekleyerek ara.
