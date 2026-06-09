@@ -16,6 +16,9 @@ export async function generateMetadata() {
   return {
     title: `Çevrendekiler — ${label}'te Hizmet Verenler`,
     description: `${label} ve çevresinde mesleğe göre hizmet veren ara. Profil incele, doğrudan mesajla, aracısız iletişime geç.`,
+    // Filtre parametreleri (?meslek, ?ilce, ?mahalle, ?q, ?siralama) sınırsız
+    // URL varyasyonu üretir; hepsi parametresiz sayfaya konsolide edilir.
+    alternates: { canonical: "/cevrendekiler" },
   };
 }
 
@@ -63,11 +66,30 @@ export default async function CevrendekilerPage({
   // Mahalle aranıp sonuç çıkmayınca ilçe geneline genişlettiysek bildir.
   const districtLabel = selectedDistrict?.name ?? "ilçe";
 
+  // Sayfa başlığı/tanıtımı — seçili meslek varsa ona göre uyarlanır.
+  const areaLabel =
+    selectedDistrict?.name ?? formatDistrictListTr(districtsAll.map((d) => d.name));
+  const activeCategoryName = sp.meslek
+    ? categoryNameBySlug.get(sp.meslek) ?? null
+    : null;
+  const pageHeading = activeCategoryName
+    ? `${areaLabel}'te ${activeCategoryName}`
+    : `${areaLabel}'te Hizmet Verenler`;
+  const pageIntro = activeCategoryName
+    ? `${areaLabel} ve çevresinde ${activeCategoryName.toLocaleLowerCase("tr")} arıyorsan müsait kişileri incele, doğrudan mesajla — aracı ve komisyon yok.`
+    : `${areaLabel} ve çevresindeki hizmet verenleri meslek ve mahalleye göre filtrele, profil incele, doğrudan iletişime geç.`;
+
   return (
     <div className="page">
-      {/* Search + filter bar */}
+      {/* Sayfa başlığı + arama/filtre */}
       <section className="pt-8 pb-6">
         <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
+          <h1 className="text-[24px] sm:text-[30px] font-semibold tracking-[-0.02em] leading-[1.15] mb-1.5">
+            {pageHeading}
+          </h1>
+          <p className="text-[14.5px] text-ink-500 leading-relaxed max-w-[640px] mb-5">
+            {pageIntro}
+          </p>
           <TopFilterBar
             districts={districts.map((d) => ({
               slug: d.slug,

@@ -22,6 +22,8 @@ export default async function Footer() {
 
         <FooterCol title="Platform">
           <FooterLink href="/cevrendekiler">Çevrendekiler</FooterLink>
+          <FooterLink href="/pendik/boyaci">Pendik Boyacı</FooterLink>
+          <FooterLink href="/pendik/elektrikci">Pendik Elektrikçi</FooterLink>
           <FooterLink href="/kayit">Hesap aç</FooterLink>
           <FooterLink href="/giris">Giriş</FooterLink>
         </FooterCol>

@@ -39,9 +39,10 @@ export const metadata: Metadata = {
     "Pendik usta bul",
     "yerel hizmet Pendik",
   ],
-  alternates: {
-    canonical: "/",
-  },
+  // NOT: canonical'ı burada tanımlamıyoruz. Root'ta tanımlanırsa, kendi
+  // canonical'ını vermeyen tüm alt sayfalar bunu miras alıp yanlışlıkla
+  // ana sayfaya ("/") işaret eder ve indexten düşebilir. Her sayfa kendi
+  // canonical'ını verir (örn. ana sayfa: page.tsx, /cevrendekiler: generateMetadata).
   openGraph: {
     type: "website",
     locale: "tr_TR",
@@ -122,10 +123,7 @@ export default function RootLayout({
                   },
                 },
               },
-              sameAs: [
-                "https://twitter.com/cevrende",
-                "https://instagram.com/cevrende",
-              ],
+              sameAs: ["https://www.instagram.com/cevrendecom/"],
             }),
           }}
         />
@@ -172,7 +170,6 @@ export default function RootLayout({
                 "@type": "AdministrativeArea",
                 name: "Pendik, İstanbul",
               },
-              telephone: "",
               openingHoursSpecification: {
                 "@type": "OpeningHoursSpecification",
                 dayOfWeek: [

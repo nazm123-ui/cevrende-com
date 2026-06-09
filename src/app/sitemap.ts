@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
 import { SITE_URL, absoluteUrl } from "@/lib/site-url";
+import { CATEGORY_PAGE_SLUGS } from "@/lib/category-pages";
 
 export const revalidate = 3600; // 1 saat
 
@@ -65,6 +66,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
+  // Kategori landing sayfaları (/pendik/[meslek]) — elle hazırlanmış SEO sayfaları
+  const categoryPages: MetadataRoute.Sitemap = CATEGORY_PAGE_SLUGS.map((slug) => ({
+    url: absoluteUrl(`/pendik/${slug}`),
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
   // Aktif işçi profilleri — sadece doğrulanmış + aktif + müsait
   let workerPages: MetadataRoute.Sitemap = [];
   try {
@@ -88,7 +97,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.warn("[sitemap] worker fetch failed:", err);
   }
 
-  return [...staticPages, ...workerPages];
+  return [...staticPages, ...categoryPages, ...workerPages];
 }
 
 export { SITE_URL };

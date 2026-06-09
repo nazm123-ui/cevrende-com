@@ -14,6 +14,7 @@ export async function generateMetadata() {
   return {
     title: `${locationLabel}'te Hizmet Veriyorsan Ücretsiz Profil Oluştur`,
     description: `${locationLabel}'te mesleğini ve mahalleni ekle, çevrendeki insanlar sana doğrudan ulaşsın. Ücretsiz profil, komisyonsuz iletişim, üyelik ücreti yok.`,
+    alternates: { canonical: "/kayit" },
   };
 }
 

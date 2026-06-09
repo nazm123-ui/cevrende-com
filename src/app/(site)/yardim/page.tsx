@@ -5,6 +5,7 @@ export const metadata = {
   title: "Yardım Merkezi — Cevrende.com",
   description:
     "Cevrende.com kullanımı hakkında sık sorulan sorular: kayıt, profil, mesajlaşma, telefon görünürlüğü ve hesap güvenliği.",
+  alternates: { canonical: "/yardim" },
 };
 
 // React node içeriğini düz metne çevirir — FAQPage schema için.

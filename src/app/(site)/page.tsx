@@ -14,6 +14,7 @@ export const metadata = {
     "Pendik'te güvenilir temizlikçi, çilingir, tadilat ustası ve daha fazlasını mahallenden bul. Aracısız, ücretsiz iletişim.",
   keywords:
     "Pendik, mahalle, temizlikçi, çilingir, tadilat, kurye, boyacı, yerel hizmet",
+  alternates: { canonical: "/" },
 };
 
 export const revalidate = 60;

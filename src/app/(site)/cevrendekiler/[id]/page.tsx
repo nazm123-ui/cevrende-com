@@ -10,6 +10,7 @@ import WorkerContactCard from "@/components/workers/WorkerContactCard";
 import Icon from "@/components/ui/Icon";
 import { isUserOnline } from "@/lib/workers";
 import { getPublicUrl } from "@/lib/r2";
+import { absoluteUrl } from "@/lib/site-url";
 
 export async function generateMetadata({
   params,
@@ -148,8 +149,37 @@ export default async function WorkerProfilePage({
   const experiences = parseExperiences(worker.experiences);
   const skills = professionNames.slice(0, 6);
 
+  // Person yapısal verisi — AI aramalarda ve zengin sonuçlarda kişiyi tanımlar.
+  const personLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: worker.fullName,
+    ...(professionNames.length > 0
+      ? { jobTitle: professionNames.join(", ") }
+      : {}),
+    url: absoluteUrl(`/cevrendekiler/${worker.id}`),
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: worker.district,
+      addressRegion: "İstanbul",
+      addressCountry: "TR",
+    },
+    areaServed: {
+      "@type": "AdministrativeArea",
+      name: `${worker.district}, İstanbul`,
+    },
+    ...(worker.bio ? { description: worker.bio.slice(0, 250) } : {}),
+    ...(worker.profilePhotoKey
+      ? { image: getPublicUrl(worker.profilePhotoKey) }
+      : {}),
+  };
+
   return (
     <div className="page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }}
+      />
       {/* Breadcrumb */}
       <section className="pt-8">
         <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
