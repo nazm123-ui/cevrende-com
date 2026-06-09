@@ -10,6 +10,7 @@ import {
   CATEGORY_PAGE_SLUGS,
   soruEki,
 } from "@/lib/category-pages";
+import { getGuidesForCategory } from "@/lib/guides";
 import { absoluteUrl } from "@/lib/site-url";
 
 // Dinamik render: hizmet veren listesi her istekte canlı veriden gelir.
@@ -63,6 +64,7 @@ export default async function CategoryLandingPage({
   const others = CATEGORY_PAGE_SLUGS.filter((s) => s !== cfg.slug).map(
     (s) => CATEGORY_PAGES[s],
   );
+  const relatedGuides = getGuidesForCategory(cfg.categorySlug);
 
   const faqLd = {
     "@context": "https://schema.org",
@@ -248,6 +250,25 @@ export default async function CategoryLandingPage({
               Ücretsiz profil oluştur
             </Link>
           </div>
+
+          {relatedGuides.length > 0 && (
+            <div className="mt-8">
+              <p className="font-mono text-[12px] uppercase tracking-[0.06em] text-ink-500 mb-3">
+                İlgili rehber
+              </p>
+              <div className="flex flex-col gap-2">
+                {relatedGuides.map((g) => (
+                  <Link
+                    key={g.slug}
+                    href={`/rehber/${g.slug}`}
+                    className="inline-flex items-center gap-2 text-[15px] text-accent-600 hover:text-accent-700 transition"
+                  >
+                    <span aria-hidden>→</span> {g.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="mt-8">
             <p className="font-mono text-[12px] uppercase tracking-[0.06em] text-ink-500 mb-3">

@@ -35,8 +35,9 @@ export default async function Footer() {
         </FooterCol>
 
         <FooterCol title="Destek">
-          <FooterLink href="/sifre-sifirla">Şifremi unuttum</FooterLink>
+          <FooterLink href="/rehber">Rehber</FooterLink>
           <FooterLink href="/yardim">Yardım merkezi</FooterLink>
+          <FooterLink href="/sifre-sifirla">Şifremi unuttum</FooterLink>
           <FooterLink href="/geri-bildirim">Geri bildirim</FooterLink>
         </FooterCol>
       </div>
