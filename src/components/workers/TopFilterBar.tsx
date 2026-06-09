@@ -30,7 +30,8 @@ export default function TopFilterBar({ districts, categories }: Props) {
   const [ilce, setIlce] = useState(params.get("ilce") ?? "");
   const [mahalle, setMahalle] = useState(params.get("mahalle") ?? "");
   const [suggestionsOpen, setSuggestionsOpen] = useState(false);
-  const [highlightIdx, setHighlightIdx] = useState(0);
+  // -1: hiçbiri seçili değil → Enter serbest metin (bio dahil) araması yapar.
+  const [highlightIdx, setHighlightIdx] = useState(-1);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const activeDistrict = useMemo(() => {
@@ -59,7 +60,7 @@ export default function TopFilterBar({ districts, categories }: Props) {
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
 
-  useEffect(() => setHighlightIdx(0), [q]);
+  useEffect(() => setHighlightIdx(-1), [q]);
 
   function pushParams(next: URLSearchParams) {
     startTransition(() => {
@@ -81,7 +82,9 @@ export default function TopFilterBar({ districts, categories }: Props) {
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (suggestionsOpen && suggestions[highlightIdx]) {
+    // Yalnızca kullanıcı bir öneriyi bilerek seçtiyse kategoriye git;
+    // aksi halde serbest metin araması yap (bio dahil tüm metni tarar).
+    if (suggestionsOpen && highlightIdx >= 0 && suggestions[highlightIdx]) {
       goToCategory(suggestions[highlightIdx].slug);
       return;
     }
@@ -104,7 +107,7 @@ export default function TopFilterBar({ districts, categories }: Props) {
       setHighlightIdx((i) => (i + 1) % suggestions.length);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setHighlightIdx((i) => (i - 1 + suggestions.length) % suggestions.length);
+      setHighlightIdx((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
     } else if (e.key === "Escape") {
       setSuggestionsOpen(false);
     }

@@ -43,7 +43,9 @@ export default function QuickSearchCard({
   const [ilce, setIlce] = useState("");
   const [mahalle, setMahalle] = useState("");
   const [suggestionsOpen, setSuggestionsOpen] = useState(false);
-  const [highlightIdx, setHighlightIdx] = useState(0);
+  // -1: hiçbiri seçili değil → Enter serbest metin (bio dahil tüm metin) araması yapar.
+  // Kullanıcı ok tuşu/tıklama ile bir kategoriyi bilerek seçerse o kategoriye gider.
+  const [highlightIdx, setHighlightIdx] = useState(-1);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const activeDistrict = useMemo(() => {
@@ -75,7 +77,7 @@ export default function QuickSearchCard({
   }, []);
 
   useEffect(() => {
-    setHighlightIdx(0);
+    setHighlightIdx(-1);
   }, [query]);
 
   function goToCategory(slug: string) {
@@ -97,7 +99,9 @@ export default function QuickSearchCard({
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (suggestionsOpen && suggestions[highlightIdx]) {
+    // Yalnızca kullanıcı bir öneriyi bilerek seçtiyse (highlightIdx >= 0)
+    // kategoriye git; aksi halde serbest metin araması yap (bio dahil).
+    if (suggestionsOpen && highlightIdx >= 0 && suggestions[highlightIdx]) {
       goToCategory(suggestions[highlightIdx].slug);
       return;
     }
@@ -125,9 +129,7 @@ export default function QuickSearchCard({
       setHighlightIdx((i) => (i + 1) % suggestions.length);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setHighlightIdx(
-        (i) => (i - 1 + suggestions.length) % suggestions.length,
-      );
+      setHighlightIdx((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
     } else if (e.key === "Escape") {
       setSuggestionsOpen(false);
     }
