@@ -1,19 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { normalizeTr } from "@/lib/normalize-tr";
 
 export type Category = { slug: string; name: string };
 
-export function normalizeTr(s: string): string {
-  return s
-    .toLocaleLowerCase("tr")
-    .replace(/ı/g, "i")
-    .replace(/ğ/g, "g")
-    .replace(/ü/g, "u")
-    .replace(/ş/g, "s")
-    .replace(/ö/g, "o")
-    .replace(/ç/g, "c");
-}
+// Geriye dönük uyumluluk: bazı bileşenler normalizeTr'i buradan import ediyor.
+export { normalizeTr };
 
 const inputCls =
   "block w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 outline-none focus:border-ink-900 focus:ring-2 focus:ring-ink-900/5";

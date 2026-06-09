@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import type { WorkerSettings } from "@/lib/phone-visibility";
 import { getPublicUrl } from "@/lib/r2";
+import { normalizeTr } from "@/lib/normalize-tr";
 
 export type { WorkerSettings };
 
@@ -37,6 +38,7 @@ export type WorkerSearchResult = {
 
 async function queryWorkers(
   where: Prisma.UserWhereInput,
+  take = 100,
 ): Promise<WorkerListItem[]> {
   const workers = await prisma.user.findMany({
     where,
@@ -55,7 +57,7 @@ async function queryWorkers(
       createdAt: true,
     },
     orderBy: { createdAt: "desc" },
-    take: 100,
+    take,
   });
 
   const enriched = workers.map((w) => ({
@@ -102,60 +104,64 @@ export async function getActiveWorkers(filters: {
     where.district = district;
   }
 
-  if (q && q.trim()) {
-    // Sorguyu kelimelere böl; "matematik öğretmeni" gibi çok kelimeli aramaların
-    // her parçası ad / tanıtım / kategori adından eşleşebilsin. Böylece çatı
-    // kategoriye (örn. "Özel Ders Öğretmeni") üye ama uzmanlığını ("Matematik")
-    // tanıtımına yazan kişiler de bulunur.
-    const tokens = q
-      .trim()
-      .split(/\s+/)
-      .filter((t) => t.length >= 2);
+  // Serbest metin araması: Türkçe harf duyarsız (ğ↔g, ı↔i, ş↔s, ö↔o, ü↔u, ç↔c).
+  // Eşleştirme JS'te yapılır; çünkü Postgres `contains` Türkçe aksanı katlamaz.
+  // "matematik öğretmeni" gibi çok kelimeli aramada her token ad / tanıtım /
+  // meslek adından eşleşebilir; kişi HER token'ı bir yerde karşılamalı.
+  const tokens =
+    q && q.trim()
+      ? normalizeTr(q)
+          .split(/\s+/)
+          .filter((t) => t.length >= 2)
+      : [];
 
-    if (tokens.length > 0) {
-      // Her token için eşleşen kategori slug'larını topla.
-      const tokenClauses = await Promise.all(
-        tokens.map(async (token) => {
-          const matchingCategories = await prisma.jobCategory.findMany({
-            where: {
-              isActive: true,
-              OR: [
-                { name: { contains: token, mode: "insensitive" } },
-                { slug: { contains: token, mode: "insensitive" } },
-              ],
-            },
-            select: { slug: true },
-          });
-          const matchingSlugs = matchingCategories.map((c) => c.slug);
-
-          const or: Prisma.UserWhereInput[] = [
-            { fullName: { contains: token, mode: "insensitive" } },
-            { bio: { contains: token, mode: "insensitive" } },
-          ];
-          if (matchingSlugs.length > 0) {
-            or.push({ professions: { hasSome: matchingSlugs } });
-          }
-          return { OR: or };
-        }),
-      );
-
-      // Kişi her token'ı bir yerde (ad / tanıtım / kategori) karşılamalı.
-      where.AND = tokenClauses;
-    }
+  let categoryNameBySlug: Map<string, string> | null = null;
+  if (tokens.length > 0) {
+    const cats = await prisma.jobCategory.findMany({
+      where: { isActive: true },
+      select: { slug: true, name: true },
+    });
+    categoryNameBySlug = new Map(cats.map((c) => [c.slug, c.name]));
   }
+
+  function textMatch(workers: WorkerListItem[]): WorkerListItem[] {
+    if (tokens.length === 0) return workers;
+    return workers.filter((w) => {
+      const name = normalizeTr(w.fullName);
+      const bio = normalizeTr(w.bio ?? "");
+      const profs = w.professions.map((s) =>
+        normalizeTr(categoryNameBySlug?.get(s) ?? s),
+      );
+      return tokens.every(
+        (tok) =>
+          name.includes(tok) ||
+          bio.includes(tok) ||
+          profs.some((p) => p.includes(tok)),
+      );
+    });
+  }
+
+  // Metin araması varsa daha geniş aday kümesi çek (JS'te eleyeceğiz), sonra 100'e indir.
+  const fetchTake = tokens.length > 0 ? 1000 : 100;
 
   // Önce mahalleye göre dene; mahalle filtresi varsa ekleyerek ara.
   if (neighborhood) {
-    const inNeighborhood = await queryWorkers({ ...where, neighborhood });
+    const inNeighborhood = textMatch(
+      await queryWorkers({ ...where, neighborhood }, fetchTake),
+    ).slice(0, 100);
     if (inNeighborhood.length > 0) {
       return { workers: inNeighborhood, widenedToDistrict: false };
     }
     // Mahallede kimse yoksa otomatik ilçe geneline genişlet.
-    const inDistrict = await queryWorkers(where);
+    const inDistrict = textMatch(await queryWorkers(where, fetchTake)).slice(
+      0,
+      100,
+    );
     return { workers: inDistrict, widenedToDistrict: inDistrict.length > 0 };
   }
 
-  return { workers: await queryWorkers(where), widenedToDistrict: false };
+  const all = textMatch(await queryWorkers(where, fetchTake)).slice(0, 100);
+  return { workers: all, widenedToDistrict: false };
 }
 
 export async function getProfessionCounts(): Promise<
