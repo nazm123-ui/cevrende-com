@@ -9,7 +9,9 @@ import { HOME_FAQS, HOW_TO_STEPS } from "@/lib/home-faqs";
 import { SITE_URL } from "@/lib/site-url";
 
 export const metadata = {
-  title: "Cevrende — Pendik'te Mahallenden Usta ve Hizmet",
+  // absolute: root layout'taki "%s — Cevrende" şablonunu atlar; aksi halde
+  // başlık "Cevrende — … — Cevrende" şeklinde marka adını iki kez tekrarlar.
+  title: { absolute: "Cevrende — Pendik'te Mahallenden Usta ve Hizmet" },
   description:
     "Pendik'te güvenilir temizlikçi, çilingir, tadilat ustası ve daha fazlasını mahallenden bul. Aracısız, ücretsiz iletişim.",
   keywords:
