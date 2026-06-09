@@ -8,6 +8,7 @@ import {
   getCategoryPage,
   CATEGORY_PAGES,
   CATEGORY_PAGE_SLUGS,
+  soruEki,
 } from "@/lib/category-pages";
 import { absoluteUrl } from "@/lib/site-url";
 
@@ -233,7 +234,7 @@ export default async function CategoryLandingPage({
           <div className="rounded-[16px] border border-ink-100 bg-white p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h2 className="text-[19px] font-semibold tracking-[-0.01em]">
-                {cfg.name} müsün?
+                {cfg.name} {soruEki(cfg.name)}?
               </h2>
               <p className="mt-1 text-[14.5px] text-ink-700 leading-relaxed max-w-[480px]">
                 Ücretsiz profil oluştur, Pendik&apos;te seni arayan insanlar

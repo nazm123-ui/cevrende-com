@@ -151,3 +151,14 @@ export const CATEGORY_PAGE_SLUGS = Object.keys(CATEGORY_PAGES);
 export function getCategoryPage(slug: string): CategoryPage | null {
   return CATEGORY_PAGES[slug] ?? null;
 }
+
+// Türkçe ünlü uyumuna göre "mısın / misin / musun / müsün" soru ekini döndürür.
+// Örn: "Boyacı" → "mısın", "Elektrikçi" → "misin", "Şoför" → "müsün".
+export function soruEki(word: string): string {
+  const vowels = word.toLocaleLowerCase("tr").match(/[aeıioöuü]/g);
+  const last = vowels ? vowels[vowels.length - 1] : "i";
+  if (last === "a" || last === "ı") return "mısın";
+  if (last === "o" || last === "u") return "musun";
+  if (last === "ö" || last === "ü") return "müsün";
+  return "misin"; // e, i
+}
