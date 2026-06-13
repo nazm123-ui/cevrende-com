@@ -144,6 +144,312 @@ export const CATEGORY_PAGES: Record<string, CategoryPage> = {
       },
     ],
   },
+
+  tesisatci: {
+    slug: "tesisatci",
+    categorySlug: "tesisatci",
+    name: "Tesisatçı",
+    h1: "Pendik Tesisatçı / Su Tesisatçısı",
+    metaTitle: "Pendik Tesisatçı — Su Tesisatçısı, Tıkanıklık, Kaçak",
+    metaDescription:
+      "Pendik'te su kaçağı, tıkanıklık, musluk-batarya ve tesisat işleri için mahallenden tesisatçı bul. Profilleri incele, doğrudan mesajla. Aracısız.",
+    intro:
+      "Su kaçağı, tıkanan gider, damlayan musluk ya da yeni tesisat... Pendik'te su tesisatı işleri için mahallendeki ustaları burada bir arada bulursun. Tesisat çoğu zaman acele gerektirir; sana yakın bir usta hem hızlı gelir hem de küçük bir sorunun büyümesini önler. Profilleri inceleyip aracı olmadan doğrudan mesaj atarsın.",
+    guideTitle: "Pendik'te tesisatçı çağırırken nelere dikkat etmeli?",
+    guidePoints: [
+      {
+        title: "Sorunu net anlat",
+        body: "Su mu akıyor, gider mi tıkalı, basınç mı düşük? Belirtiyi ve nerede olduğunu (mutfak, banyo, kombi hattı) söyle ki usta doğru ekipmanla gelsin.",
+      },
+      {
+        title: "Acil mi, planlı mı?",
+        body: "Aktif su kaçağında müsait ve çevrimiçi ustaya öncelik ver; ana vanayı kapatıp hemen mesaj at. Yeni tesisat gibi planlı işlerde acele etme, karşılaştır.",
+      },
+      {
+        title: "Kaçak tespiti ayrı bir uzmanlık",
+        body: "Görünmeyen su kaçaklarında 'kırmadan kaçak tespiti' yapabilen usta, gereksiz kırım masrafından kurtarır. Profilde bu deneyimi sor.",
+      },
+      {
+        title: "Malzeme ve garanti",
+        body: "Değişecek parça (batarya, conta, boru) fiyata dahil mi, işçilik ayrı mı? Yapılan işe garanti veriliyor mu, baştan konuş.",
+      },
+    ],
+    emptyState:
+      "Şu anda Pendik'te müsait tesisatçı görünmüyor. Tesisat işi yapıyorsan ücretsiz profil oluştur, bu sayfada ilk sen görün.",
+    faqs: [
+      {
+        q: "Su kaçağında ne yapmalıyım?",
+        a: "Önce ana su vanasını kapat, ardından müsait bir tesisatçıya mesaj atıp durumu anlat. Vanayı kapatmak, usta gelene kadar hasarın büyümesini önler.",
+      },
+      {
+        q: "Tıkanıklık için tesisatçı mı çağırmalıyım?",
+        a: "Basit bir tıkanıklık bazen pompayla açılır; ama tekrar eden veya ana gidere inen tıkanıklıklarda makineyle açım gerekir. Tesisatçıya tıkanıklığın yerini ve ne sıklıkta olduğunu anlat.",
+      },
+      {
+        q: "Tesisatçıdan fiyat alabilir miyim?",
+        a: "Evet. Sorunu mesajda tarif edersen bir fiyat aralığı söyleyebilir; kesin tutar genelde yerinde görüldükten sonra netleşir.",
+      },
+      {
+        q: "Cevrende ücretli mi?",
+        a: "Hayır. Profil oluşturmak ve tesisatçıyla iletişime geçmek ücretsizdir, komisyon alınmaz.",
+      },
+    ],
+  },
+
+  tadilat: {
+    slug: "tadilat",
+    categorySlug: "insaat-tadilat",
+    name: "Tadilat Ustası",
+    h1: "Pendik Tadilat ve İnşaat Yardımı",
+    metaTitle: "Pendik Tadilat — Ev Tadilatı ve İnşaat Ustası Bul",
+    metaDescription:
+      "Pendik'te ev tadilatı, alçı, fayans, boya ve genel inşaat işleri için mahallenden usta bul. Profilleri incele, doğrudan iletişime geç. Aracısız.",
+    intro:
+      "Evini yenilemek, banyo-mutfak değiştirmek ya da küçük onarımlar mı istiyorsun? Pendik'te tadilat ve inşaat işleri yapan ustaları burada bulursun. Tadilat birden fazla işi (kırım, alçı, fayans, boya, elektrik-su) kapsayabilir; işi baştan netleştirmek hem bütçeni korur hem süreci hızlandırır.",
+    guideTitle: "Pendik'te tadilat yaptırırken nelere dikkat etmeli?",
+    guidePoints: [
+      {
+        title: "Kapsamı yaz",
+        body: "Hangi odalar, hangi işler? Sadece boya mı, yoksa fayans-alçı-tesisat dahil komple mi? Liste ne kadar net olursa fiyat o kadar gerçekçi olur.",
+      },
+      {
+        title: "Tek usta mı, ekip mi?",
+        body: "Küçük işler tek ustayla, komple tadilat genelde ekiple yürür. Ustaya işin büyüklüğünü söyle; gerekirse başka kalemleri de o yönlendirir.",
+      },
+      {
+        title: "Malzeme kimde?",
+        body: "Fayans, boya, malzeme alımı sana mı ait, ustaya mı? Bu, toplam maliyeti en çok etkileyen konu — baştan netleştir.",
+      },
+      {
+        title: "Aşamalı ödeme",
+        body: "Tadilat uzun sürebilir; ödemeyi işin aşamalarına bölmek iki taraf için de güvenlidir. Tamamını peşin verme.",
+      },
+    ],
+    emptyState:
+      "Şu anda Pendik'te müsait tadilat ustası görünmüyor. Tadilat/inşaat işi yapıyorsan ücretsiz profil oluştur, bu sayfada ilk sen görün.",
+    faqs: [
+      {
+        q: "Tadilat ne kadar sürer?",
+        a: "İşin kapsamına bağlı. Tek bir odanın boya-onarımı birkaç gün sürerken, banyo-mutfak dahil komple tadilat haftalar alabilir. Ustaya kapsamı anlatıp net süre iste.",
+      },
+      {
+        q: "Tadilat için tek ustaya mı ulaşmalıyım?",
+        a: "Küçük işler için tek usta yeterli. Komple tadilatta usta genelde gereken diğer kişileri (fayansçı, boyacı, tesisatçı) yönlendirir ya da ekibiyle gelir.",
+      },
+      {
+        q: "Maliyeti baştan öğrenebilir miyim?",
+        a: "Yapılacak işleri net listelersen usta bir tahmin verebilir. Kesin tutar genelde yerinde görüldükten ve malzeme seçimi netleştikten sonra çıkar.",
+      },
+      {
+        q: "Cevrende komisyon alıyor mu?",
+        a: "Hayır. Ustaya ulaşmak da profil açmak da ücretsizdir; komisyon yoktur.",
+      },
+    ],
+  },
+
+  cilingir: {
+    slug: "cilingir",
+    categorySlug: "cilingir",
+    name: "Çilingir",
+    h1: "Pendik Çilingir",
+    metaTitle: "Pendik Çilingir — Kapı Açma ve Kilit Değişimi",
+    metaDescription:
+      "Pendik'te kapıda kaldıysan veya kilit değişimi gerekiyorsa mahallenden çilingir bul. Sana en yakın ustaya doğrudan, aracısız ulaş.",
+    intro:
+      "Kapıda mı kaldın, anahtarını mı kaybettin, kilidini mi yeniletmek istiyorsun? Pendik'te çilingirler genelde acil durumlarda aranır; bu yüzden sana en yakın ve müsait olanı bulmak en hızlı çözümdür. Mahallendeki çilingirleri burada görür, doğrudan iletişime geçersin.",
+    guideTitle: "Pendik'te çilingir çağırırken nelere dikkat etmeli?",
+    guidePoints: [
+      {
+        title: "Yakınlık her şeydir",
+        body: "Acil bir durumda en hızlı çözüm, sana en yakın mahalledeki çilingirdir. Müsait ve çevrimiçi olanı seç.",
+      },
+      {
+        title: "Durumu net söyle",
+        body: "Kapı çelik mi ahşap mı, içeride anahtar var mı, kilit kırık mı? Çilingir doğru aletle gelirse hem hızlı hem hasarsız açar.",
+      },
+      {
+        title: "Fiyatı önceden sor",
+        body: "Gece/gündüz ve kapı tipine göre ücret değişir. Yola çıkmadan tahmini fiyatı konuşmak sürprizi önler.",
+      },
+      {
+        title: "Güvenlik için kilit yenileme",
+        body: "Anahtar kaybında veya taşınmada kilidi/barel'i yenilemek mantıklıdır; çilingire bu seçeneği de sor.",
+      },
+    ],
+    emptyState:
+      "Şu anda Pendik'te müsait çilingir görünmüyor. Çilingirsen ücretsiz profil oluştur, acil arayanlar sana doğrudan ulaşsın.",
+    faqs: [
+      {
+        q: "Kapıda kaldım, en hızlı nasıl çilingir bulurum?",
+        a: "Listede müsait ve çevrimiçi, sana en yakın mahalledeki çilingiri seç ve hemen mesaj at. Yakınlık, gelme süresini doğrudan kısaltır.",
+      },
+      {
+        q: "Çilingir kapıyı hasarsız açar mı?",
+        a: "Çoğu durumda evet. Kapı tipini ve durumunu (içeride anahtar var mı, kilit kırık mı) baştan söylersen usta doğru yöntemle, mümkün olduğunca hasarsız açar.",
+      },
+      {
+        q: "Çilingir ücreti ne kadar?",
+        a: "Kapı tipine ve saate (gece/gündüz) göre değişir. Yola çıkmadan mesajla tahmini ücreti sormak en doğrusu.",
+      },
+      {
+        q: "Cevrende ücretli mi?",
+        a: "Hayır. Çilingire ulaşmak ve profil açmak ücretsizdir, komisyon alınmaz.",
+      },
+    ],
+  },
+
+  marangoz: {
+    slug: "marangoz",
+    categorySlug: "marangoz",
+    name: "Marangoz",
+    h1: "Pendik Marangoz / Mobilya Ustası",
+    metaTitle: "Pendik Marangoz — Mobilya Tamiri ve Ahşap İşleri",
+    metaDescription:
+      "Pendik'te mobilya tamiri, dolap-raf montajı, kapı ayarı ve ahşap işleri için mahallenden marangoz bul. Doğrudan, aracısız iletişim.",
+    intro:
+      "Açılmayan dolap kapağı, sökülen mobilya, ölçüye özel raf ya da ahşap onarımı... Pendik'te marangoz ve mobilya ustalarını burada bulursun. İster küçük bir tamir ister sıfırdan üretim olsun, mahallendeki ustaya doğrudan ulaşır, işini anlatıp anlaşırsın.",
+    guideTitle: "Pendik'te marangoz seçerken nelere dikkat etmeli?",
+    guidePoints: [
+      {
+        title: "İşin türünü belirt",
+        body: "Tamir mi (kapak, menteşe, çekmece), montaj mı, yoksa ölçüye özel üretim mi? Marangozların uzmanlığı farklıdır; ihtiyacını net söyle.",
+      },
+      {
+        title: "Fotoğraf gönder",
+        body: "Tamir veya üretim işinde mevcut durumun fotoğrafı, ustanın hızlı ve doğru fikir vermesini sağlar.",
+      },
+      {
+        title: "Malzeme ve ölçü",
+        body: "Üretim işlerinde malzeme (sunta, MDF, masif) ve ölçüleri netleştir; fiyat buna göre değişir.",
+      },
+      {
+        title: "Yerinde mi, atölyede mi?",
+        body: "Bazı işler evde yapılır, bazıları atölyede. Mobilyanın taşınması gerekiyorsa bunu baştan konuş.",
+      },
+    ],
+    emptyState:
+      "Şu anda Pendik'te müsait marangoz görünmüyor. Marangoz/mobilya ustasıysan ücretsiz profil oluştur, bu sayfada ilk sen görün.",
+    faqs: [
+      {
+        q: "Marangozlar hangi işleri yapar?",
+        a: "Mobilya tamiri, dolap-raf montajı, kapı ve menteşe ayarı, ölçüye özel ahşap üretim ve çeşitli ahşap onarımları. Her ustanın ağırlık verdiği alan profilinde yazar.",
+      },
+      {
+        q: "Küçük bir tamir için de marangoz çağırabilir miyim?",
+        a: "Tabii. Menteşe, çekmece rayı, gevşeyen birleşim gibi küçük işler için de ulaşabilirsin. Durumu fotoğrafla anlatman işi kolaylaştırır.",
+      },
+      {
+        q: "Fiyatı önceden öğrenebilir miyim?",
+        a: "İşi ve mümkünse fotoğrafı paylaşırsan usta tahmini bir fiyat verebilir. Üretim işlerinde ölçü ve malzeme netleşince kesinleşir.",
+      },
+      {
+        q: "Cevrende ücretli mi?",
+        a: "Hayır. Ustaya ulaşmak ve profil açmak ücretsizdir, komisyon yoktur.",
+      },
+    ],
+  },
+
+  demirci: {
+    slug: "demirci",
+    categorySlug: "demirci-kaynakci",
+    name: "Demirci",
+    h1: "Pendik Demirci / Kaynakçı / Korkuluk",
+    metaTitle: "Pendik Demirci — Kaynakçı, Korkuluk ve Ferforje",
+    metaDescription:
+      "Pendik'te korkuluk, ferforje, demir kapı, kaynak ve metal işleri için mahallenden demirci-kaynakçı bul. Doğrudan, aracısız iletişim.",
+    intro:
+      "Balkon korkuluğu, ferforje, demir kapı, çelik raf ya da bir kaynak işi... Pendik'te demirci ve kaynakçıları burada bulursun. Metal işleri çoğu zaman ölçüye özel üretilir; işini net anlatıp mahallendeki ustaya doğrudan ulaşarak doğru fiyatı alırsın.",
+    guideTitle: "Pendik'te demirci/kaynakçı seçerken nelere dikkat etmeli?",
+    guidePoints: [
+      {
+        title: "İşi ve ölçüyü belirt",
+        body: "Korkuluk, kapı, kafes, tamir kaynağı... Ne istediğini ve yaklaşık ölçüleri söyle. Metal işleri ölçüye göre üretildiği için fiyat buna bağlıdır.",
+      },
+      {
+        title: "Yerinde ölçü önemli",
+        body: "Korkuluk/kapı gibi işlerde ustanın yerinde ölçü alması en doğru sonucu verir. Montaj dahil mi, ayrıca sor.",
+      },
+      {
+        title: "Malzeme ve kaplama",
+        body: "Demir mi paslanmaz mı, boyalı mı galvaniz mi? Kaplama/boya hem fiyatı hem ömrü etkiler; baştan konuş.",
+      },
+      {
+        title: "Önceki işleri gör",
+        body: "Ferforje gibi görsel işlerde ustanın daha önce yaptıklarından fotoğraf istemek beklentini netleştirir.",
+      },
+    ],
+    emptyState:
+      "Şu anda Pendik'te müsait demirci/kaynakçı görünmüyor. Bu işi yapıyorsan ücretsiz profil oluştur, bu sayfada ilk sen görün.",
+    faqs: [
+      {
+        q: "Demirciler hangi işleri yapar?",
+        a: "Balkon ve merdiven korkuluğu, ferforje, demir/çelik kapı, kafes, raf ve çeşitli kaynak-tamir işleri. Her ustanın uzmanlığı profilinde belirtilir.",
+      },
+      {
+        q: "Korkuluk için fiyatı nasıl alırım?",
+        a: "Yaklaşık ölçü ve istediğin modeli (düz, ferforje vb.) anlat; usta tahmini fiyat verir. Kesin fiyat genelde yerinde ölçü sonrası netleşir.",
+      },
+      {
+        q: "Montaj fiyata dahil mi?",
+        a: "Ustaya göre değişir. Üretim ve montajın ayrı mı birlikte mi fiyatlandığını baştan netleştir.",
+      },
+      {
+        q: "Cevrende ücretli mi?",
+        a: "Hayır. Ustaya ulaşmak ve profil açmak ücretsizdir, komisyon alınmaz.",
+      },
+    ],
+  },
+
+  cekici: {
+    slug: "cekici",
+    categorySlug: "cekici-yol-yardim",
+    name: "Çekici / Yol Yardım",
+    h1: "Pendik Çekici / Yol Yardım",
+    metaTitle: "Pendik Çekici — Oto Çekici ve Yol Yardım",
+    metaDescription:
+      "Pendik'te yolda kaldıysan oto çekici ve yol yardım için mahallenden ulaş. Sana en yakın, müsait çekiciye doğrudan ve aracısız mesaj at.",
+    intro:
+      "Aracın yolda mı kaldı, çalışmıyor mu, kaza mı yaptın? Pendik'te çekici ve yol yardım hizmeti verenleri burada bulursun. Bu hizmette en kritik şey hız ve yakınlık; sana en yakın müsait çekiciye doğrudan ulaşır, konumunu ve durumu anlatırsın.",
+    guideTitle: "Pendik'te çekici çağırırken nelere dikkat etmeli?",
+    guidePoints: [
+      {
+        title: "Konumunu net ver",
+        body: "Bulunduğun yeri (cadde, yön, belirgin nokta) olabildiğince net söyle. Doğru konum, çekicinin sana hızlı ulaşmasının anahtarıdır.",
+      },
+      {
+        title: "Aracını ve sorunu tarif et",
+        body: "Araç tipi (otomobil, ticari), sorun (çalışmıyor, lastik, kaza) ve aracın yol kenarında mı yoksa otoparkta mı olduğunu söyle.",
+      },
+      {
+        title: "Nereye çekilecek?",
+        body: "Aracın hangi servise/adrese gideceğini baştan belirt; çekici buna göre fiyat ve rota planlar.",
+      },
+      {
+        title: "Güvende kal",
+        body: "Yol kenarında dörtlüleri yak, mümkünse aracın gerisine reflektör/üçgen koy ve çekici gelene kadar güvenli bir yerde bekle.",
+      },
+    ],
+    emptyState:
+      "Şu anda Pendik'te müsait çekici görünmüyor. Çekici/yol yardım hizmeti veriyorsan ücretsiz profil oluştur, yolda kalanlar sana ulaşsın.",
+    faqs: [
+      {
+        q: "Yolda kaldım, en hızlı nasıl çekici bulurum?",
+        a: "Listede müsait ve sana en yakın çekiciyi seçip hemen mesaj at; konumunu ve aracın durumunu net ver. Yakınlık gelme süresini doğrudan belirler.",
+      },
+      {
+        q: "Çekici ücreti neye göre değişir?",
+        a: "Mesafe, araç tipi ve aracın durumu başlıca etkenlerdir. Yola çıkmadan tahmini ücreti sormak sürprizi önler.",
+      },
+      {
+        q: "Aracımı istediğim servise çektirebilir miyim?",
+        a: "Evet. Aracın nereye gideceğini baştan söylersen çekici rotayı ve fiyatı ona göre planlar.",
+      },
+      {
+        q: "Cevrende ücretli mi?",
+        a: "Hayır. Çekiciye ulaşmak ve profil açmak ücretsizdir, komisyon alınmaz.",
+      },
+    ],
+  },
 };
 
 export const CATEGORY_PAGE_SLUGS = Object.keys(CATEGORY_PAGES);

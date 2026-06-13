@@ -64,7 +64,7 @@ export default async function CategoryLandingPage({
   const others = CATEGORY_PAGE_SLUGS.filter((s) => s !== cfg.slug).map(
     (s) => CATEGORY_PAGES[s],
   );
-  const relatedGuides = getGuidesForCategory(cfg.categorySlug);
+  const relatedGuides = getGuidesForCategory(cfg.slug);
 
   const faqLd = {
     "@context": "https://schema.org",

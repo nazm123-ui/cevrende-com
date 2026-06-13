@@ -235,6 +235,226 @@ export const GUIDES: Record<string, Guide> = {
     ],
     relatedCategorySlugs: ["boyaci", "elektrikci"],
   },
+
+  "pendik-su-kacagi-tikaniklik": {
+    slug: "pendik-su-kacagi-tikaniklik",
+    title: "Su Kaçağı veya Tıkanıklıkta Ne Yapmalı? (Pendik)",
+    metaTitle: "Su Kaçağı / Tıkanıklıkta Ne Yapmalı? — Pendik Rehberi",
+    metaDescription:
+      "Pendik'te su kaçağı veya gider tıkanıklığında ilk anda ne yapmalı, ne zaman tesisatçı çağırmalı? Hasarı azaltmanın pratik yolları.",
+    excerpt:
+      "Su kaçağı veya tıkanıklıkta panik yapmadan hasarı azaltmanın ve doğru tesisatçıyı bulmanın yolu.",
+    publishedAt: "2026-06-13",
+    updatedAt: "2026-06-13",
+    intro:
+      "Su kaçağı ve tıkanıklık, ev sahiplerinin en sık karşılaştığı acil durumlardandır ve hızlı davranmak hasarı ciddi şekilde azaltır. İlk birkaç dakikada doğru adımları atmak, hem evini hem de cebini korur. İşte Pendik'te bu durumlarda yapman gerekenler.",
+    sections: [
+      {
+        heading: "Su kaçağında ilk 5 dakika",
+        bullets: [
+          { title: "Ana vanayı kapat", body: "Evdeki su akışını durdurmak hasarı anında azaltır. Ana vananın yerini önceden öğrenmek, o an için zaman kazandırır." },
+          { title: "Elektrikle teması kes", body: "Su, priz veya elektrikli cihaza ulaşıyorsa o bölgenin sigortasını indir." },
+          { title: "Suyu topla / yönlendir", body: "Havlu, kova veya paspasla yayılmayı engelle; alt komşuya sızmasını önle." },
+        ],
+      },
+      {
+        heading: "Tıkanıklıkta ne yapmalı?",
+        paragraphs: [
+          "Lavabo veya giderdeki basit tıkanıklıklar bazen pompayla (lastik pompa) açılır. Ancak kimyasal açıcıları aşırı kullanmak boruya zarar verebilir. Tekrar eden, birden fazla gideri etkileyen ya da ana hatta inen tıkanıklıklarda makineyle açım gerekir; bu noktada tesisatçı çağırmak en doğrusu.",
+        ],
+      },
+      {
+        heading: "Ne zaman mutlaka tesisatçı çağırmalı?",
+        bullets: [
+          { title: "Görünmeyen kaçak", body: "Duvardan/zeminden gelen nem, fatura artışı veya rutubet lekesi varsa 'kırmadan kaçak tespiti' yapan bir ustaya ihtiyacın olabilir." },
+          { title: "Geçmeyen tıkanıklık", body: "Pompa ve basit yöntemler işe yaramıyorsa zorlamayı bırak; makineyle açım gerekir." },
+          { title: "Birden fazla nokta", body: "Aynı anda birkaç gider tıkalıysa sorun ana hatta olabilir, profesyonel müdahale şart." },
+        ],
+      },
+      {
+        heading: "Doğru tesisatçıyı seçmek",
+        paragraphs: [
+          "Tesisat acil olduğunda sana en yakın, müsait ustayı seçmek en hızlı çözümdür. Sorunu net tarif et (nerede, ne zamandır, ne sıklıkta), değişecek parçanın fiyata dahil olup olmadığını ve yapılan işe garanti verilip verilmediğini baştan sor.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Su kaçağında ilk önce ne yapmalıyım?",
+        a: "Ana su vanasını kapat. Bu, usta gelene kadar hasarın büyümesini önleyen en etkili adımdır. Su elektriğe ulaşıyorsa ilgili sigortayı da indir.",
+      },
+      {
+        q: "Tıkanıklığı kendim açabilir miyim?",
+        a: "Basit lavabo tıkanıklıkları pompayla açılabilir. Ama tekrar eden, çoklu veya ana hatta inen tıkanıklıklarda kimyasalla uğraşmak yerine makineyle açım yapan bir tesisatçı çağır.",
+      },
+      {
+        q: "Kaçak nereden geldiğini bulamıyorum, ne yapmalıyım?",
+        a: "Görünmeyen kaçaklarda 'kırmadan kaçak tespiti' yapabilen bir tesisatçı, gereksiz kırım masrafından kurtarır. Profilde bu deneyimi sorabilirsin.",
+      },
+    ],
+    relatedCategorySlugs: ["tesisatci"],
+  },
+
+  "pendik-tadilat-dikkat": {
+    slug: "pendik-tadilat-dikkat",
+    title: "Pendik'te Tadilat Yaptırırken Dikkat Edilmesi Gerekenler",
+    metaTitle: "Pendik'te Tadilat Yaptırırken Dikkat Edilecekler",
+    metaDescription:
+      "Pendik'te ev tadilatına başlamadan önce: kapsamı belirleme, malzeme, süre, ödeme planı ve sık yapılan hatalar. Sorunsuz tadilat rehberi.",
+    excerpt:
+      "Tadilata başlamadan kapsamı, bütçeyi ve ödeme planını netleştirmenin yolu — sürprizleri önle.",
+    publishedAt: "2026-06-13",
+    updatedAt: "2026-06-13",
+    intro:
+      "Tadilat, birden çok işin (kırım, alçı, fayans, boya, elektrik-su) bir araya geldiği ve kolayca bütçe aşımına yol açabilen bir süreçtir. İyi planlanmış bir tadilat ise hem zamanında biter hem de beklenenden pahalıya patlamaz. Pendik'te tadilata başlamadan önce şunlara dikkat et.",
+    sections: [
+      {
+        heading: "1. Önce kapsamı netleştir",
+        paragraphs: [
+          "En sık yapılan hata, işi belirsiz bırakmaktır. 'Banyoyu yenileyelim' yerine; hangi işlerin yapılacağını (fayans sökümü, su tesisatı, alçı, boya, dolap) tek tek listele. Ne kadar net olursan, ustadan o kadar gerçekçi fiyat ve süre alırsın.",
+        ],
+      },
+      {
+        heading: "2. Maliyeti belirleyen kalemler",
+        bullets: [
+          { title: "Malzeme kimde?", body: "Fayans, boya ve malzemeyi sen mi alacaksın yoksa usta mı? Bu, toplam maliyeti en çok etkileyen konudur." },
+          { title: "Kırım ve hafriyat", body: "Eski yapının sökümü ve molozun taşınması ayrı bir kalemdir; fiyata dahil mi sor." },
+          { title: "Gizli işler", body: "Su/elektrik hatları, su yalıtımı gibi görünmeyen ama kritik işleri atlama; sonradan açmak çok daha pahalıdır." },
+        ],
+      },
+      {
+        heading: "3. Süre ve yaşam düzeni",
+        paragraphs: [
+          "Tadilat sırasında evde yaşanıp yaşanamayacağını baştan konuş. Toz, gürültü ve susuz/elektriksiz kalınacak günler olabilir. Ustadan aşamalı bir takvim istemek, sürecin kontrolünü sende tutar.",
+        ],
+      },
+      {
+        heading: "4. Ödemeyi aşamalara böl",
+        paragraphs: [
+          "Tadilat uzun sürdüğü için ödemenin tamamını peşin vermek risklidir. İşi aşamalara bölüp (ör. kırım sonrası, kaba iş sonrası, teslimde) ödeme yapmak iki taraf için de güvenlidir. Konuşulanları mesajla yazılı tutmak ileride anlaşmazlığı önler.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Tadilatta en sık yapılan hata nedir?",
+        a: "İşin kapsamını belirsiz bırakmak. Hangi işlerin yapılacağını net listelemezsen hem fiyat tahmini yanlış olur hem de süreçte sürekli ek maliyet çıkar.",
+      },
+      {
+        q: "Malzemeyi ben mi almalıyım usta mı?",
+        a: "İkisi de olur. Önemli olan baştan netleştirmek: malzeme kimde olacak, hangi kalite kullanılacak ve bu fiyata dahil mi? Bu konu toplam maliyeti en çok etkileyen kalemdir.",
+      },
+      {
+        q: "Ödemeyi nasıl planlamalıyım?",
+        a: "Tamamını peşin vermek yerine işi aşamalara bölüp her aşama sonunda ödemek daha güvenlidir. Anlaşmayı mesajla yazılı tutmanı öneririz.",
+      },
+    ],
+    relatedCategorySlugs: ["tadilat"],
+  },
+
+  "kapida-kalinca-cilingir": {
+    slug: "kapida-kalinca-cilingir",
+    title: "Kapıda mı Kaldınız? Çilingir Çağırmadan Önce Bilinmesi Gerekenler",
+    metaTitle: "Kapıda Kalınca Ne Yapmalı? — Pendik Çilingir Rehberi",
+    metaDescription:
+      "Pendik'te kapıda kaldığında ya da anahtarını kaybettiğinde ne yapmalı? Hasarsız kapı açma, güvenlik ve doğru çilingir seçimi.",
+    excerpt:
+      "Kapıda kaldığında panik yapmadan, hasarsız ve güvenli şekilde çözmenin yolu.",
+    publishedAt: "2026-06-13",
+    updatedAt: "2026-06-13",
+    intro:
+      "Kapıda kalmak ya da anahtarını kaybetmek can sıkıcıdır, ama doğru adımlarla hızlı ve hasarsız çözülebilir. Önemli olan paniğe kapılıp kapıyı zorlamamak ve güvenilir bir çilingire ulaşmak. İşte Pendik'te kapıda kaldığında bilmen gerekenler.",
+    sections: [
+      {
+        heading: "Önce sakin ol, kapıyı zorlama",
+        paragraphs: [
+          "Kapıyı tekmelemek veya tornavidayla zorlamak çoğu zaman kilidi ve kasayı kalıcı olarak bozar; sonuçta hem açtırma hem de tamir masrafı çıkar. Deneyimli bir çilingir, çoğu kapıyı çok daha kısa sürede ve hasarsız açar.",
+        ],
+      },
+      {
+        heading: "Çilingire ne söylemelisin?",
+        bullets: [
+          { title: "Kapı tipi", body: "Çelik kapı mı, ahşap mı? Çelik kapılar farklı teknik gerektirir." },
+          { title: "Durum", body: "İçeride anahtar takılı mı, kilit kırık mı, yoksa sadece anahtar mı yok? Bunu söylersen usta doğru aletle gelir." },
+          { title: "Konum", body: "Açık adresini ve kat bilgisini ver; en yakın çilingirin gelmesi en hızlısıdır." },
+        ],
+      },
+      {
+        heading: "Güvenlik: ne zaman kilit yeniletmeli?",
+        paragraphs: [
+          "Anahtarını kaybettiysen veya yeni bir eve taşındıysan, kapıyı açtırmakla yetinme; kilit göbeğini (barel) yeniletmek güvenliğin için önemlidir. Eski anahtarların kimde olduğunu bilemezsin. Çilingire bu seçeneği de sor.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Kapıda kaldım, kapıyı kendim açmaya çalışmalı mıyım?",
+        a: "Hayır. Zorlamak genelde kilidi ve kasayı bozar, masrafı artırır. Sana en yakın müsait çilingire ulaşıp kapı tipini ve durumu anlatman en hızlı ve hasarsız çözümdür.",
+      },
+      {
+        q: "Çilingir kapıyı hasarsız açabilir mi?",
+        a: "Çoğu durumda evet. Kapı tipini (çelik/ahşap) ve durumu önceden söylersen usta uygun yöntemle, mümkün olduğunca hasarsız açar.",
+      },
+      {
+        q: "Anahtarımı kaybettim, sadece açtırmak yeterli mi?",
+        a: "Güvenlik için kilit göbeğini (barel) yeniletmen önerilir; eski anahtarların kimde olduğunu bilemezsin. Çilingirden bu seçeneği iste.",
+      },
+    ],
+    relatedCategorySlugs: ["cilingir"],
+  },
+
+  "kombi-bakimi-ne-zaman": {
+    slug: "kombi-bakimi-ne-zaman",
+    title: "Kombi Bakımı Ne Zaman ve Neden Yapılmalı?",
+    metaTitle: "Kombi Bakımı Ne Zaman Yapılmalı? — Pendik Rehberi",
+    metaDescription:
+      "Kombi bakımı ne sıklıkla yapılmalı, hangi belirtiler arıza habercisi? Pendik'te güvenli ve verimli kombi kullanımı için pratik rehber.",
+    excerpt:
+      "Yıllık kombi bakımının neden önemli olduğu, belirtiler ve doğru zamanlama.",
+    publishedAt: "2026-06-13",
+    updatedAt: "2026-06-13",
+    intro:
+      "Kombi, evin hem ısınmasını hem sıcak suyunu sağlayan kritik bir cihazdır; düzenli bakım hem güvenliğin hem de faturanın için önemlidir. Bakımsız bir kombi daha çok yakıt tüketir ve kışın en kötü zamanda arızalanabilir. İşte kombi bakımı hakkında bilmen gerekenler.",
+    sections: [
+      {
+        heading: "Ne sıklıkla bakım yapılmalı?",
+        paragraphs: [
+          "Kombilerde genellikle yılda bir kez bakım önerilir. En uygun zaman, yoğun kullanımın başlamasından önce, yani sonbahardır. Kış ortasında arızayla uğraşmak yerine sezon öncesi kontrol, hem güvenli hem ekonomiktir.",
+        ],
+      },
+      {
+        heading: "Bakımda neler yapılır?",
+        bullets: [
+          { title: "Temizlik", body: "Eşanjör ve brülör temizliği, verimi artırır ve yakıt tüketimini düşürür." },
+          { title: "Basınç ve ayar", body: "Su basıncı, gaz ayarı ve yanma kontrolü yapılır." },
+          { title: "Güvenlik kontrolü", body: "Baca/atık gaz tahliyesi ve sızdırmazlık kontrolü, karbonmonoksit riskine karşı önemlidir." },
+        ],
+      },
+      {
+        heading: "Bu belirtilere dikkat",
+        bullets: [
+          { title: "Basınç düşmesi", body: "Sık sık su eklemek zorunda kalıyorsan bir kaçak veya arıza olabilir." },
+          { title: "Sesli çalışma", body: "Anormal ses, kireçlenme veya pompada sorun işareti olabilir." },
+          { title: "Isınmada düzensizlik", body: "Petekler eşit ısınmıyor veya sıcak su gelmiyorsa bakım/onarım gerekir." },
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Kombi bakımı ne zaman yapılmalı?",
+        a: "Genellikle yılda bir kez, ideal olarak yoğun kullanımdan önce sonbaharda. Sezon öncesi kontrol, kış ortasında arıza yaşama riskini azaltır.",
+      },
+      {
+        q: "Bakım yaptırmazsam ne olur?",
+        a: "Bakımsız kombi daha çok yakıt tüketir, verimi düşer ve arıza riski artar. Ayrıca baca/yanma sorunları güvenlik açısından risk oluşturabilir.",
+      },
+      {
+        q: "Pendik'te kombi ustasına nasıl ulaşırım?",
+        a: "Çevrendekiler sayfasından kombi tamiri/bakımı yapan kişileri bulup doğrudan mesaj atabilirsin. Aracı ve komisyon yoktur.",
+      },
+    ],
+    relatedCategorySlugs: [],
+  },
 };
 
 export const GUIDE_SLUGS = Object.keys(GUIDES);
