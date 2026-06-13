@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import PwaRegister from "@/components/PwaRegister";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { SITE_URL, SITE_NAME } from "@/lib/site-url";
 import "./globals.css";
 
@@ -219,6 +220,7 @@ export default function RootLayout({
         <PwaRegister />
         <PwaInstallBanner />
       </body>
+      <GoogleAnalytics gaId="G-KXJYYBVW68" />
     </html>
   );
 }
