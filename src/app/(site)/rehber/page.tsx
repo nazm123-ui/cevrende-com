@@ -1,5 +1,13 @@
-import Link from "next/link";
-import { getAllGuides, formatGuideDate } from "@/lib/guides";
+import {
+  getAllGuides,
+  getTopicsWithCounts,
+  formatGuideDate,
+  GUIDE_TOPICS,
+} from "@/lib/guides";
+import { absoluteUrl } from "@/lib/site-url";
+import GuideExplorer, {
+  type GuideCard,
+} from "@/components/rehber/GuideExplorer";
 
 export const metadata = {
   title: "Rehber — Pendik'te Usta ve Hizmet Almak İçin İpuçları",
@@ -12,49 +20,75 @@ export const dynamic = "force-static";
 
 export default function RehberIndexPage() {
   const guides = getAllGuides();
+  const topics = getTopicsWithCounts().map((t) => ({
+    slug: t.topic.slug,
+    label: t.topic.label,
+    count: t.count,
+  }));
+
+  const cards: GuideCard[] = guides.map((g) => {
+    const topic = GUIDE_TOPICS[g.topic];
+    return {
+      slug: g.slug,
+      title: g.title,
+      excerpt: g.excerpt,
+      dateLabel: formatGuideDate(g.publishedAt),
+      topicSlug: topic.slug,
+      topicLabel: topic.label,
+      from: topic.from,
+      to: topic.to,
+      coverImage: g.coverImage ?? null,
+    };
+  });
+
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: guides.map((g, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: absoluteUrl(`/rehber/${g.slug}`),
+      name: g.title,
+    })),
+  };
 
   return (
     <div className="page">
-      <section className="pt-10 pb-4">
-        <div className="mx-auto max-w-[760px] px-5 sm:px-6">
-          <div className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-ink-500 font-medium mb-2.5">
-            Rehber
-          </div>
-          <h1 className="text-[28px] sm:text-[38px] font-semibold tracking-[-0.025em] leading-[1.12]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
+      />
+
+      {/* Hero */}
+      <section className="pt-10 sm:pt-14 pb-2">
+        <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
+          <span className="inline-flex items-center gap-2 h-8 pl-2.5 pr-3.5 rounded-full bg-accent-50 text-accent-700 text-[12.5px] font-medium">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+            </svg>
+            Pendik&apos;te sahadan derlenen bilgiler
+          </span>
+          <h1 className="mt-4 text-[30px] sm:text-[42px] font-semibold tracking-[-0.03em] leading-[1.08] max-w-[760px]">
             Pendik&apos;te hizmet alırken işine yarayacak rehberler
           </h1>
-          <p className="mt-3 text-[15px] sm:text-[16px] text-ink-700 leading-relaxed">
-            Doğru ustayı seçmek, gerçekçi fiyat almak ve sorunsuz bir iş için
-            bilmen gerekenleri sade bir dille topladık.
+          <p className="mt-4 text-[15px] sm:text-[17px] text-ink-700 leading-relaxed max-w-[620px]">
+            Güvenilir usta seçimi, gerçekçi fiyat araştırması ve sorunsuz bir iş
+            için bilmen gerekenleri sade bir dille topladık.
           </p>
         </div>
       </section>
 
-      <section className="pt-6 pb-24">
-        <div className="mx-auto max-w-[760px] px-5 sm:px-6 flex flex-col gap-3">
-          {guides.map((g) => (
-            <Link
-              key={g.slug}
-              href={`/rehber/${g.slug}`}
-              className="block rounded-[14px] border border-ink-100 bg-white p-5 sm:p-6 hover:border-ink-700 transition"
-            >
-              <div className="font-mono text-[12px] text-ink-500 mb-2">
-                {formatGuideDate(g.publishedAt)}
-              </div>
-              <h2 className="text-[18px] sm:text-[20px] font-semibold tracking-[-0.01em] leading-snug">
-                {g.title}
-              </h2>
-              <p className="mt-2 text-[14.5px] text-ink-700 leading-relaxed">
-                {g.excerpt}
-              </p>
-              <span className="mt-3 inline-flex items-center gap-1 text-[14px] text-accent-600">
-                Oku
-                <span aria-hidden>→</span>
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
+      <GuideExplorer guides={cards} topics={topics} />
     </div>
   );
 }

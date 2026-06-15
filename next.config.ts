@@ -5,11 +5,13 @@ const isProd = process.env.NODE_ENV === "production";
 const csp = [
   "default-src 'self'",
   // Next.js needs 'unsafe-inline' for hydration scripts; 'unsafe-eval' only in dev for HMR.
-  `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"}`,
+  // Google Analytics (GA4): gtag scripti googletagmanager.com'dan yüklenir.
+  `script-src 'self' 'unsafe-inline' https://www.googletagmanager.com${isProd ? "" : " 'unsafe-eval'"}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://*.r2.dev https://*.r2.cloudflarestorage.com https://media.cevrende.com",
+  "img-src 'self' data: blob: https://*.r2.dev https://*.r2.cloudflarestorage.com https://media.cevrende.com https://www.googletagmanager.com https://www.google-analytics.com",
   "font-src 'self' data:",
-  "connect-src 'self'",
+  // GA4 veri gönderimi (collect) + tag yapılandırması için izinli uç noktalar.
+  "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

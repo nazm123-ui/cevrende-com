@@ -27,6 +27,37 @@ export type Guide = {
   faqs: GuideFaq[];
   /** İlgili kategori sayfaları (/pendik/[slug]) — internal linking */
   relatedCategorySlugs: string[];
+  /** Sol menü gruplaması — TOPICS anahtarı */
+  topic: GuideTopicSlug;
+  /** Kapak görseli (R2 URL). Yoksa konuya göre degrade placeholder gösterilir. */
+  coverImage?: string | null;
+};
+
+// Rehber konuları — liste sayfasındaki sol menü ve kart rozetleri için.
+// Görsel yüklenene kadar her konu için sade bir degrade placeholder kullanılır.
+export type GuideTopicSlug =
+  | "tadilat-insaat"
+  | "tesisat-onarim"
+  | "guvenlik-kilit"
+  | "boya-badana"
+  | "elektrik"
+  | "genel";
+
+export type GuideTopic = {
+  slug: GuideTopicSlug;
+  label: string;
+  /** Placeholder degrade renkleri (hex) */
+  from: string;
+  to: string;
+};
+
+export const GUIDE_TOPICS: Record<GuideTopicSlug, GuideTopic> = {
+  "tadilat-insaat": { slug: "tadilat-insaat", label: "Tadilat & İnşaat", from: "#9a8866", to: "#6f5f44" },
+  "tesisat-onarim": { slug: "tesisat-onarim", label: "Tesisat & Onarım", from: "#6b8aa6", to: "#3f5d77" },
+  "guvenlik-kilit": { slug: "guvenlik-kilit", label: "Güvenlik & Kilit", from: "#6e7378", to: "#41464b" },
+  "boya-badana": { slug: "boya-badana", label: "Boya & Badana", from: "#7fa07f", to: "#4f6f4f" },
+  elektrik: { slug: "elektrik", label: "Elektrik", from: "#b8a05a", to: "#8a7330" },
+  genel: { slug: "genel", label: "Genel", from: "#8f9aa0", to: "#5d6870" },
 };
 
 export const GUIDES: Record<string, Guide> = {
@@ -106,6 +137,7 @@ export const GUIDES: Record<string, Guide> = {
       },
     ],
     relatedCategorySlugs: ["boyaci"],
+    topic: "boya-badana",
   },
 
   "pendik-elektrikci-secimi": {
@@ -173,6 +205,7 @@ export const GUIDES: Record<string, Guide> = {
       },
     ],
     relatedCategorySlugs: ["elektrikci"],
+    topic: "elektrik",
   },
 
   "mahalleden-usta-bulmanin-avantajlari": {
@@ -234,6 +267,7 @@ export const GUIDES: Record<string, Guide> = {
       },
     ],
     relatedCategorySlugs: ["boyaci", "elektrikci"],
+    topic: "genel",
   },
 
   "pendik-su-kacagi-tikaniklik": {
@@ -293,6 +327,7 @@ export const GUIDES: Record<string, Guide> = {
       },
     ],
     relatedCategorySlugs: ["tesisatci"],
+    topic: "tesisat-onarim",
   },
 
   "pendik-tadilat-dikkat": {
@@ -350,6 +385,7 @@ export const GUIDES: Record<string, Guide> = {
       },
     ],
     relatedCategorySlugs: ["tadilat"],
+    topic: "tadilat-insaat",
   },
 
   "kapida-kalinca-cilingir": {
@@ -401,6 +437,7 @@ export const GUIDES: Record<string, Guide> = {
       },
     ],
     relatedCategorySlugs: ["cilingir"],
+    topic: "guvenlik-kilit",
   },
 
   "kombi-bakimi-ne-zaman": {
@@ -454,6 +491,7 @@ export const GUIDES: Record<string, Guide> = {
       },
     ],
     relatedCategorySlugs: [],
+    topic: "tesisat-onarim",
   },
 };
 
@@ -475,6 +513,17 @@ export function getGuidesForCategory(categorySlug: string): Guide[] {
   return getAllGuides().filter((g) =>
     g.relatedCategorySlugs.includes(categorySlug),
   );
+}
+
+/** Liste sayfası sol menüsü için: yalnızca rehberi olan konular + gerçek sayıları. */
+export function getTopicsWithCounts(): { topic: GuideTopic; count: number }[] {
+  const counts = new Map<GuideTopicSlug, number>();
+  for (const g of getAllGuides()) {
+    counts.set(g.topic, (counts.get(g.topic) ?? 0) + 1);
+  }
+  return (Object.keys(GUIDE_TOPICS) as GuideTopicSlug[])
+    .filter((slug) => counts.has(slug))
+    .map((slug) => ({ topic: GUIDE_TOPICS[slug], count: counts.get(slug)! }));
 }
 
 export function formatGuideDate(iso: string): string {
