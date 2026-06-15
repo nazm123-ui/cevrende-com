@@ -85,7 +85,7 @@ export default async function PreviewListings() {
               <Link
                 key={w.id}
                 href={`/cevrendekiler/${w.id}`}
-                className="block px-6 py-5 bg-white border border-ink-100 rounded-[14px] hover:border-ink-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ink-900 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-50"
+                className="card-lift block px-6 py-5 bg-white border border-ink-100 rounded-[14px] hover:border-ink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink-900 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-50"
               >
                 <div className="flex items-center justify-between gap-2 mb-3.5 flex-wrap">
                   <div className="flex items-center gap-2 text-ink-500 text-[13px]">

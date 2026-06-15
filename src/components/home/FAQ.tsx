@@ -17,15 +17,15 @@ export default function FAQ({ faqs }: { faqs: HomeFaq[] }) {
           {faqs.map((faq, i) => (
             <details
               key={i}
-              className="group border border-ink-100 rounded-[12px] p-5 sm:p-6 cursor-pointer hover:border-ink-200 transition"
+              className="faq-item group border border-ink-100 rounded-[12px] px-5 py-4 sm:px-6 sm:py-5 hover:border-ink-200 transition"
             >
-              <summary className="font-medium text-[16px] text-ink-900 flex items-center justify-between select-none">
+              <summary className="cursor-pointer list-none font-medium text-[16px] text-ink-900 flex items-center justify-between gap-3 select-none">
                 {faq.q}
-                <span className="ml-4 text-ink-500 group-open:rotate-180 transition">
-                  ▼
+                <span aria-hidden className="ml-4 text-ink-400 group-open:rotate-45 transition text-[20px] leading-none">
+                  +
                 </span>
               </summary>
-              <p className="mt-4 text-[15px] text-ink-500 leading-relaxed">
+              <p className="mt-3 text-[15px] text-ink-700 leading-relaxed">
                 {faq.a}
               </p>
             </details>
