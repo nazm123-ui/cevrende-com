@@ -57,6 +57,12 @@ const NAV = {
       countKey: "categories" as const,
     },
     {
+      href: "/admin/sayfalar",
+      id: "pages",
+      icon: "edit",
+      label: "Sayfalar",
+    },
+    {
       href: "/admin/oneriler",
       id: "suggestions",
       icon: "msg",
@@ -139,7 +145,7 @@ export default function AdminSidebar({
         <div className="nav-group-label">Yönetim</div>
         {NAV.management.map((item) => {
           const active = isActive(pathname, item.href);
-          const count = counts[item.countKey];
+          const count = "countKey" in item ? counts[item.countKey] : 0;
           const showDot = "dotIfOpen" in item && item.dotIfOpen && count > 0;
           return (
             <Link
