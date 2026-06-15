@@ -84,7 +84,7 @@ export default async function CevrendekilerPage({
       {/* Sayfa başlığı + arama/filtre */}
       <section className="pt-8 pb-6">
         <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
-          <h1 className="text-[24px] sm:text-[30px] font-semibold tracking-[-0.02em] leading-[1.15] mb-1.5">
+          <h1 className="u-balance text-[24px] sm:text-[30px] font-semibold tracking-[-0.02em] leading-[1.15] mb-1.5">
             {pageHeading}
           </h1>
           <p className="text-[14.5px] text-ink-500 leading-relaxed max-w-[640px] mb-5">

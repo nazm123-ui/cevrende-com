@@ -33,7 +33,7 @@ export default function WorkerCard({
   const initials = getInitials(worker.fullName);
 
   return (
-    <article className="px-6 py-5 bg-white border border-ink-100 rounded-[14px] transition hover:border-ink-700">
+    <article className="card-lift px-6 py-5 bg-white border border-ink-100 rounded-[14px] hover:border-ink-700">
       <div className="flex items-center justify-between gap-2 mb-3.5 flex-wrap">
         <div className="flex items-center gap-2 text-ink-500 text-[13px] flex-wrap">
           <span className="font-mono">{formatRelative(worker.createdAt)}</span>
