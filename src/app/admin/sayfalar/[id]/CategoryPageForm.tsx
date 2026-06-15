@@ -27,12 +27,54 @@ type Initial = {
 export default function CategoryPageForm({
   categories,
   initial,
+  initialCoverUrl,
 }: {
   categories: { slug: string; name: string }[];
   initial?: Initial;
+  initialCoverUrl?: string | null;
 }) {
   const router = useRouter();
   const isNew = !initial;
+
+  const [coverUrl, setCoverUrl] = useState<string | null>(initialCoverUrl ?? null);
+  const [coverBusy, setCoverBusy] = useState(false);
+
+  async function onCoverChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // aynı dosyayı tekrar seçebilmek için sıfırla
+    if (!file || !initial) return;
+    setCoverBusy(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      fd.append("cover", file);
+      const res = await fetch(`/api/admin/category-pages/${initial.id}/cover`, {
+        method: "POST",
+        body: fd,
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(d.error || "Görsel yüklenemedi.");
+        return;
+      }
+      setCoverUrl(d.url ?? null);
+    } finally {
+      setCoverBusy(false);
+    }
+  }
+
+  async function removeCover() {
+    if (!initial) return;
+    setCoverBusy(true);
+    try {
+      const res = await fetch(`/api/admin/category-pages/${initial.id}/cover`, {
+        method: "DELETE",
+      });
+      if (res.ok) setCoverUrl(null);
+    } finally {
+      setCoverBusy(false);
+    }
+  }
 
   const [slug, setSlug] = useState(initial?.slug ?? "");
   const [categorySlug, setCategorySlug] = useState(
@@ -123,6 +165,61 @@ export default function CategoryPageForm({
           Yayında
         </label>
       </div>
+
+      {/* Kapak görseli */}
+      {isNew ? (
+        <p className="text-[13px] text-ink-500 bg-ink-50 border border-ink-100 rounded-[10px] px-3 py-2.5">
+          Kapak görselini sayfayı <strong>oluşturduktan sonra</strong> ekleyebilirsin.
+        </p>
+      ) : (
+        <Section title="Kapak görseli">
+          {coverUrl ? (
+            <div className="flex flex-col gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={coverUrl}
+                alt="Kapak"
+                className="w-full max-w-[480px] rounded-[12px] border border-ink-100 object-cover"
+                style={{ aspectRatio: "1200 / 630" }}
+              />
+              <div className="flex items-center gap-3">
+                <label className="btn-outline h-9 px-4 rounded-full text-[13px] cursor-pointer inline-flex items-center">
+                  {coverBusy ? "Yükleniyor…" : "Değiştir"}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/heic"
+                    className="hidden"
+                    onChange={onCoverChange}
+                    disabled={coverBusy}
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={removeCover}
+                  disabled={coverBusy}
+                  className="text-[13px] text-red-600 hover:text-red-700 transition px-2 disabled:opacity-50"
+                >
+                  Kaldır
+                </button>
+              </div>
+            </div>
+          ) : (
+            <label className="flex flex-col items-center justify-center gap-1.5 h-40 max-w-[480px] rounded-[12px] border border-dashed border-ink-200 bg-ink-50 cursor-pointer hover:border-ink-300 transition text-ink-500 text-[14px] text-center px-4">
+              <span>{coverBusy ? "Yükleniyor…" : "+ Görsel yükle"}</span>
+              <span className="text-[12px] text-ink-400">
+                JPG / PNG / WebP · otomatik 1200×630&apos;a kırpılır
+              </span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/heic"
+                className="hidden"
+                onChange={onCoverChange}
+                disabled={coverBusy}
+              />
+            </label>
+          )}
+        </Section>
+      )}
 
       {/* Temel */}
       <Section title="Temel bilgiler">

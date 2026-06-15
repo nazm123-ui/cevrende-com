@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
 import CategoryPageForm from "./CategoryPageForm";
+import { getPublicUrl } from "@/lib/r2";
 import type { CategoryFaq, CategoryGuidePoint } from "@/lib/category-pages";
 
 export const metadata = { title: "Sayfa Düzenle — Admin" };
@@ -31,6 +32,7 @@ export default async function EditCategoryPage({
   return (
     <CategoryPageForm
       categories={categories}
+      initialCoverUrl={page.coverImageKey ? getPublicUrl(page.coverImageKey) : null}
       initial={{
         id: page.id,
         slug: page.slug,

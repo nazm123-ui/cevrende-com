@@ -11,6 +11,7 @@ import {
 } from "@/lib/category-pages-db";
 import { getGuidesForCategory, GUIDE_TOPICS } from "@/lib/guides";
 import { absoluteUrl } from "@/lib/site-url";
+import { getPublicUrl } from "@/lib/r2";
 
 // Dinamik render: hizmet veren listesi her istekte canlı veriden gelir.
 // Geçerli slug'lar config (getCategoryPage) ile sınırlanır; gerisi notFound.
@@ -35,6 +36,9 @@ export async function generateMetadata({
       description: cfg.metaDescription,
       url: `/pendik/${cfg.slug}`,
       type: "website",
+      ...(cfg.coverImageKey
+        ? { images: [{ url: getPublicUrl(cfg.coverImageKey) }] }
+        : {}),
     },
   };
 }
@@ -129,6 +133,17 @@ export default async function CategoryLandingPage({
               </span>
             )}
           </div>
+
+          {cfg.coverImageKey && (
+            <div className="mt-6 rounded-[18px] overflow-hidden border border-ink-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={getPublicUrl(cfg.coverImageKey)}
+                alt={cfg.h1}
+                className="w-full h-48 sm:h-64 object-cover"
+              />
+            </div>
+          )}
         </div>
       </section>
 
