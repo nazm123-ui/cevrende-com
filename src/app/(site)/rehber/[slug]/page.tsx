@@ -151,10 +151,10 @@ export default async function GuideArticlePage({
                   <span className="text-ink-700">{topic.label}</span>
                 </nav>
 
-                <h1 className="mt-4 text-[30px] sm:text-[42px] font-semibold tracking-[-0.03em] leading-[1.1]">
+                <h1 className="u-balance mt-4 text-[30px] sm:text-[42px] font-semibold tracking-[-0.03em] leading-[1.1]">
                   {g.title}
                 </h1>
-                <p className="mt-4 text-[15px] sm:text-[16.5px] text-ink-700 leading-[1.65] max-w-[560px]">
+                <p className="u-pretty mt-4 text-[15px] sm:text-[16.5px] text-ink-700 leading-[1.65] max-w-[560px]">
                   {g.intro}
                 </p>
 
@@ -232,7 +232,7 @@ export default async function GuideArticlePage({
                   </h2>
                   <div className="flex flex-col gap-3">
                     {g.faqs.map((f) => (
-                      <details key={f.q} className="group rounded-[14px] border border-ink-100 bg-white px-5 py-4">
+                      <details key={f.q} className="faq-item group rounded-[14px] border border-ink-100 bg-white px-5 py-4">
                         <summary className="cursor-pointer list-none flex items-center justify-between gap-3 text-[15px] font-medium text-ink-900">
                           {f.q}
                           <span aria-hidden className="text-ink-400 transition group-open:rotate-45 text-[20px] leading-none">+</span>
@@ -295,7 +295,7 @@ export default async function GuideArticlePage({
                   <Link
                     key={c.slug}
                     href={`/pendik/${c.slug}`}
-                    className="group flex flex-col items-center text-center rounded-[16px] border border-ink-100 bg-white p-5 hover:border-ink-300 hover:shadow-[0_6px_24px_-14px_rgba(0,0,0,0.2)] transition"
+                    className="card-lift group flex flex-col items-center text-center rounded-[16px] border border-ink-100 bg-white p-5 hover:border-ink-300"
                   >
                     <span className="flex h-11 w-11 items-center justify-center rounded-full bg-accent-50 text-accent-700">
                       <CategoryIcon slug={c.categorySlug} />

@@ -443,6 +443,59 @@ label {
   to { opacity: 1; transform: none; }
 }
 
+/* ============================================================
+   Cila: hareket, etkileşim, tipografi
+   (impeccable + emil-design-eng + taste skill ilkeleri)
+   ============================================================ */
+:root {
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* İçindekiler/çapa kaydırması yumuşak olsun */
+html { scroll-behavior: smooth; }
+
+/* Başlıkların satır dağılımı dengeli, uzun metinlerde öksüz kelime azalsın */
+.u-balance { text-wrap: balance; }
+.u-pretty { text-wrap: pretty; }
+
+/* Kart hover yükselmesi — sadece gerçek işaretçili cihazlarda */
+.card-lift {
+  transition:
+    transform 220ms var(--ease-out-quart),
+    box-shadow 220ms var(--ease-out-quart),
+    border-color 220ms var(--ease-out-quart);
+  will-change: transform;
+}
+@media (hover: hover) {
+  .card-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px -20px rgba(15, 17, 16, 0.28);
+  }
+}
+
+/* SSS akordeon — açılırken içerik yumuşakça belirsin */
+details.faq-item > *:not(summary) {
+  animation: faq-reveal 240ms var(--ease-out-quart);
+}
+@keyframes faq-reveal {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Hareket azaltma tercihi — animasyonları kapat */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .page { animation: none; }
+  .card-lift { transition: none; }
+  .card-lift:hover { transform: none; box-shadow: none; }
+  details.faq-item > *:not(summary) { animation: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Section default spacing */
 section.tight {
   padding: 64px 0;

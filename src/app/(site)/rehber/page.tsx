@@ -78,7 +78,7 @@ export default function RehberIndexPage() {
             </svg>
             Pendik&apos;te sahadan derlenen bilgiler
           </span>
-          <h1 className="mt-4 text-[30px] sm:text-[42px] font-semibold tracking-[-0.03em] leading-[1.08] max-w-[760px]">
+          <h1 className="u-balance mt-4 text-[30px] sm:text-[42px] font-semibold tracking-[-0.03em] leading-[1.08] max-w-[760px]">
             Pendik&apos;te hizmet alırken işine yarayacak rehberler
           </h1>
           <p className="mt-4 text-[15px] sm:text-[17px] text-ink-700 leading-relaxed max-w-[620px]">

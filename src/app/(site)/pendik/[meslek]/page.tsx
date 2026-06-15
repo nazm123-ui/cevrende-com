@@ -114,10 +114,10 @@ export default async function CategoryLandingPage({
 
           <div className="mt-4 flex items-start justify-between gap-4 flex-wrap">
             <div className="max-w-[680px]">
-              <h1 className="text-[28px] sm:text-[40px] font-semibold tracking-[-0.03em] leading-[1.1]">
+              <h1 className="u-balance text-[28px] sm:text-[40px] font-semibold tracking-[-0.03em] leading-[1.1]">
                 {cfg.h1}
               </h1>
-              <p className="mt-3 text-[15px] sm:text-[16px] text-ink-700 leading-relaxed">
+              <p className="u-pretty mt-3 text-[15px] sm:text-[16px] text-ink-700 leading-relaxed">
                 {cfg.intro}
               </p>
             </div>
@@ -182,12 +182,12 @@ export default async function CategoryLandingPage({
       <section className="pt-8 pb-4">
         <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
           <div className="rounded-[22px] bg-accent-50 p-6 sm:p-10">
-            <h2 className="text-center text-[22px] sm:text-[26px] font-semibold tracking-[-0.02em] max-w-[640px] mx-auto">
+            <h2 className="u-balance text-center text-[22px] sm:text-[26px] font-semibold tracking-[-0.02em] max-w-[640px] mx-auto">
               {cfg.guideTitle}
             </h2>
             <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {cfg.guidePoints.map((p, i) => (
-                <div key={p.title} className="rounded-[16px] bg-white border border-ink-100 p-5">
+                <div key={p.title} className="card-lift rounded-[16px] bg-white border border-ink-100 p-5">
                   <span className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-accent-50 text-accent-700">
                     <GuidePointIcon index={i} />
                   </span>
@@ -212,7 +212,7 @@ export default async function CategoryLandingPage({
           </h2>
           <div className="flex flex-col gap-3">
             {cfg.faqs.map((f) => (
-              <details key={f.q} className="group rounded-[14px] border border-ink-100 bg-white px-5 py-4">
+              <details key={f.q} className="faq-item group rounded-[14px] border border-ink-100 bg-white px-5 py-4">
                 <summary className="cursor-pointer list-none flex items-center justify-between gap-3 text-[15px] font-medium text-ink-900">
                   {f.q}
                   <span aria-hidden className="text-ink-400 transition group-open:rotate-45 text-[20px] leading-none">+</span>
@@ -262,7 +262,7 @@ export default async function CategoryLandingPage({
                     <Link
                       key={g.slug}
                       href={`/rehber/${g.slug}`}
-                      className="group flex flex-col rounded-[14px] border border-ink-100 bg-white overflow-hidden hover:border-ink-300 transition"
+                      className="card-lift group flex flex-col rounded-[14px] border border-ink-100 bg-white overflow-hidden hover:border-ink-300"
                     >
                       <div className="h-20 w-full" style={{ backgroundImage: `linear-gradient(135deg, ${gt.from}, ${gt.to})` }} />
                       <div className="p-3.5">

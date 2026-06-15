@@ -170,7 +170,7 @@ function GuideCardItem({ guide: g }: { guide: GuideCard }) {
   return (
     <Link
       href={`/rehber/${g.slug}`}
-      className="group flex flex-col rounded-[16px] border border-ink-100 bg-white overflow-hidden hover:border-ink-300 hover:shadow-[0_6px_24px_-12px_rgba(0,0,0,0.18)] transition"
+      className="card-lift group flex flex-col rounded-[16px] border border-ink-100 bg-white overflow-hidden hover:border-ink-300"
     >
       <div
         className="relative h-44 w-full"
