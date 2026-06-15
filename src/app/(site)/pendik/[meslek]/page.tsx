@@ -10,7 +10,7 @@ import {
   CATEGORY_PAGE_SLUGS,
   soruEki,
 } from "@/lib/category-pages";
-import { getGuidesForCategory } from "@/lib/guides";
+import { getGuidesForCategory, GUIDE_TOPICS } from "@/lib/guides";
 import { absoluteUrl } from "@/lib/site-url";
 
 // Dinamik render: hizmet veren listesi her istekte canlı veriden gelir.
@@ -233,19 +233,19 @@ export default async function CategoryLandingPage({
       {/* CTA + diğer hizmetler */}
       <section className="pt-8 pb-24">
         <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
-          <div className="rounded-[16px] border border-ink-100 bg-white p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="rounded-[16px] bg-accent-700 text-white p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h2 className="text-[19px] font-semibold tracking-[-0.01em]">
                 {cfg.name} {soruEki(cfg.name)}?
               </h2>
-              <p className="mt-1 text-[14.5px] text-ink-700 leading-relaxed max-w-[480px]">
+              <p className="mt-1 text-[14.5px] text-white/80 leading-relaxed max-w-[480px]">
                 Ücretsiz profil oluştur, Pendik&apos;te seni arayan insanlar
                 doğrudan sana ulaşsın. Komisyon yok, aracı yok.
               </p>
             </div>
             <Link
               href="/kayit"
-              className="btn-ink h-12 px-6 rounded-full text-[15px] shrink-0 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-12 px-6 rounded-full bg-white text-accent-700 text-[15px] font-medium hover:bg-white/90 transition shrink-0 whitespace-nowrap"
             >
               Ücretsiz profil oluştur
             </Link>
@@ -256,16 +256,29 @@ export default async function CategoryLandingPage({
               <p className="font-mono text-[12px] uppercase tracking-[0.06em] text-ink-500 mb-3">
                 İlgili rehber
               </p>
-              <div className="flex flex-col gap-2">
-                {relatedGuides.map((g) => (
-                  <Link
-                    key={g.slug}
-                    href={`/rehber/${g.slug}`}
-                    className="inline-flex items-center gap-2 text-[15px] text-accent-600 hover:text-accent-700 transition"
-                  >
-                    <span aria-hidden>→</span> {g.title}
-                  </Link>
-                ))}
+              <div className="grid gap-3 sm:grid-cols-3">
+                {relatedGuides.map((g) => {
+                  const gt = GUIDE_TOPICS[g.topic];
+                  return (
+                    <Link
+                      key={g.slug}
+                      href={`/rehber/${g.slug}`}
+                      className="group flex flex-col rounded-[14px] border border-ink-100 bg-white overflow-hidden hover:border-ink-300 transition"
+                    >
+                      <div
+                        className="h-20 w-full"
+                        style={{
+                          backgroundImage: `linear-gradient(135deg, ${gt.from}, ${gt.to})`,
+                        }}
+                      />
+                      <div className="p-3.5">
+                        <h3 className="text-[14px] font-semibold leading-snug text-ink-900 line-clamp-3">
+                          {g.title}
+                        </h3>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}
