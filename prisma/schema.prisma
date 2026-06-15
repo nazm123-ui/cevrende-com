@@ -186,3 +186,27 @@ model MessageReport {
   @@index([status, createdAt])
   @@index([messageId])
 }
+
+// Elle yönetilen kategori landing sayfaları (/pendik/[slug]).
+// İçerik admin panelinden düzenlenir; daha önce kodda (category-pages.ts) tutuluyordu.
+model CategoryPage {
+  id              String   @id @default(cuid())
+  slug            String   @unique // URL slug, ör. "boyaci"
+  categorySlug    String   // işçi filtreleme için jobCategory.slug
+  name            String   // kısa meslek adı, ör. "Boyacı"
+  h1              String
+  metaTitle       String
+  metaDescription String
+  intro           String
+  guideTitle      String
+  guidePoints     Json     @default("[]") // [{ title, body }]
+  emptyState      String
+  faqs            Json     @default("[]") // [{ q, a }]
+  coverImageKey   String?  // R2 nesne anahtarı (yoksa degrade placeholder)
+  isPublished     Boolean  @default(true)
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([isPublished, order])
+}
