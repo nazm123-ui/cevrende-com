@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
 import { SITE_URL, absoluteUrl } from "@/lib/site-url";
-import { CATEGORY_PAGE_SLUGS } from "@/lib/category-pages";
+import { getPublishedCategoryPageSlugs } from "@/lib/category-pages-db";
 import { getAllGuides } from "@/lib/guides";
 
 export const revalidate = 3600; // 1 saat
@@ -67,13 +67,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Kategori landing sayfaları (/pendik/[meslek]) — elle hazırlanmış SEO sayfaları
-  const categoryPages: MetadataRoute.Sitemap = CATEGORY_PAGE_SLUGS.map((slug) => ({
-    url: absoluteUrl(`/pendik/${slug}`),
-    lastModified: now,
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
+  // Kategori landing sayfaları (/pendik/[meslek]) — DB'den yayınlanmış sayfalar
+  let categoryPages: MetadataRoute.Sitemap = [];
+  try {
+    const slugs = await getPublishedCategoryPageSlugs();
+    categoryPages = slugs.map((slug) => ({
+      url: absoluteUrl(`/pendik/${slug}`),
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    }));
+  } catch (err) {
+    console.warn("[sitemap] category pages fetch failed:", err);
+  }
 
   // Rehber içerikleri (/rehber + /rehber/[slug])
   const guidePages: MetadataRoute.Sitemap = [

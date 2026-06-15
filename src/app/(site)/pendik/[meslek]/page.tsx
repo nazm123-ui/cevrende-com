@@ -4,12 +4,11 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getActiveWorkers } from "@/lib/workers";
 import WorkerCard from "@/components/workers/WorkerCard";
+import { soruEki } from "@/lib/category-pages";
 import {
-  getCategoryPage,
-  CATEGORY_PAGES,
-  CATEGORY_PAGE_SLUGS,
-  soruEki,
-} from "@/lib/category-pages";
+  getCategoryPageBySlug,
+  getPublishedCategoryPages,
+} from "@/lib/category-pages-db";
 import { getGuidesForCategory, GUIDE_TOPICS } from "@/lib/guides";
 import { absoluteUrl } from "@/lib/site-url";
 
@@ -23,7 +22,7 @@ export async function generateMetadata({
   params: Promise<{ meslek: string }>;
 }) {
   const { meslek } = await params;
-  const cfg = getCategoryPage(meslek);
+  const cfg = await getCategoryPageBySlug(meslek);
   if (!cfg) {
     return { title: "Sayfa bulunamadı", robots: { index: false, follow: false } };
   }
@@ -46,24 +45,23 @@ export default async function CategoryLandingPage({
   params: Promise<{ meslek: string }>;
 }) {
   const { meslek } = await params;
-  const cfg = getCategoryPage(meslek);
+  const cfg = await getCategoryPageBySlug(meslek);
   if (!cfg) notFound();
 
-  const [user, result, categories] = await Promise.all([
+  const [user, result, categories, allPages] = await Promise.all([
     getCurrentUser(),
     getActiveWorkers({ profession: cfg.categorySlug }),
     prisma.jobCategory.findMany({
       where: { isActive: true },
       select: { slug: true, name: true },
     }),
+    getPublishedCategoryPages(),
   ]);
   const { workers } = result;
   const categoryNameBySlug = new Map(categories.map((c) => [c.slug, c.name]));
   const canContact = !!user && user.isEmailVerified;
 
-  const others = CATEGORY_PAGE_SLUGS.filter((s) => s !== cfg.slug).map(
-    (s) => CATEGORY_PAGES[s],
-  );
+  const others = allPages.filter((p) => p.slug !== cfg.slug);
   const relatedGuides = getGuidesForCategory(cfg.slug);
   const nameLower = cfg.name.toLocaleLowerCase("tr");
 
