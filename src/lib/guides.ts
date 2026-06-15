@@ -2,10 +2,22 @@
 // Elle yazılmış, Pendik'e özgü, gerçekten faydalı evergreen makaleler.
 // Uydurma fiyat/istatistik YOK — tavsiye odaklı, dürüst içerik.
 
+export type GuideIcon = "camera" | "wave" | "thermometer" | "shield" | "wrench";
+
+export type GuideBullet = { title?: string; body: string; icon?: GuideIcon };
+
 export type GuideSection = {
   heading: string;
+  /**
+   * Bölüm görsel düzeni:
+   * - "prose" (varsayılan): paragraf + kart maddeler
+   * - "steps": numaralı adımlar
+   * - "checklist": yeşil tikli kontrol listesi (açık kutu)
+   * - "features": ikonlu özellik kartları
+   */
+  layout?: "prose" | "steps" | "checklist" | "features";
   paragraphs?: string[];
-  bullets?: { title?: string; body: string }[];
+  bullets?: GuideBullet[];
 };
 
 export type GuideFaq = { q: string; a: string };
@@ -284,11 +296,28 @@ export const GUIDES: Record<string, Guide> = {
       "Su kaçağı ve tıkanıklık, ev sahiplerinin en sık karşılaştığı acil durumlardandır ve hızlı davranmak hasarı ciddi şekilde azaltır. İlk birkaç dakikada doğru adımları atmak, hem evini hem de cebini korur. İşte Pendik'te bu durumlarda yapman gerekenler.",
     sections: [
       {
-        heading: "Su kaçağında ilk 5 dakika",
+        heading: "Su kaçağında ilk müdahale adımları",
+        layout: "steps",
+        paragraphs: [
+          "Su kaçağında ilk dakikalar hasarın boyutunu belirler. Panik yapmadan şu adımları sırayla uygula:",
+        ],
         bullets: [
           { title: "Ana vanayı kapat", body: "Evdeki su akışını durdurmak hasarı anında azaltır. Ana vananın yerini önceden öğrenmek, o an için zaman kazandırır." },
-          { title: "Elektrikle teması kes", body: "Su, priz veya elektrikli cihaza ulaşıyorsa o bölgenin sigortasını indir." },
-          { title: "Suyu topla / yönlendir", body: "Havlu, kova veya paspasla yayılmayı engelle; alt komşuya sızmasını önle." },
+          { title: "Elektrik bağlantısını kes", body: "Su; priz, kablo veya elektrikli cihaza ulaşıyorsa o bölgenin sigortasını indir." },
+          { title: "Suyu topla ve not al", body: "Havlu veya kovayla yayılmayı engelle, alt komşuya sızmasını önle; mümkünse kaçağın yerini fotoğrafla." },
+        ],
+      },
+      {
+        heading: "Gizli su kaçağının belirtileri",
+        layout: "checklist",
+        paragraphs: [
+          "Bazı kaçaklar hemen kendini belli etmez. Aşağıdakilerden birini yaşıyorsan bir tesisatçıya danışmakta fayda var:",
+        ],
+        bullets: [
+          { body: "Su faturasında beklenmedik artış" },
+          { body: "Duvarda küf, kabarma veya rutubet kokusu" },
+          { body: "Parke veya zeminde kabarma, nemlenme" },
+          { body: "Tüm musluklar kapalıyken dönmeye devam eden sayaç" },
         ],
       },
       {
@@ -298,11 +327,15 @@ export const GUIDES: Record<string, Guide> = {
         ],
       },
       {
-        heading: "Ne zaman mutlaka tesisatçı çağırmalı?",
+        heading: "Kırmadan kaçak tespiti: modern yöntemler",
+        layout: "features",
+        paragraphs: [
+          "Görünmeyen kaçaklarda artık duvarı baştan sona kırmaya gerek yok. Deneyimli tesisatçılar noktasal tespit için şu yöntemleri kullanır:",
+        ],
         bullets: [
-          { title: "Görünmeyen kaçak", body: "Duvardan/zeminden gelen nem, fatura artışı veya rutubet lekesi varsa 'kırmadan kaçak tespiti' yapan bir ustaya ihtiyacın olabilir." },
-          { title: "Geçmeyen tıkanıklık", body: "Pompa ve basit yöntemler işe yaramıyorsa zorlamayı bırak; makineyle açım gerekir." },
-          { title: "Birden fazla nokta", body: "Aynı anda birkaç gider tıkalıysa sorun ana hatta olabilir, profesyonel müdahale şart." },
+          { icon: "camera", title: "Kameralı görüntüleme", body: "Gider ve tesisat hattına sokulan robotik kamerayla tıkanıklık veya çatlağın yeri görüntülenir." },
+          { icon: "wave", title: "Akustik dinleme", body: "Duvar arkasındaki kaçağın sesi hassas dinleme cihazıyla tespit edilir." },
+          { icon: "thermometer", title: "Termal kamera", body: "Sıcak su hattındaki kaçaklar ısı farkından termal kamerayla bulunur." },
         ],
       },
       {
