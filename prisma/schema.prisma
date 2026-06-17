@@ -210,3 +210,27 @@ model CategoryPage {
 
   @@index([isPublished, order])
 }
+
+// Elle yönetilen rehber yazıları (/rehber/[slug]).
+// İçerik admin panelinden düzenlenir; daha önce kodda (guides.ts) tutuluyordu.
+model GuideArticle {
+  id                   String   @id @default(cuid())
+  slug                 String   @unique
+  title                String
+  metaTitle            String
+  metaDescription      String
+  excerpt              String
+  intro                String
+  topic                String   // GUIDE_TOPICS anahtarı (boya-badana, tesisat-onarim, ...)
+  sections             Json     @default("[]") // [{ heading, layout?, paragraphs?, bullets? }]
+  faqs                 Json     @default("[]") // [{ q, a }]
+  relatedCategorySlugs String[] @default([])   // /pendik/[slug] iç-linkleri
+  coverImageKey        String?
+  isPublished          Boolean  @default(true)
+  publishedAt          DateTime @default(now())
+  order                Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([isPublished, publishedAt])
+}
