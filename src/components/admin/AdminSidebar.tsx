@@ -63,6 +63,12 @@ const NAV = {
       label: "Sayfalar",
     },
     {
+      href: "/admin/rehber",
+      id: "guides",
+      icon: "edit",
+      label: "Rehber",
+    },
+    {
       href: "/admin/oneriler",
       id: "suggestions",
       icon: "msg",
