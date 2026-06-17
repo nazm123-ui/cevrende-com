@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/require-auth";
 import { prisma } from "@/lib/db";
 import GuideForm from "./GuideForm";
+import { getPublicUrl } from "@/lib/r2";
 import type { GuideSection, GuideFaq } from "@/lib/guides";
 
 export const metadata = { title: "Yazı Düzenle — Admin" };
@@ -30,6 +31,7 @@ export default async function EditGuidePage({
   return (
     <GuideForm
       categoryPages={categoryPages}
+      initialCoverUrl={g.coverImageKey ? getPublicUrl(g.coverImageKey) : null}
       initial={{
         id: g.id,
         slug: g.slug,
