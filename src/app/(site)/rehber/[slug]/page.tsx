@@ -7,7 +7,7 @@ import {
   type GuideIcon,
 } from "@/lib/guides";
 import { getGuideArticleBySlug } from "@/lib/guides-db";
-import { CATEGORY_PAGES, CATEGORY_PAGE_SLUGS } from "@/lib/category-pages";
+import { getPublishedCategoryPages } from "@/lib/category-pages-db";
 import { absoluteUrl, SITE_NAME } from "@/lib/site-url";
 import { normalizeTr } from "@/lib/normalize-tr";
 
@@ -60,16 +60,15 @@ export default async function GuideArticlePage({
   if (!g) notFound();
 
   const topic = GUIDE_TOPICS[g.topic];
-  const related = g.relatedCategorySlugs
-    .map((s) => CATEGORY_PAGES[s])
-    .filter(Boolean);
 
-  // İlgili hizmetler: önce makalenin ilgili kategorileri, sonra diğerleriyle 4'e tamamla.
+  // İlgili hizmetler (DB): önce makalenin ilgili kategorileri, sonra diğerleriyle 4'e tamamla.
+  const allCats = await getPublishedCategoryPages();
+  const relatedCats = g.relatedCategorySlugs
+    .map((s) => allCats.find((c) => c.slug === s))
+    .filter((c): c is (typeof allCats)[number] => Boolean(c));
   const services = [
-    ...related,
-    ...CATEGORY_PAGE_SLUGS.filter(
-      (s) => !related.some((r) => r.slug === s),
-    ).map((s) => CATEGORY_PAGES[s]),
+    ...relatedCats,
+    ...allCats.filter((c) => !relatedCats.some((r) => r.slug === c.slug)),
   ].slice(0, 4);
 
   const toc = [
