@@ -9,7 +9,8 @@ import {
   getCategoryPageBySlug,
   getPublishedCategoryPages,
 } from "@/lib/category-pages-db";
-import { getGuidesForCategory, GUIDE_TOPICS } from "@/lib/guides";
+import { GUIDE_TOPICS } from "@/lib/guides";
+import { getGuidesForCategoryDb } from "@/lib/guides-db";
 import { absoluteUrl } from "@/lib/site-url";
 import { getPublicUrl } from "@/lib/r2";
 
@@ -66,7 +67,7 @@ export default async function CategoryLandingPage({
   const canContact = !!user && user.isEmailVerified;
 
   const others = allPages.filter((p) => p.slug !== cfg.slug);
-  const relatedGuides = getGuidesForCategory(cfg.slug);
+  const relatedGuides = await getGuidesForCategoryDb(cfg.slug);
   const nameLower = cfg.name.toLocaleLowerCase("tr");
 
   const faqLd = {

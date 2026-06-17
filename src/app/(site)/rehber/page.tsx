@@ -1,9 +1,8 @@
+import { formatGuideDate, GUIDE_TOPICS } from "@/lib/guides";
 import {
-  getAllGuides,
-  getTopicsWithCounts,
-  formatGuideDate,
-  GUIDE_TOPICS,
-} from "@/lib/guides";
+  getAllGuideArticles,
+  getTopicsWithCountsDb,
+} from "@/lib/guides-db";
 import { absoluteUrl } from "@/lib/site-url";
 import GuideExplorer, {
   type GuideCard,
@@ -16,11 +15,11 @@ export const metadata = {
   alternates: { canonical: "/rehber" },
 };
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export default function RehberIndexPage() {
-  const guides = getAllGuides();
-  const topics = getTopicsWithCounts().map((t) => ({
+export default async function RehberIndexPage() {
+  const guides = await getAllGuideArticles();
+  const topics = (await getTopicsWithCountsDb()).map((t) => ({
     slug: t.topic.slug,
     label: t.topic.label,
     count: t.count,

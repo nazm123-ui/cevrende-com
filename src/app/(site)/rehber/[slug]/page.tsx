@@ -1,22 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  getGuide,
-  GUIDE_SLUGS,
   GUIDE_TOPICS,
   formatGuideDate,
   type GuideSection,
   type GuideIcon,
 } from "@/lib/guides";
+import { getGuideArticleBySlug } from "@/lib/guides-db";
 import { CATEGORY_PAGES, CATEGORY_PAGE_SLUGS } from "@/lib/category-pages";
 import { absoluteUrl, SITE_NAME } from "@/lib/site-url";
 import { normalizeTr } from "@/lib/normalize-tr";
 
-export const dynamic = "force-static";
-
-export function generateStaticParams() {
-  return GUIDE_SLUGS.map((slug) => ({ slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -24,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const g = getGuide(slug);
+  const g = await getGuideArticleBySlug(slug);
   if (!g) {
     return { title: "Yazı bulunamadı", robots: { index: false, follow: false } };
   }
@@ -39,6 +34,7 @@ export async function generateMetadata({
       type: "article",
       publishedTime: g.publishedAt,
       modifiedTime: g.updatedAt,
+      ...(g.coverImage ? { images: [{ url: g.coverImage }] } : {}),
     },
   };
 }
@@ -60,7 +56,7 @@ export default async function GuideArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const g = getGuide(slug);
+  const g = await getGuideArticleBySlug(slug);
   if (!g) notFound();
 
   const topic = GUIDE_TOPICS[g.topic];
