@@ -198,6 +198,7 @@ model CategoryPage {
   metaTitle       String
   metaDescription String
   intro           String
+  bodyContent     String?  // özgün gövde metni (paragraflar boş satırla ayrılır)
   guideTitle      String
   guidePoints     Json     @default("[]") // [{ title, body }]
   emptyState      String

@@ -42,6 +42,7 @@ export default async function EditCategoryPage({
         metaTitle: page.metaTitle,
         metaDescription: page.metaDescription,
         intro: page.intro,
+        bodyContent: page.bodyContent,
         guideTitle: page.guideTitle,
         emptyState: page.emptyState,
         guidePoints: Array.isArray(page.guidePoints)

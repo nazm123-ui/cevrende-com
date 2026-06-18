@@ -55,6 +55,7 @@ export async function PATCH(
   if (data.metaTitle !== undefined) updateData.metaTitle = data.metaTitle;
   if (data.metaDescription !== undefined) updateData.metaDescription = data.metaDescription;
   if (data.intro !== undefined) updateData.intro = data.intro;
+  if (data.bodyContent !== undefined) updateData.bodyContent = data.bodyContent;
   if (data.guideTitle !== undefined) updateData.guideTitle = data.guideTitle;
   if (data.guidePoints !== undefined)
     updateData.guidePoints = data.guidePoints as unknown as Prisma.InputJsonValue;

@@ -192,6 +192,31 @@ export default async function CategoryLandingPage({
         </div>
       </section>
 
+      {/* Özgün gövde metni — mesleğe/Pendik'e özgü açıklama */}
+      {cfg.bodyContent && cfg.bodyContent.trim() && (
+        <section className="pt-8 pb-2">
+          <div className="mx-auto max-w-[760px] px-5 sm:px-6">
+            <h2 className="text-[20px] sm:text-[22px] font-semibold tracking-[-0.015em] mb-4">
+              Pendik&apos;te {nameLower} hizmeti
+            </h2>
+            <div className="flex flex-col gap-4">
+              {cfg.bodyContent
+                .split(/\n{2,}/)
+                .map((para) => para.trim())
+                .filter(Boolean)
+                .map((para, i) => (
+                  <p
+                    key={i}
+                    className="u-pretty text-[15px] sm:text-[15.5px] text-ink-700 leading-[1.7] m-0"
+                  >
+                    {para}
+                  </p>
+                ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Rehber — nelere dikkat etmeli (vurgulu kutu) */}
       <section className="pt-8 pb-4">
         <div className="mx-auto max-w-[1200px] px-5 sm:px-6">

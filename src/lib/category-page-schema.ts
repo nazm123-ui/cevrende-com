@@ -23,6 +23,7 @@ export const categoryPageCreateSchema = z.object({
   metaTitle: z.string().trim().min(1).max(120),
   metaDescription: z.string().trim().min(1).max(300),
   intro: z.string().trim().min(1).max(2000),
+  bodyContent: z.string().trim().max(8000).nullable().optional(),
   guideTitle: z.string().trim().min(1).max(160),
   guidePoints: z.array(guidePointSchema).max(12).default([]),
   emptyState: z.string().trim().min(1).max(400),

@@ -16,6 +16,7 @@ type Initial = {
   metaTitle: string;
   metaDescription: string;
   intro: string;
+  bodyContent: string | null;
   guideTitle: string;
   emptyState: string;
   guidePoints: GuidePoint[];
@@ -87,6 +88,7 @@ export default function CategoryPageForm({
     initial?.metaDescription ?? "",
   );
   const [intro, setIntro] = useState(initial?.intro ?? "");
+  const [bodyContent, setBodyContent] = useState(initial?.bodyContent ?? "");
   const [guideTitle, setGuideTitle] = useState(initial?.guideTitle ?? "");
   const [emptyState, setEmptyState] = useState(initial?.emptyState ?? "");
   const [guidePoints, setGuidePoints] = useState<GuidePoint[]>(
@@ -111,6 +113,7 @@ export default function CategoryPageForm({
         metaTitle,
         metaDescription,
         intro,
+        bodyContent: bodyContent.trim() || null,
         guideTitle,
         emptyState,
         guidePoints: guidePoints.filter((g) => g.title.trim() || g.body.trim()),
@@ -257,6 +260,17 @@ export default function CategoryPageForm({
             onChange={(e) => setIntro(e.target.value)}
             rows={4}
             required
+          />
+        </Field>
+        <Field
+          label="Gövde metni (opsiyonel)"
+          hint="Paragrafları boş satırla ayır"
+        >
+          <textarea
+            value={bodyContent}
+            onChange={(e) => setBodyContent(e.target.value)}
+            rows={10}
+            placeholder="Listenin altında görünen uzun açıklama. Mesleğe ve Pendik'e özgü, gerçekten faydalı bilgi yaz."
           />
         </Field>
       </Section>

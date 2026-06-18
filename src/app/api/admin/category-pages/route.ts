@@ -44,6 +44,7 @@ export async function POST(req: Request) {
       metaTitle: data.metaTitle,
       metaDescription: data.metaDescription,
       intro: data.intro,
+      bodyContent: data.bodyContent ?? null,
       guideTitle: data.guideTitle,
       guidePoints: data.guidePoints as unknown as Prisma.InputJsonValue,
       emptyState: data.emptyState,

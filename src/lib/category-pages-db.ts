@@ -13,6 +13,7 @@ export type DbCategoryPage = {
   metaTitle: string;
   metaDescription: string;
   intro: string;
+  bodyContent: string | null;
   guideTitle: string;
   guidePoints: CategoryGuidePoint[];
   emptyState: string;
@@ -29,6 +30,7 @@ type Row = {
   metaTitle: string;
   metaDescription: string;
   intro: string;
+  bodyContent: string | null;
   guideTitle: string;
   guidePoints: unknown;
   emptyState: string;
@@ -46,6 +48,7 @@ function toModel(r: Row): DbCategoryPage {
     metaTitle: r.metaTitle,
     metaDescription: r.metaDescription,
     intro: r.intro,
+    bodyContent: r.bodyContent,
     guideTitle: r.guideTitle,
     guidePoints: Array.isArray(r.guidePoints)
       ? (r.guidePoints as CategoryGuidePoint[])
